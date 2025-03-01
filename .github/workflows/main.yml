@@ -21,14 +21,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.x'
 
       - name: Install dependencies
         run: |
           pip install python-semantic-release pdoc
 
       - name: Generate Documentation
-        run: pdoc --html . -o docs
+        run: pdoc --output-dir docs .
 
       - name: Python Semantic Release
         uses: python-semantic-release/python-semantic-release@master
