@@ -1,6 +1,30 @@
 # CHANGELOG
 
 
+## v0.0.2 (2025-03-01)
+
+### Bug Fixes
+
+- **build**: Fixing tests actions
+  ([`fa37d44`](https://github.com/well-it-wasnt-me/ICU/commit/fa37d4418142ecedd14d054096f7254aa41b80f0))
+
+- **stream-processor**: Timestamp for img creation
+  ([`811a2a9`](https://github.com/well-it-wasnt-me/ICU/commit/811a2a945b8ebad831694707c606f645403c99b2))
+
+### Build System
+
+- **pytest**: Fixing pytest action
+  ([`0271c8a`](https://github.com/well-it-wasnt-me/ICU/commit/0271c8a0c3f24fd77b03cd846154b81e82499c32))
+
+### Chores
+
+- **gitignore**: Ignoring tests summary
+  ([`336999c`](https://github.com/well-it-wasnt-me/ICU/commit/336999c0903997aa095966e30a3226ca867b75c1))
+
+- **requirements**: Updating requirements
+  ([`a09e714`](https://github.com/well-it-wasnt-me/ICU/commit/a09e71489f290eeb6745c1e01ac9cda1f1de4cce))
+
+
 ## v0.0.1 (2025-03-01)
 
 ### Bug Fixes
