@@ -1,0 +1,16 @@
+name: PyTest
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    concurrency: release
+
+    steps:
+    - uses: pavelzw/pytest-action@v2.1.0
+      with:
+        report-title: 'PyTest Report'

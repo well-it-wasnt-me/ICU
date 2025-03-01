@@ -1,0 +1,38 @@
+name: Sphinx
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install sphinx
+          if [ -f docs/requirements.txt ]; then pip install -r docs/requirements.txt; fi
+
+      - name: Generate Sphinx API documentation
+        run: |
+          cd docs/ && sphinx-apidoc -o . ..
+
+      - name: Build Sphinx documentation
+        run: |
+          cd docs/ && make clean && make html
+
+      - name: Upload built docs artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sphinx-docs
+          path: docs/_build/html
