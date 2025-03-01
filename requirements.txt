@@ -33,3 +33,5 @@ typing_extensions==4.12.2
 urllib3==2.3.0
 wheel==0.41.2
 pytest==8.3.4
+pytest-emoji==0.2.0
+pytest-md==0.2.0
