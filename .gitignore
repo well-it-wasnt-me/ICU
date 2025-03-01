@@ -5,3 +5,4 @@ cameras.yaml
 venv
 captures/**/*
 poi/**/*
+docs/_build
