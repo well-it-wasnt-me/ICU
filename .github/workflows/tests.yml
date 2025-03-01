@@ -11,6 +11,19 @@ jobs:
     concurrency: release
 
     steps:
-    - uses: pavelzw/pytest-action@v2.1.0
-      with:
-        report-title: 'PyTest Report'
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'  # Specify your Python version
+
+      - name: Install dependencies
+        run: |
+          pip install pytest
+
+      - name: Run PyTest
+        uses: pavelzw/pytest-action@v2.1.0
+        with:
+          report-title: 'PyTest Report'
