@@ -1,6 +1,21 @@
+"""
+Logger Setup Module.
+
+Configures logging for the application and provides a global logger instance.
+"""
+
 import logging
 
+
 def setup_logging(log_file='face_recognition.log'):
+    """
+    Set up logging for the application.
+
+    Logs are configured to output both to a file and to the console with a specified format.
+
+    :param log_file: The filename for the log file.
+    :return: Configured logger instance.
+    """
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
@@ -17,6 +32,7 @@ def setup_logging(log_file='face_recognition.log'):
     logger.addHandler(ch)
 
     return logger
+
 
 # Instantiate a global logger
 logger = setup_logging()

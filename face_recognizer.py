@@ -1,3 +1,13 @@
+"""
+Face Recognizer Module.
+
+This module provides the FaceRecognizer class which is responsible for:
+- Determining the appropriate processing device (CUDA, MPS, or CPU)
+- Training a KNN classifier using face embeddings from training images
+- Making predictions on input frames with the trained classifier
+- Loading reference images for known individuals
+"""
+
 import math
 import os
 import pickle
@@ -16,21 +26,33 @@ from logger_setup import logger
 
 class FaceRecognizer:
     """
-    Handles all face recognition-related logic:
-    - Determining CUDA/MPS/CPU device
-    - Training the KNN classifier
-    - Making predictions using the classifier
-    - Loading reference images
+    A class to handle face recognition operations including training, prediction, and model management.
+
+    This class supports both GPU-based face recognition using facenet-pytorch and CPU-based recognition
+    using the face_recognition library.
     """
 
     def __init__(self, use_gpu=False, device=None, knn_clf=None):
+        """
+        Initialize the FaceRecognizer.
+
+        :param use_gpu: Boolean flag to indicate if GPU-based recognition should be used.
+        :param device: Optional torch.device to override device selection.
+        :param knn_clf: Pre-trained KNN classifier. If None, the classifier can be trained later.
+        """
         self.use_gpu = use_gpu
         self.device = device if device else self.get_device(use_gpu)
         self.knn_clf = knn_clf
-        self.models = None  # (MTCNN, InceptionResnetV1) if GPU is used
+        self.models = None  # Tuple of (MTCNN, InceptionResnetV1) when GPU is used.
 
     @staticmethod
     def get_device(use_gpu):
+        """
+        Determine the appropriate torch.device based on GPU availability.
+
+        :param use_gpu: Boolean flag indicating if GPU should be used.
+        :return: torch.device for GPU (cuda or mps) if available, otherwise CPU.
+        """
         if use_gpu:
             if torch.cuda.is_available():
                 return torch.device('cuda')
@@ -42,6 +64,15 @@ class FaceRecognizer:
 
     @staticmethod
     def load_reference_images(train_dir):
+        """
+        Load reference images for each person from a training directory.
+
+        The function expects each subdirectory in `train_dir` to be named after the person,
+        and uses the first image found in each subdirectory as the reference image.
+
+        :param train_dir: Directory containing subdirectories for each person with training images.
+        :return: Dictionary mapping person names to their reference image (as a numpy array).
+        """
         reference_images = {}
         for person_name in os.listdir(train_dir):
             person_folder = os.path.join(train_dir, person_name)
@@ -56,11 +87,23 @@ class FaceRecognizer:
                 reference_images[person_name] = ref_img
             except Exception as e:
                 logger.error(f"Failed to load reference image {ref_path}: {e}")
-                pass
         return reference_images
 
     def train(self, train_dir, model_save_path=None, n_neighbors=None,
               knn_algo='ball_tree', verbose=False):
+        """
+        Train the KNN classifier using face embeddings from training images.
+
+        This method processes images for each person in the `train_dir`, extracts face embeddings,
+        and trains a KNN classifier. Optionally, the trained model can be saved to disk.
+
+        :param train_dir: Directory containing subdirectories for each person with training images.
+        :param model_save_path: Optional file path to save the trained KNN classifier.
+        :param n_neighbors: Number of neighbors for the KNN classifier. If None, computed automatically.
+        :param knn_algo: KNN algorithm to use (default: 'ball_tree').
+        :param verbose: Boolean flag to enable verbose logging.
+        :return: Trained KNN classifier or None if training fails.
+        """
         X = []
         y = []
 
@@ -143,6 +186,12 @@ class FaceRecognizer:
         return knn_clf
 
     def load_model(self, model_path):
+        """
+        Load a pre-trained KNN classifier from disk.
+
+        :param model_path: File path to the saved KNN classifier.
+        :return: Loaded KNN classifier, or None if loading fails.
+        """
         try:
             with open(model_path, 'rb') as f:
                 self.knn_clf = pickle.load(f)
@@ -154,7 +203,7 @@ class FaceRecognizer:
 
     def initialize_facenet_pytorch_models(self):
         """
-        Initialize MTCNN and Resnet if using GPU.
+        Initialize the facenet-pytorch models (MTCNN and InceptionResnetV1) for GPU-based processing.
         """
         try:
             mtcnn = MTCNN(image_size=160, margin=0, device=self.device)
@@ -165,6 +214,17 @@ class FaceRecognizer:
             sys.exit(1)
 
     def predict(self, X_frame, distance_threshold=0.5):
+        """
+        Predict the identities of faces present in the provided image frame.
+
+        Depending on whether GPU-based processing is used, the method extracts face embeddings using
+        either facenet-pytorch or the face_recognition library, and then uses the trained KNN classifier
+        to determine the closest matches. A distance threshold is applied to filter out low-confidence matches.
+
+        :param X_frame: A numpy array representing the image frame (BGR format).
+        :param distance_threshold: A float specifying the threshold for valid face matching.
+        :return: A list of tuples, each containing the predicted identity and the corresponding face distance.
+        """
         if not self.knn_clf:
             raise Exception("KNN classifier not loaded or trained.")
 

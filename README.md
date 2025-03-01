@@ -148,6 +148,7 @@ options:
 1. [ ] Implement notification (telegram and/or other)  
 2. [ ] Resource optimization
 3. [ ] Integrate [Nerve](https://github.com/evilsocket/nerve) with custom tasklet 
+3. [ ] Automatic Doc Generation 
 
 ## Conclusion
 Well, that's all she wrote. If you run into any issues, feel free to do nothing and don't bother me.

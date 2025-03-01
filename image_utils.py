@@ -1,29 +1,51 @@
+"""
+Image Utilities Module.
+
+Provides utility functions for image processing such as resampling,
+conversion to RGB, adding timestamps, and creating side-by-side screenshots.
+"""
+
 import os
-import time
 from datetime import datetime
-from PIL import Image, ImageDraw, ImageFont
-import numpy as np
+
 import cv2
+import numpy as np
 import torch
+from PIL import Image, ImageDraw, ImageFont
 
 from logger_setup import logger
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'JPG'}
 
+
 class ImageUtils:
     """
-    Handles image conversions, timestamp addition,
-    side-by-side screenshot creation, etc.
+    A collection of static methods for various image processing tasks.
     """
 
     @staticmethod
     def custom_imresample(img, sz):
+        """
+        Resample an image tensor to a given size using bilinear interpolation.
+
+        :param img: The input image tensor.
+        :param sz: The target size (height, width).
+        :return: The resampled image tensor.
+        """
         return torch.nn.functional.interpolate(
             img, size=sz, mode="bilinear", align_corners=False
         )
 
     @staticmethod
     def convert_images_to_rgb(directory):
+        """
+        Convert all images in the specified directory to RGB format.
+
+        This function walks through the directory and its subdirectories, converting images
+        with allowed extensions to ensure consistent color channels.
+
+        :param directory: The root directory to search for images.
+        """
         for root, _, files in os.walk(directory):
             for file in files:
                 if file.lower().endswith(tuple(ALLOWED_EXTENSIONS)):
@@ -37,6 +59,14 @@ class ImageUtils:
 
     @staticmethod
     def add_timestamp(frame):
+        """
+        Add a timestamp overlay to an image frame.
+
+        The timestamp is added at the bottom-left corner of the image.
+
+        :param frame: The input image frame as a numpy array.
+        :return: The image frame with a timestamp overlay.
+        """
         pil_image = Image.fromarray(frame)
         draw = ImageDraw.Draw(pil_image)
 
@@ -54,6 +84,7 @@ class ImageUtils:
         x = 10
         y = pil_image.height - text_height - 10
 
+        # Draw a rectangle behind the text for better readability
         draw.rectangle((x - 5, y - 5, x + text_width + 5, y + text_height + 5),
                        fill=(0, 0, 0))
         draw.text((x, y), timestamp, fill=(255, 255, 255), font=font)
@@ -63,6 +94,20 @@ class ImageUtils:
 
     @staticmethod
     def create_side_by_side_screenshot(frame, ref_image, camera_name, person_name, confidence):
+        """
+        Create a side-by-side screenshot of the input frame and a reference image.
+
+        The function resizes the images, places them next to each other on a white canvas,
+        and overlays textual information including camera name, person name, confidence, and timestamp.
+
+        :param frame: The current frame from the camera (BGR format).
+        :param ref_image: The reference image (BGR format) for the recognized person.
+                          If None or empty, a blank image is used.
+        :param camera_name: Name identifier for the camera.
+        :param person_name: Name of the recognized person.
+        :param confidence: Confidence level of the face recognition (percentage).
+        :return: The combined image as a numpy array in BGR format.
+        """
         final_w, final_h = 800, 600
         canvas = Image.new("RGB", (final_w, final_h), (255, 255, 255))
 

@@ -1,10 +1,18 @@
+"""
+Main Application Module.
+
+This module serves as the entry point for the face recognition application.
+It handles command-line argument parsing, training the model, loading configuration,
+and initiating the stream processing.
+"""
+
 import argparse
 import os
 import yaml
 import threading
 import time
 
-# Ensure facenet-pytorch uses the custom imresample
+# Ensure facenet-pytorch uses the custom imresample function from ImageUtils
 import facenet_pytorch.models.utils.detect_face as detect_face_module
 from image_utils import ImageUtils
 
@@ -15,7 +23,14 @@ from logger_setup import logger
 from face_recognizer import FaceRecognizer
 from stream_processor import StreamProcessor
 
+
 def main():
+    """
+    Entry point of the face recognition application.
+
+    Parses command-line arguments, trains or loads the KNN classifier,
+    loads camera configurations, and starts stream processing threads for each camera.
+    """
     parser = argparse.ArgumentParser(
         description='Face Recognition from Live Camera Stream'
     )
@@ -24,12 +39,12 @@ def main():
                         help='Path to save/load KNN model')
     parser.add_argument('--n_neighbors', type=int, default=None, help='Number of neighbors for KNN')
     parser.add_argument('--config', type=str, default='cameras.yaml', help='Path to YAML config')
-    parser.add_argument('--distance_threshold', type=float, default=0.5, help='Distance threshold')
+    parser.add_argument('--distance_threshold', type=float, default=0.5, help='Distance threshold for recognition')
     parser.add_argument('--train', action='store_true', help='Train the model')
     parser.add_argument('--use_gpu', action='store_true', help='Use GPU with facenet-pytorch')
     args = parser.parse_args()
 
-    # Convert images to RGB in your train_dir once (if needed)
+    # Convert images in training directory to RGB (if needed)
     ImageUtils.convert_images_to_rgb(args.train_dir)
 
     face_recognizer = FaceRecognizer(use_gpu=args.use_gpu)
@@ -38,7 +53,7 @@ def main():
     if args.train:
         logger.info("Training KNN classifier...")
         if args.use_gpu:
-            # Initialize face-net pytorch models
+            # Initialize facenet-pytorch models for GPU-based training
             face_recognizer.initialize_facenet_pytorch_models()
 
         knn_clf = face_recognizer.train(
@@ -54,14 +69,14 @@ def main():
             logger.error("Training failed.")
         return
 
-    # If not training, load existing model
+    # Load pre-trained model if not in training mode
     if not os.path.exists(args.model_save_path):
         logger.error(f"Model file {args.model_save_path} does not exist. Train first using --train.")
         return
 
     face_recognizer.load_model(args.model_save_path)
 
-    # Load camera config
+    # Load camera configuration from YAML file
     if not os.path.exists(args.config):
         logger.error(f"Configuration file {args.config} does not exist.")
         return
@@ -71,16 +86,16 @@ def main():
             config = yaml.safe_load(file)
             cameras = config.get('cameras', [])
             if not cameras:
-                logger.error("No camera configurations found in the YAML.")
+                logger.error("No camera configurations found in the YAML file.")
                 return
     except yaml.YAMLError as exc:
         logger.error(f"Error parsing YAML file: {exc}")
         return
 
-    # Load reference images (for side-by-side screenshot)
+    # Load reference images for side-by-side screenshot captures
     reference_images = face_recognizer.load_reference_images(args.train_dir)
 
-    # If GPU is used, initialize facenet-pytorch models for inference
+    # Initialize facenet-pytorch models for inference if GPU is used
     if args.use_gpu:
         face_recognizer.initialize_facenet_pytorch_models()
 
@@ -106,6 +121,7 @@ def main():
         t.join()
 
     logger.info("All camera threads finished.")
+
 
 if __name__ == "__main__":
     main()
