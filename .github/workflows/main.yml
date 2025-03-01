@@ -1,4 +1,4 @@
-name: Semantic Release & Docs Generation
+name: Semantic Release
 
 on:
   push:
@@ -14,23 +14,11 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          pip install python-semantic-release pdoc
-
-      - name: Generate Documentation
-        run: pdoc --output-dir docs .
-
-      - name: Python Semantic Release
-        uses: python-semantic-release/python-semantic-release@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Python Semantic Release
+      uses: python-semantic-release/python-semantic-release@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
