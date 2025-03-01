@@ -1,6 +1,45 @@
 # CHANGELOG
 
 
+## v0.0.1 (2025-03-01)
+
+### Bug Fixes
+
+- **build**: Bumping upload-artifact
+  ([`d2100a0`](https://github.com/well-it-wasnt-me/ICU/commit/d2100a0e08f9c4dcd75798ce0081ce592052ed09))
+
+### Build System
+
+- **actions**: New actions
+  ([`85c97e6`](https://github.com/well-it-wasnt-me/ICU/commit/85c97e6f1306760611242c57d5f4bdf98670a645))
+
+### Chores
+
+- Few useless stuff
+  ([`62c284a`](https://github.com/well-it-wasnt-me/ICU/commit/62c284a64c693c4c17ed91e6a816c8a5bf282b2f))
+
+- Funding
+  ([`1e0ac97`](https://github.com/well-it-wasnt-me/ICU/commit/1e0ac97e3d6bab898a29f3d2efab1f46add9fd81))
+
+### Documentation
+
+- Docstring and readme update
+  ([`d389b43`](https://github.com/well-it-wasnt-me/ICU/commit/d389b4323001836171b82bd388e3dcd56a2aca40))
+
+- Readthedocs integration
+  ([`28a8455`](https://github.com/well-it-wasnt-me/ICU/commit/28a84553ca53fa77f1d55ea75af35f067f66b5d4))
+
+- Readthedocs integration
+  ([`6b150ba`](https://github.com/well-it-wasnt-me/ICU/commit/6b150ba017534f87964106dc3e3f214dbaef74c6))
+
+### Testing
+
+- **add**: New test cases
+  ([`0f556ea`](https://github.com/well-it-wasnt-me/ICU/commit/0f556ea48d7c52fd312ab67cbb348ceeea6b286d))
+
+Added pytest
+
+
 ## v0.0.0 (2025-03-01)
 
 ### Chores
@@ -19,3 +58,8 @@
 
 - Github workflow
   ([`22c7a5c`](https://github.com/well-it-wasnt-me/ICU/commit/22c7a5cadffdbfb9b27526a3e19ae56fbdb4a576))
+
+### Documentation
+
+- Generated documentation via pdoc
+  ([`a180a04`](https://github.com/well-it-wasnt-me/ICU/commit/a180a04933500b88927087fe5d7ce6901420b755))
