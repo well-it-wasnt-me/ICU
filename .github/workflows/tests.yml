@@ -21,9 +21,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pytest
+          pip install pytest pytest-md pytest-emoji
 
       - name: Run PyTest
-        uses: pavelzw/pytest-action@v2.1.0
-        with:
-          report-title: 'PyTest Report'
+        run: |
+          pytest -v --md=tests/summary.md        
