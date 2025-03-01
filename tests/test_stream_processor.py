@@ -59,14 +59,23 @@ def test_get_frames_from_stream_local_webcam(monkeypatch):
     assert len(frames) == 5, "Expected 5 frames from the dummy webcam stream."
 
 def test_process_stream(dummy_stream_processor, dummy_camera_config, tmp_path):
+    # Change current working directory to the temporary path
+    os.chdir(tmp_path)
     with patch("stream_processor.get_frames_from_stream") as mock_get_frames:
-        mock_get_frames.return_value = [np.zeros((480, 640, 3), dtype=np.uint8) for _ in range(5)]
+        mock_get_frames.return_value = [
+            np.zeros((480, 640, 3), dtype=np.uint8) for _ in range(5)
+        ]
         dummy_stream_processor.process_stream(dummy_camera_config, distance_threshold=0.6)
 
         capture_dir = os.path.join(tmp_path, "captures", "TestCamera")
         assert os.path.exists(capture_dir), "Capture directory was not created."
         captured_files = os.listdir(capture_dir)
-        assert len(captured_files) == 10, "Expected 10 captured files (5 annotated frames and 5 side-by-side images)."
+        # Expect 10 files: 5 annotated frames and 5 side-by-side images
+        assert len(captured_files) == 10, (
+            "Expected 10 captured files (5 annotated frames and 5 side-by-side images)."
+        )
+        # Verify that all filenames are unique (i.e. no overwriting occurred)
+        assert len(set(captured_files)) == 10, "Duplicate filenames detected. Filenames should be unique."
 
 def test_process_stream_logging(dummy_stream_processor, dummy_camera_config, caplog):
     with patch("stream_processor.get_frames_from_stream") as mock_get_frames:
