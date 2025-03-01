@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.5">
+<title>ICU.face_recognizer API documentation</title>
+<meta name="description" content="Face Recognizer Module …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>ICU.face_recognizer</code></h1>
+</header>
+<section id="section-intro">
+<p>Face Recognizer Module.</p>
+<p>This module provides the FaceRecognizer class which is responsible for:
+- Determining the appropriate processing device (CUDA, MPS, or CPU)
+- Training a KNN classifier using face embeddings from training images
+- Making predictions on input frames with the trained classifier
+- Loading reference images for known individuals</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="ICU.face_recognizer.FaceRecognizer"><code class="flex name class">
+<span>class <span class="ident">FaceRecognizer</span></span>
+<span>(</span><span>use_gpu=False, device=None, knn_clf=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FaceRecognizer:
+    &#34;&#34;&#34;
+    A class to handle face recognition operations including training, prediction, and model management.
+
+    This class supports both GPU-based face recognition using facenet-pytorch and CPU-based recognition
+    using the face_recognition library.
+    &#34;&#34;&#34;
+
+    def __init__(self, use_gpu=False, device=None, knn_clf=None):
+        &#34;&#34;&#34;
+        Initialize the FaceRecognizer.
+
+        :param use_gpu: Boolean flag to indicate if GPU-based recognition should be used.
+        :param device: Optional torch.device to override device selection.
+        :param knn_clf: Pre-trained KNN classifier. If None, the classifier can be trained later.
+        &#34;&#34;&#34;
+        self.use_gpu = use_gpu
+        self.device = device if device else self.get_device(use_gpu)
+        self.knn_clf = knn_clf
+        self.models = None  # Tuple of (MTCNN, InceptionResnetV1) when GPU is used.
+
+    @staticmethod
+    def get_device(use_gpu):
+        &#34;&#34;&#34;
+        Determine the appropriate torch.device based on GPU availability.
+
+        :param use_gpu: Boolean flag indicating if GPU should be used.
+        :return: torch.device for GPU (cuda or mps) if available, otherwise CPU.
+        &#34;&#34;&#34;
+        if use_gpu:
+            if torch.cuda.is_available():
+                return torch.device(&#39;cuda&#39;)
+            elif torch.backends.mps.is_available():
+                return torch.device(&#39;mps&#39;)
+            else:
+                logger.warning(&#34;GPU requested but not available. Using CPU.&#34;)
+        return torch.device(&#39;cpu&#39;)
+
+    @staticmethod
+    def load_reference_images(train_dir):
+        &#34;&#34;&#34;
+        Load reference images for each person from a training directory.
+
+        The function expects each subdirectory in `train_dir` to be named after the person,
+        and uses the first image found in each subdirectory as the reference image.
+
+        :param train_dir: Directory containing subdirectories for each person with training images.
+        :return: Dictionary mapping person names to their reference image (as a numpy array).
+        &#34;&#34;&#34;
+        reference_images = {}
+        for person_name in os.listdir(train_dir):
+            person_folder = os.path.join(train_dir, person_name)
+            if not os.path.isdir(person_folder):
+                continue
+            image_files = list(image_files_in_folder(person_folder))
+            if len(image_files) == 0:
+                continue
+            ref_path = image_files[0]
+            try:
+                ref_img = cv2.imread(ref_path)
+                reference_images[person_name] = ref_img
+            except Exception as e:
+                logger.error(f&#34;Failed to load reference image {ref_path}: {e}&#34;)
+        return reference_images
+
+    def train(self, train_dir, model_save_path=None, n_neighbors=None,
+              knn_algo=&#39;ball_tree&#39;, verbose=False):
+        &#34;&#34;&#34;
+        Train the KNN classifier using face embeddings from training images.
+
+        This method processes images for each person in the `train_dir`, extracts face embeddings,
+        and trains a KNN classifier. Optionally, the trained model can be saved to disk.
+
+        :param train_dir: Directory containing subdirectories for each person with training images.
+        :param model_save_path: Optional file path to save the trained KNN classifier.
+        :param n_neighbors: Number of neighbors for the KNN classifier. If None, computed automatically.
+        :param knn_algo: KNN algorithm to use (default: &#39;ball_tree&#39;).
+        :param verbose: Boolean flag to enable verbose logging.
+        :return: Trained KNN classifier or None if training fails.
+        &#34;&#34;&#34;
+        X = []
+        y = []
+
+        if self.use_gpu:
+            logger.info(f&#34;Using device for training: {self.device}&#34;)
+            mtcnn = MTCNN(image_size=160, margin=0, device=self.device)
+            resnet = InceptionResnetV1(pretrained=&#39;vggface2&#39;).eval().to(self.device)
+        else:
+            mtcnn = None
+            resnet = None
+
+        for class_dir in os.listdir(train_dir):
+            if not os.path.isdir(os.path.join(train_dir, class_dir)):
+                continue
+
+            for img_path in image_files_in_folder(os.path.join(train_dir, class_dir)):
+                image = face_recognition.load_image_file(img_path)
+                if self.use_gpu:
+                    img_pil = Image.fromarray(image).convert(&#39;RGB&#39;)
+                    boxes, _ = mtcnn.detect(img_pil)
+                    if boxes is None:
+                        if verbose:
+                            logger.warning(f&#34;Image {img_path} not suitable: no face found&#34;)
+                        continue
+
+                    faces = mtcnn.extract(img_pil, boxes, save_path=None)
+                    if faces is None or (faces.dim() == 3 and faces.shape[0] == 0):
+                        if verbose:
+                            logger.warning(f&#34;Image {img_path} not suitable: no faces extracted&#34;)
+                        continue
+                    if faces.dim() == 3:
+                        faces = faces.unsqueeze(0)
+
+                    embeddings = resnet(faces.to(self.device)).detach().cpu().numpy()
+                    if len(embeddings) != 1:
+                        if verbose:
+                            logger.warning(f&#34;Image {img_path} has multiple faces. Skipping.&#34;)
+                        continue
+
+                    X.append(embeddings[0])
+                    y.append(class_dir)
+                else:
+                    face_bounding_boxes = face_recognition.face_locations(image)
+                    if len(face_bounding_boxes) != 1:
+                        if verbose:
+                            logger.warning(
+                                f&#34;Image {img_path} not suitable: &#34;
+                                f&#34;{&#39;No face found&#39; if len(face_bounding_boxes) &lt; 1 else &#39;More than one face found&#39;}&#34;
+                            )
+                        continue
+
+                    encoding = face_recognition.face_encodings(
+                        image, known_face_locations=face_bounding_boxes)[0]
+                    X.append(encoding)
+                    y.append(class_dir)
+
+        if len(X) == 0:
+            logger.error(&#34;No faces found in the training data. Aborting.&#34;)
+            return None
+
+        if n_neighbors is None:
+            n_neighbors = int(round(math.sqrt(len(X))))
+            if verbose:
+                logger.info(f&#34;Chose n_neighbors automatically: {n_neighbors}&#34;)
+
+        knn_clf = neighbors.KNeighborsClassifier(n_neighbors=n_neighbors,
+                                                 algorithm=knn_algo,
+                                                 weights=&#39;distance&#39;)
+        knn_clf.fit(X, y)
+
+        if model_save_path is not None:
+            try:
+                with open(model_save_path, &#39;wb&#39;) as f:
+                    pickle.dump(knn_clf, f, protocol=pickle.HIGHEST_PROTOCOL)
+                logger.info(f&#34;KNN classifier saved to {model_save_path}&#34;)
+            except Exception as e:
+                logger.error(f&#34;Failed to save KNN classifier: {e}&#34;)
+
+        self.knn_clf = knn_clf
+        return knn_clf
+
+    def load_model(self, model_path):
+        &#34;&#34;&#34;
+        Load a pre-trained KNN classifier from disk.
+
+        :param model_path: File path to the saved KNN classifier.
+        :return: Loaded KNN classifier, or None if loading fails.
+        &#34;&#34;&#34;
+        try:
+            with open(model_path, &#39;rb&#39;) as f:
+                self.knn_clf = pickle.load(f)
+            logger.info(f&#34;Loaded KNN classifier from {model_path}&#34;)
+        except Exception as e:
+            logger.error(f&#34;Failed to load KNN classifier: {e}&#34;)
+            self.knn_clf = None
+        return self.knn_clf
+
+    def initialize_facenet_pytorch_models(self):
+        &#34;&#34;&#34;
+        Initialize the facenet-pytorch models (MTCNN and InceptionResnetV1) for GPU-based processing.
+        &#34;&#34;&#34;
+        try:
+            mtcnn = MTCNN(image_size=160, margin=0, device=self.device)
+            resnet = InceptionResnetV1(pretrained=&#39;vggface2&#39;).eval().to(self.device)
+            self.models = (mtcnn, resnet)
+        except Exception as e:
+            logger.error(f&#34;Failed to initialize facenet-pytorch models: {e}&#34;)
+            sys.exit(1)
+
+    def predict(self, X_frame, distance_threshold=0.5):
+        &#34;&#34;&#34;
+        Predict the identities of faces present in the provided image frame.
+
+        Depending on whether GPU-based processing is used, the method extracts face embeddings using
+        either facenet-pytorch or the face_recognition library, and then uses the trained KNN classifier
+        to determine the closest matches. A distance threshold is applied to filter out low-confidence matches.
+
+        :param X_frame: A numpy array representing the image frame (BGR format).
+        :param distance_threshold: A float specifying the threshold for valid face matching.
+        :return: A list of tuples, each containing the predicted identity and the corresponding face distance.
+        &#34;&#34;&#34;
+        if not self.knn_clf:
+            raise Exception(&#34;KNN classifier not loaded or trained.&#34;)
+
+        if self.use_gpu:
+            if not self.models:
+                logger.error(&#34;Facenet-pytorch models must be provided when using GPU.&#34;)
+                sys.exit(1)
+            mtcnn, resnet = self.models
+            img_pil = Image.fromarray(X_frame).convert(&#39;RGB&#39;)
+            boxes, _ = mtcnn.detect(img_pil)
+            if boxes is None:
+                return []
+
+            faces = mtcnn.extract(img_pil, boxes, save_path=None)
+            if faces is None:
+                return []
+
+            if faces.dim() == 3:
+                faces = faces.unsqueeze(0)
+
+            embeddings = resnet(faces.to(self.device)).detach().cpu().numpy()
+            closest_distances = self.knn_clf.kneighbors(embeddings, n_neighbors=1)
+            are_matches = [closest_distances[0][i][0] &lt;= distance_threshold
+                           for i in range(len(embeddings))]
+
+            predictions = []
+            for i, (pred, rec, box) in enumerate(zip(self.knn_clf.predict(embeddings), are_matches, boxes)):
+                face_distance = closest_distances[0][i][0]
+                if rec:
+                    predictions.append((pred, face_distance))
+                else:
+                    predictions.append((&#34;unknown&#34;, face_distance))
+            return predictions
+
+        else:
+            X_face_locations = face_recognition.face_locations(X_frame)
+            if len(X_face_locations) == 0:
+                return []
+
+            faces_encodings = face_recognition.face_encodings(X_frame, known_face_locations=X_face_locations)
+            closest_distances = self.knn_clf.kneighbors(faces_encodings, n_neighbors=1)
+            are_matches = [closest_distances[0][i][0] &lt;= distance_threshold
+                           for i in range(len(faces_encodings))]
+
+            predictions = []
+            for i, (pred, rec) in enumerate(zip(self.knn_clf.predict(faces_encodings), are_matches)):
+                distance = closest_distances[0][i][0]
+                if rec:
+                    predictions.append((pred, distance))
+                else:
+                    predictions.append((&#34;unknown&#34;, distance))
+            return predictions</code></pre>
+</details>
+<div class="desc"><p>A class to handle face recognition operations including training, prediction, and model management.</p>
+<p>This class supports both GPU-based face recognition using facenet-pytorch and CPU-based recognition
+using the face_recognition library.</p>
+<p>Initialize the FaceRecognizer.</p>
+<p>:param use_gpu: Boolean flag to indicate if GPU-based recognition should be used.
+:param device: Optional torch.device to override device selection.
+:param knn_clf: Pre-trained KNN classifier. If None, the classifier can be trained later.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="ICU.face_recognizer.FaceRecognizer.get_device"><code class="name flex">
+<span>def <span class="ident">get_device</span></span>(<span>use_gpu)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_device(use_gpu):
+    &#34;&#34;&#34;
+    Determine the appropriate torch.device based on GPU availability.
+
+    :param use_gpu: Boolean flag indicating if GPU should be used.
+    :return: torch.device for GPU (cuda or mps) if available, otherwise CPU.
+    &#34;&#34;&#34;
+    if use_gpu:
+        if torch.cuda.is_available():
+            return torch.device(&#39;cuda&#39;)
+        elif torch.backends.mps.is_available():
+            return torch.device(&#39;mps&#39;)
+        else:
+            logger.warning(&#34;GPU requested but not available. Using CPU.&#34;)
+    return torch.device(&#39;cpu&#39;)</code></pre>
+</details>
+<div class="desc"><p>Determine the appropriate torch.device based on GPU availability.</p>
+<p>:param use_gpu: Boolean flag indicating if GPU should be used.
+:return: torch.device for GPU (cuda or mps) if available, otherwise CPU.</p></div>
+</dd>
+<dt id="ICU.face_recognizer.FaceRecognizer.load_reference_images"><code class="name flex">
+<span>def <span class="ident">load_reference_images</span></span>(<span>train_dir)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def load_reference_images(train_dir):
+    &#34;&#34;&#34;
+    Load reference images for each person from a training directory.
+
+    The function expects each subdirectory in `train_dir` to be named after the person,
+    and uses the first image found in each subdirectory as the reference image.
+
+    :param train_dir: Directory containing subdirectories for each person with training images.
+    :return: Dictionary mapping person names to their reference image (as a numpy array).
+    &#34;&#34;&#34;
+    reference_images = {}
+    for person_name in os.listdir(train_dir):
+        person_folder = os.path.join(train_dir, person_name)
+        if not os.path.isdir(person_folder):
+            continue
+        image_files = list(image_files_in_folder(person_folder))
+        if len(image_files) == 0:
+            continue
+        ref_path = image_files[0]
+        try:
+            ref_img = cv2.imread(ref_path)
+            reference_images[person_name] = ref_img
+        except Exception as e:
+            logger.error(f&#34;Failed to load reference image {ref_path}: {e}&#34;)
+    return reference_images</code></pre>
+</details>
+<div class="desc"><p>Load reference images for each person from a training directory.</p>
+<p>The function expects each subdirectory in <code>train_dir</code> to be named after the person,
+and uses the first image found in each subdirectory as the reference image.</p>
+<p>:param train_dir: Directory containing subdirectories for each person with training images.
+:return: Dictionary mapping person names to their reference image (as a numpy array).</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="ICU.face_recognizer.FaceRecognizer.initialize_facenet_pytorch_models"><code class="name flex">
+<span>def <span class="ident">initialize_facenet_pytorch_models</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def initialize_facenet_pytorch_models(self):
+    &#34;&#34;&#34;
+    Initialize the facenet-pytorch models (MTCNN and InceptionResnetV1) for GPU-based processing.
+    &#34;&#34;&#34;
+    try:
+        mtcnn = MTCNN(image_size=160, margin=0, device=self.device)
+        resnet = InceptionResnetV1(pretrained=&#39;vggface2&#39;).eval().to(self.device)
+        self.models = (mtcnn, resnet)
+    except Exception as e:
+        logger.error(f&#34;Failed to initialize facenet-pytorch models: {e}&#34;)
+        sys.exit(1)</code></pre>
+</details>
+<div class="desc"><p>Initialize the facenet-pytorch models (MTCNN and InceptionResnetV1) for GPU-based processing.</p></div>
+</dd>
+<dt id="ICU.face_recognizer.FaceRecognizer.load_model"><code class="name flex">
+<span>def <span class="ident">load_model</span></span>(<span>self, model_path)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_model(self, model_path):
+    &#34;&#34;&#34;
+    Load a pre-trained KNN classifier from disk.
+
+    :param model_path: File path to the saved KNN classifier.
+    :return: Loaded KNN classifier, or None if loading fails.
+    &#34;&#34;&#34;
+    try:
+        with open(model_path, &#39;rb&#39;) as f:
+            self.knn_clf = pickle.load(f)
+        logger.info(f&#34;Loaded KNN classifier from {model_path}&#34;)
+    except Exception as e:
+        logger.error(f&#34;Failed to load KNN classifier: {e}&#34;)
+        self.knn_clf = None
+    return self.knn_clf</code></pre>
+</details>
+<div class="desc"><p>Load a pre-trained KNN classifier from disk.</p>
+<p>:param model_path: File path to the saved KNN classifier.
+:return: Loaded KNN classifier, or None if loading fails.</p></div>
+</dd>
+<dt id="ICU.face_recognizer.FaceRecognizer.predict"><code class="name flex">
+<span>def <span class="ident">predict</span></span>(<span>self, X_frame, distance_threshold=0.5)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def predict(self, X_frame, distance_threshold=0.5):
+    &#34;&#34;&#34;
+    Predict the identities of faces present in the provided image frame.
+
+    Depending on whether GPU-based processing is used, the method extracts face embeddings using
+    either facenet-pytorch or the face_recognition library, and then uses the trained KNN classifier
+    to determine the closest matches. A distance threshold is applied to filter out low-confidence matches.
+
+    :param X_frame: A numpy array representing the image frame (BGR format).
+    :param distance_threshold: A float specifying the threshold for valid face matching.
+    :return: A list of tuples, each containing the predicted identity and the corresponding face distance.
+    &#34;&#34;&#34;
+    if not self.knn_clf:
+        raise Exception(&#34;KNN classifier not loaded or trained.&#34;)
+
+    if self.use_gpu:
+        if not self.models:
+            logger.error(&#34;Facenet-pytorch models must be provided when using GPU.&#34;)
+            sys.exit(1)
+        mtcnn, resnet = self.models
+        img_pil = Image.fromarray(X_frame).convert(&#39;RGB&#39;)
+        boxes, _ = mtcnn.detect(img_pil)
+        if boxes is None:
+            return []
+
+        faces = mtcnn.extract(img_pil, boxes, save_path=None)
+        if faces is None:
+            return []
+
+        if faces.dim() == 3:
+            faces = faces.unsqueeze(0)
+
+        embeddings = resnet(faces.to(self.device)).detach().cpu().numpy()
+        closest_distances = self.knn_clf.kneighbors(embeddings, n_neighbors=1)
+        are_matches = [closest_distances[0][i][0] &lt;= distance_threshold
+                       for i in range(len(embeddings))]
+
+        predictions = []
+        for i, (pred, rec, box) in enumerate(zip(self.knn_clf.predict(embeddings), are_matches, boxes)):
+            face_distance = closest_distances[0][i][0]
+            if rec:
+                predictions.append((pred, face_distance))
+            else:
+                predictions.append((&#34;unknown&#34;, face_distance))
+        return predictions
+
+    else:
+        X_face_locations = face_recognition.face_locations(X_frame)
+        if len(X_face_locations) == 0:
+            return []
+
+        faces_encodings = face_recognition.face_encodings(X_frame, known_face_locations=X_face_locations)
+        closest_distances = self.knn_clf.kneighbors(faces_encodings, n_neighbors=1)
+        are_matches = [closest_distances[0][i][0] &lt;= distance_threshold
+                       for i in range(len(faces_encodings))]
+
+        predictions = []
+        for i, (pred, rec) in enumerate(zip(self.knn_clf.predict(faces_encodings), are_matches)):
+            distance = closest_distances[0][i][0]
+            if rec:
+                predictions.append((pred, distance))
+            else:
+                predictions.append((&#34;unknown&#34;, distance))
+        return predictions</code></pre>
+</details>
+<div class="desc"><p>Predict the identities of faces present in the provided image frame.</p>
+<p>Depending on whether GPU-based processing is used, the method extracts face embeddings using
+either facenet-pytorch or the face_recognition library, and then uses the trained KNN classifier
+to determine the closest matches. A distance threshold is applied to filter out low-confidence matches.</p>
+<p>:param X_frame: A numpy array representing the image frame (BGR format).
+:param distance_threshold: A float specifying the threshold for valid face matching.
+:return: A list of tuples, each containing the predicted identity and the corresponding face distance.</p></div>
+</dd>
+<dt id="ICU.face_recognizer.FaceRecognizer.train"><code class="name flex">
+<span>def <span class="ident">train</span></span>(<span>self,<br>train_dir,<br>model_save_path=None,<br>n_neighbors=None,<br>knn_algo='ball_tree',<br>verbose=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def train(self, train_dir, model_save_path=None, n_neighbors=None,
+          knn_algo=&#39;ball_tree&#39;, verbose=False):
+    &#34;&#34;&#34;
+    Train the KNN classifier using face embeddings from training images.
+
+    This method processes images for each person in the `train_dir`, extracts face embeddings,
+    and trains a KNN classifier. Optionally, the trained model can be saved to disk.
+
+    :param train_dir: Directory containing subdirectories for each person with training images.
+    :param model_save_path: Optional file path to save the trained KNN classifier.
+    :param n_neighbors: Number of neighbors for the KNN classifier. If None, computed automatically.
+    :param knn_algo: KNN algorithm to use (default: &#39;ball_tree&#39;).
+    :param verbose: Boolean flag to enable verbose logging.
+    :return: Trained KNN classifier or None if training fails.
+    &#34;&#34;&#34;
+    X = []
+    y = []
+
+    if self.use_gpu:
+        logger.info(f&#34;Using device for training: {self.device}&#34;)
+        mtcnn = MTCNN(image_size=160, margin=0, device=self.device)
+        resnet = InceptionResnetV1(pretrained=&#39;vggface2&#39;).eval().to(self.device)
+    else:
+        mtcnn = None
+        resnet = None
+
+    for class_dir in os.listdir(train_dir):
+        if not os.path.isdir(os.path.join(train_dir, class_dir)):
+            continue
+
+        for img_path in image_files_in_folder(os.path.join(train_dir, class_dir)):
+            image = face_recognition.load_image_file(img_path)
+            if self.use_gpu:
+                img_pil = Image.fromarray(image).convert(&#39;RGB&#39;)
+                boxes, _ = mtcnn.detect(img_pil)
+                if boxes is None:
+                    if verbose:
+                        logger.warning(f&#34;Image {img_path} not suitable: no face found&#34;)
+                    continue
+
+                faces = mtcnn.extract(img_pil, boxes, save_path=None)
+                if faces is None or (faces.dim() == 3 and faces.shape[0] == 0):
+                    if verbose:
+                        logger.warning(f&#34;Image {img_path} not suitable: no faces extracted&#34;)
+                    continue
+                if faces.dim() == 3:
+                    faces = faces.unsqueeze(0)
+
+                embeddings = resnet(faces.to(self.device)).detach().cpu().numpy()
+                if len(embeddings) != 1:
+                    if verbose:
+                        logger.warning(f&#34;Image {img_path} has multiple faces. Skipping.&#34;)
+                    continue
+
+                X.append(embeddings[0])
+                y.append(class_dir)
+            else:
+                face_bounding_boxes = face_recognition.face_locations(image)
+                if len(face_bounding_boxes) != 1:
+                    if verbose:
+                        logger.warning(
+                            f&#34;Image {img_path} not suitable: &#34;
+                            f&#34;{&#39;No face found&#39; if len(face_bounding_boxes) &lt; 1 else &#39;More than one face found&#39;}&#34;
+                        )
+                    continue
+
+                encoding = face_recognition.face_encodings(
+                    image, known_face_locations=face_bounding_boxes)[0]
+                X.append(encoding)
+                y.append(class_dir)
+
+    if len(X) == 0:
+        logger.error(&#34;No faces found in the training data. Aborting.&#34;)
+        return None
+
+    if n_neighbors is None:
+        n_neighbors = int(round(math.sqrt(len(X))))
+        if verbose:
+            logger.info(f&#34;Chose n_neighbors automatically: {n_neighbors}&#34;)
+
+    knn_clf = neighbors.KNeighborsClassifier(n_neighbors=n_neighbors,
+                                             algorithm=knn_algo,
+                                             weights=&#39;distance&#39;)
+    knn_clf.fit(X, y)
+
+    if model_save_path is not None:
+        try:
+            with open(model_save_path, &#39;wb&#39;) as f:
+                pickle.dump(knn_clf, f, protocol=pickle.HIGHEST_PROTOCOL)
+            logger.info(f&#34;KNN classifier saved to {model_save_path}&#34;)
+        except Exception as e:
+            logger.error(f&#34;Failed to save KNN classifier: {e}&#34;)
+
+    self.knn_clf = knn_clf
+    return knn_clf</code></pre>
+</details>
+<div class="desc"><p>Train the KNN classifier using face embeddings from training images.</p>
+<p>This method processes images for each person in the <code>train_dir</code>, extracts face embeddings,
+and trains a KNN classifier. Optionally, the trained model can be saved to disk.</p>
+<p>:param train_dir: Directory containing subdirectories for each person with training images.
+:param model_save_path: Optional file path to save the trained KNN classifier.
+:param n_neighbors: Number of neighbors for the KNN classifier. If None, computed automatically.
+:param knn_algo: KNN algorithm to use (default: 'ball_tree').
+:param verbose: Boolean flag to enable verbose logging.
+:return: Trained KNN classifier or None if training fails.</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="ICU" href="index.html">ICU</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="ICU.face_recognizer.FaceRecognizer" href="#ICU.face_recognizer.FaceRecognizer">FaceRecognizer</a></code></h4>
+<ul class="">
+<li><code><a title="ICU.face_recognizer.FaceRecognizer.get_device" href="#ICU.face_recognizer.FaceRecognizer.get_device">get_device</a></code></li>
+<li><code><a title="ICU.face_recognizer.FaceRecognizer.initialize_facenet_pytorch_models" href="#ICU.face_recognizer.FaceRecognizer.initialize_facenet_pytorch_models">initialize_facenet_pytorch_models</a></code></li>
+<li><code><a title="ICU.face_recognizer.FaceRecognizer.load_model" href="#ICU.face_recognizer.FaceRecognizer.load_model">load_model</a></code></li>
+<li><code><a title="ICU.face_recognizer.FaceRecognizer.load_reference_images" href="#ICU.face_recognizer.FaceRecognizer.load_reference_images">load_reference_images</a></code></li>
+<li><code><a title="ICU.face_recognizer.FaceRecognizer.predict" href="#ICU.face_recognizer.FaceRecognizer.predict">predict</a></code></li>
+<li><code><a title="ICU.face_recognizer.FaceRecognizer.train" href="#ICU.face_recognizer.FaceRecognizer.train">train</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
+</footer>
+</body>
+</html>
