@@ -1,9 +1,15 @@
 # CHANGELOG
 
 
+## v0.0.3 (2025-03-01)
+
+
 ## v0.0.2 (2025-03-01)
 
 ### Bug Fixes
+
+- **actions**: Fixing github action
+  ([`8f74de4`](https://github.com/well-it-wasnt-me/ICU/commit/8f74de40f4799915021e95b78c853c7d0ab8d3d8))
 
 - **build**: Fixing tests actions
   ([`fa37d44`](https://github.com/well-it-wasnt-me/ICU/commit/fa37d4418142ecedd14d054096f7254aa41b80f0))
