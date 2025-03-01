@@ -179,7 +179,7 @@ class StreamProcessor:
 
                         # Annotate the frame with a timestamp
                         annotated_frame = ImageUtils.add_timestamp(frame.copy())
-                        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
                         filename = f"{name}_{pred_name}_{timestamp}.jpg"
                         filepath = os.path.join(capture_dir, filename)
                         try:
