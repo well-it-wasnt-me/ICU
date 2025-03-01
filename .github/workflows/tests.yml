@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pytest pytest-md pytest-emoji
+          pip install -r requirements.txt
 
       - name: Run PyTest
         run: |
