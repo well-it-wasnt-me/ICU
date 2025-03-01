@@ -1,8 +1,7 @@
 Welcome to ICU documentation!
 ===================================
 
-**ICU** (I See You) is a Python script that connect to the defined cameras
-and will try it's best to find who are you looking for.
+Well, folks, if you are here then chances are you're looking to find people on cameras live stream. Lucky for you, I made this thing to make you become the king of the stalker.
 
 Check out the :doc:`installation` section to get started.
 
