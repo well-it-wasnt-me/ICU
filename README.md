@@ -2,6 +2,7 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/well-it-wasnt-me/icu/main.yml)
 ![Docs](https://readthedocs.org/projects/icu-i-see-you/badge/?version=latest)
 
+![ICU-Logo](docs/icu.jpg)
 ## Introduction
 Well, folks, if you are here then chances are you're looking to find people on cameras live stream. 
 Lucky for you, I made this thing to make you become the king of the stalker.
