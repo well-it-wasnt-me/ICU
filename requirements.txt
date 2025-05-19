@@ -22,7 +22,7 @@ PyYAML==6.0.2
 requests==2.32.3
 scikit-learn==1.6.0
 scipy==1.14.1
-setuptools==68.2.0
+setuptools==78.1.1
 sympy==1.13.3
 threadpoolctl==3.5.0
 torch==2.2.2
