@@ -8,10 +8,14 @@ Includes a generator to yield frames from a stream and a class to handle stream 
 import os
 import time
 from datetime import datetime
+from typing import Dict, Optional
 import av
 import cv2
 from image_utils import ImageUtils
 from logger_setup import logger
+from notifications import NotificationManager
+from resource_monitor import ResourceMonitor
+from tui_manager import TuiManager
 
 
 def get_frames_from_stream(url, headers=None, reconnect_interval=300):
@@ -97,7 +101,20 @@ class StreamProcessor:
     logs detections, and saves screenshots with annotations.
     """
 
-    def __init__(self, face_recognizer, reference_images, base_capture_dir='captures'):
+    def __init__(
+        self,
+        face_recognizer,
+        reference_images,
+        base_capture_dir: str = 'captures',
+        notifier: Optional[NotificationManager] = None,
+        tui: Optional[TuiManager] = None,
+        show_preview: bool = False,
+        preview_scale: float = 0.5,
+        target_processing_fps: Optional[float] = None,
+        resource_monitor: Optional[ResourceMonitor] = None,
+        cpu_pressure_threshold: float = 85.0,
+        pressure_backoff_factor: float = 2.0,
+    ):
         """
         Initialize the StreamProcessor.
 
@@ -108,6 +125,16 @@ class StreamProcessor:
         self.face_recognizer = face_recognizer
         self.reference_images = reference_images
         self.base_capture_dir = base_capture_dir
+        self.notifier = notifier
+        self.tui = tui
+        self.show_preview = show_preview
+        self.preview_scale = preview_scale if preview_scale > 0 else 1.0
+        self.resource_monitor = resource_monitor
+        self.cpu_pressure_threshold = cpu_pressure_threshold
+        self.pressure_backoff_factor = pressure_backoff_factor
+        self.min_processing_interval = (
+            0 if not target_processing_fps else max(0.0, 1.0 / target_processing_fps)
+        )
 
     def process_stream(self, camera_config, distance_threshold):
         """
@@ -132,6 +159,8 @@ class StreamProcessor:
         capture_cooldown = camera_config.get('capture_cooldown', 60)
 
         logger.info(f"[{name}] Connecting to the video stream...")
+        if self.tui:
+            self.tui.update_camera(name, "connecting", stream_url)
 
         frames = get_frames_from_stream(stream_url, headers=headers)
         frame_count = 0
@@ -142,70 +171,96 @@ class StreamProcessor:
             os.makedirs(capture_dir)
 
         # Track last saved timestamp for each recognized person
-        last_saved = {}
+        last_saved: Dict[str, float] = {}
 
         logger.info(f"[{name}] CONNECTED. Starting analysis process...")
+        if self.tui:
+            self.tui.update_camera(name, "online", "analyzing")
 
         try:
+            last_processed_at = 0.0
             for frame in frames:
                 frame_count += 1
-                # Process only every Nth frame to reduce processing load
-                if frame_count % process_frame_interval == 0:
-                    # Resize frame for faster processing
-                    img_small = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
 
-                    predictions = self.face_recognizer.predict(
-                        img_small,
-                        distance_threshold=distance_threshold
+                if self.show_preview:
+                    preview_frame = frame
+                    if 0 < self.preview_scale != 1.0:
+                        preview_frame = cv2.resize(frame, (0, 0), fx=self.preview_scale, fy=self.preview_scale)
+                    cv2.imshow(name, preview_frame)
+
+                if not self._should_process_frame(frame_count, process_frame_interval):
+                    continue
+
+                now = time.time()
+                min_interval = self._current_min_interval()
+                if now - last_processed_at < min_interval:
+                    continue
+                last_processed_at = now
+
+                img_small = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
+
+                predictions = self.face_recognizer.predict(
+                    img_small,
+                    distance_threshold=distance_threshold
+                )
+
+                for (pred_name, face_dist) in predictions:
+                    if pred_name == "unknown":
+                        continue  # Skip if face is not recognized
+
+                    confidence = self._calculate_confidence(face_dist)
+
+                    logger.info(f"[{name}] Detected known face: {pred_name} at {int(confidence)}%")
+                    if self.tui:
+                        self.tui.notify_detection(name, pred_name, confidence)
+
+                    current_time = time.time()
+                    last_time = last_saved.get(pred_name, 0)
+
+                    # Skip saving if within the cooldown period
+                    if (current_time - last_time) < capture_cooldown:
+                        logger.info(f"[{name}] Skipping save for {pred_name}, still in cooldown.")
+                        continue
+
+                    # Annotate the frame with a timestamp
+                    annotated_frame = ImageUtils.add_timestamp(frame.copy())
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+                    filename = f"{name}_{pred_name}_{timestamp}.jpg"
+                    filepath = os.path.join(capture_dir, filename)
+                    try:
+                        cv2.imwrite(filepath, annotated_frame)
+                        logger.info(f"[{name}] Saved captured frame to {filepath}")
+                        last_saved[pred_name] = current_time
+                    except Exception as e:
+                        logger.error(f"[{name}] Failed to save frame: {e}")
+
+                    # Create a side-by-side screenshot with the reference image
+                    ref_img = self.reference_images.get(pred_name, None)
+                    side_by_side = ImageUtils.create_side_by_side_screenshot(
+                        frame,
+                        ref_img,
+                        camera_name=name,
+                        person_name=pred_name,
+                        confidence=confidence
                     )
 
-                    for (pred_name, face_dist) in predictions:
-                        if pred_name == "unknown":
-                            continue  # Skip if face is not recognized
+                    side_filename = f"{name}_{pred_name}_{timestamp}_sidebyside.jpg"
+                    side_filepath = os.path.join(capture_dir, side_filename)
+                    try:
+                        cv2.imwrite(side_filepath, side_by_side)
+                        logger.info(f"[{name}] Saved side-by-side screenshot to {side_filepath}")
+                    except Exception as e:
+                        logger.error(f"[{name}] Failed to save side-by-side screenshot: {e}")
 
-                        # Calculate confidence as a percentage based on the distance metric
-                        confidence = (1.0 - (face_dist / distance_threshold)) * 100.0
-                        confidence = max(0, min(100, confidence))  # Clamp confidence between 0 and 100
-
-                        logger.info(f"[{name}] Detected known face: {pred_name} at {int(confidence)}%")
-
-                        current_time = time.time()
-                        last_time = last_saved.get(pred_name, 0)
-
-                        # Skip saving if within the cooldown period
-                        if (current_time - last_time) < capture_cooldown:
-                            logger.info(f"[{name}] Skipping save for {pred_name}, still in cooldown.")
-                            continue
-
-                        # Annotate the frame with a timestamp
-                        annotated_frame = ImageUtils.add_timestamp(frame.copy())
-                        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-                        filename = f"{name}_{pred_name}_{timestamp}.jpg"
-                        filepath = os.path.join(capture_dir, filename)
-                        try:
-                            cv2.imwrite(filepath, annotated_frame)
-                            logger.info(f"[{name}] Saved captured frame to {filepath}")
-                            last_saved[pred_name] = current_time
-                        except Exception as e:
-                            logger.error(f"[{name}] Failed to save frame: {e}")
-
-                        # Create a side-by-side screenshot with the reference image
-                        ref_img = self.reference_images.get(pred_name, None)
-                        side_by_side = ImageUtils.create_side_by_side_screenshot(
-                            frame,
-                            ref_img,
+                    if self.notifier:
+                        self.notifier.notify_detection(
                             camera_name=name,
                             person_name=pred_name,
-                            confidence=confidence
+                            confidence=confidence,
+                            capture_path=filepath,
+                            side_by_side_path=side_filepath,
+                            timestamp=datetime.utcnow(),
                         )
-
-                        side_filename = f"{name}_{pred_name}_{timestamp}_sidebyside.jpg"
-                        side_filepath = os.path.join(capture_dir, side_filename)
-                        try:
-                            cv2.imwrite(side_filepath, side_by_side)
-                            logger.info(f"[{name}] Saved side-by-side screenshot to {side_filepath}")
-                        except Exception as e:
-                            logger.error(f"[{name}] Failed to save side-by-side screenshot: {e}")
 
                 # Check if the 'q' key is pressed for a graceful exit
                 if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -213,7 +268,37 @@ class StreamProcessor:
 
         except KeyboardInterrupt:
             logger.info(f"[{name}] Interrupted by user. Exiting...")
+            if self.tui:
+                self.tui.update_camera(name, "interrupted")
         except Exception as e:
             logger.error(f"[{name}] An error occurred: {e}")
+            if self.tui:
+                self.tui.update_camera(name, "error", str(e))
         finally:
             logger.info(f"[{name}] Stream processing terminated.")
+            if self.tui:
+                self.tui.update_camera(name, "offline", "stopped")
+            if self.show_preview:
+                cv2.destroyWindow(name)
+
+    def _should_process_frame(self, frame_count: int, base_interval: int) -> bool:
+        if base_interval <= 1:
+            return True
+        if self.cpu_pressure_threshold > 0 and self.resource_monitor and self.resource_monitor.is_under_pressure(self.cpu_pressure_threshold):
+            backoff = max(1, int(self.pressure_backoff_factor))
+            return frame_count % (base_interval * backoff) == 0
+        return frame_count % base_interval == 0
+
+    def _current_min_interval(self) -> float:
+        if self.min_processing_interval == 0:
+            return 0
+        if self.cpu_pressure_threshold > 0 and self.resource_monitor and self.resource_monitor.is_under_pressure(self.cpu_pressure_threshold):
+            return self.min_processing_interval * self.pressure_backoff_factor
+        return self.min_processing_interval
+
+    @staticmethod
+    def _calculate_confidence(face_distance: float) -> float:
+        """
+        Convert face distance (0 = identical, 1 = different) into a percentage confidence.
+        """
+        return max(0.0, min(100.0, (1.0 - min(face_distance, 1.0)) * 100.0))
