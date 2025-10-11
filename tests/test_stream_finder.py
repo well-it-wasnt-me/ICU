@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -86,6 +87,139 @@ def test_earthcam_scraper_parses_results(monkeypatch):
     assert streams[0].headers and "Referer" in streams[0].headers
     assert streams[0].url.endswith(".m3u8")
     assert any(headers for headers in headers_seen), "Requests should include custom headers."
+
+
+def test_earthcam_scraper_parses_search_item_cards(monkeypatch):
+    listing_html = """
+    <div class="searchItem" id="result_cam">
+        <div class="imgContainer">
+            <a onclick="urchinTracker('/outgoing/searchresults/EarthCam')" href="https://www.earthcam.com/world/ireland/dublin/?cam=dublinpub" target="_self" data-earthcam="yes" data-cam="abc">
+                <img src="https://static.earthcam.com/camshots/example.jpg" alt="EarthCam: Dublin Pub Cam">
+            </a>
+        </div>
+        <div class="cam_name">
+            <a title="EarthCam: Dublin Pub Cam" href="https://www.earthcam.com/world/ireland/dublin/?cam=dublinpub" target="_self" class="camTitle" data-earthcam="yes" data-cam="abc">
+                <span>EarthCam: Dublin Pub Cam</span>
+            </a>
+        </div>
+    </div>
+    """
+    detail_html = '<video data-hls="https://videos-3.earthcam.com/fecnetwork/dublin.m3u8"></video>'
+
+    search_url = "https://www.earthcam.com/search/ft-search.php?term=Dublin"
+    detail_url = "https://www.earthcam.com/world/ireland/dublin/?cam=dublinpub"
+
+    responses = {
+        search_url: DummyResponse(listing_html),
+        detail_url: DummyResponse(detail_html),
+    }
+
+    call_counts = {}
+
+    def fake_get(url, timeout, verify, headers=None):
+        call_counts[url] = call_counts.get(url, 0) + 1
+        return responses[url]
+
+    finder = CameraStreamFinder(timeout=1, scrapers=(EarthCamScraper(),))
+    monkeypatch.setattr(finder.session, "get", fake_get)
+
+    streams = finder.find_streams("Dublin", max_pages=1, max_results=2)
+    assert streams
+    assert streams[0].url.endswith("dublin.m3u8")
+    assert streams[0].protocol == "hls"
+    assert call_counts[detail_url] == 1
+
+
+def test_earthcam_scraper_extracts_streams_from_json_config(monkeypatch):
+    listing_html = """
+    <div class="searchItem">
+        <a href="https://www.earthcam.com/world/ireland/dublin/?cam=dublinpub" data-earthcam="yes">Cam</a>
+    </div>
+    """
+    detail_html = """
+    <script>
+        window.playerConfig = {
+            configUrl: "/config/cam_dublinpub.json"
+        };
+    </script>
+    """
+    config_payload = json.dumps(
+        {
+            "streams": [
+                {
+                    "base": "https://videos-3.earthcam.com/fecnetwork/dublinpub.stream",
+                    "file": "playlist.m3u8",
+                    "default": True,
+                }
+            ]
+        }
+    )
+
+    search_url = "https://www.earthcam.com/search/ft-search.php?term=Dublin"
+    detail_url = "https://www.earthcam.com/world/ireland/dublin/?cam=dublinpub"
+    config_url = "https://www.earthcam.com/config/cam_dublinpub.json"
+
+    responses = {
+        search_url: DummyResponse(listing_html),
+        detail_url: DummyResponse(detail_html),
+        config_url: DummyResponse(config_payload),
+    }
+
+    def fake_get(url, timeout, verify, headers=None):
+        return responses[url]
+
+    finder = CameraStreamFinder(timeout=1, scrapers=(EarthCamScraper(),))
+    monkeypatch.setattr(finder.session, "get", fake_get)
+
+    streams = finder.find_streams("Dublin", max_pages=1, max_results=3)
+    assert streams
+    assert streams[0].url == "https://videos-3.earthcam.com/fecnetwork/dublinpub.stream/playlist.m3u8"
+    assert streams[0].protocol == "hls"
+
+
+def test_earthcam_scraper_handles_iframe_and_config(monkeypatch):
+    listing_html = """
+    <div class="tiny-single-row">
+        <a href="/usa/test/camera2/">Cam 2</a>
+    </div>
+    """
+    detail_html = """
+    <iframe src="/embedded/player.html"></iframe>
+    <div data-config="/api/config.json"></div>
+    """
+    iframe_html = '<script>var playlist = "https://videos-3.earthcam.com/fecnetwork/iframe_stream.m3u8"</script>'
+    config_payload = '{"stream":"https://cdn.example.com/live/another_stream.m3u8"}'
+
+    search_url = "https://www.earthcam.com/search/ft-search.php?term=Test%20City"
+    detail_url = "https://www.earthcam.com/usa/test/camera2/"
+    iframe_url = "https://www.earthcam.com/embedded/player.html"
+    config_url = "https://www.earthcam.com/api/config.json"
+
+    responses = {
+        search_url: DummyResponse(listing_html),
+        detail_url: DummyResponse(detail_html),
+        iframe_url: DummyResponse(iframe_html),
+        config_url: DummyResponse(config_payload),
+    }
+
+    headers_seen = {}
+
+    def fake_get(url, timeout, verify, headers=None):
+        headers_seen.setdefault(url, []).append(headers or {})
+        return responses[url]
+
+    finder = CameraStreamFinder(timeout=1, scrapers=(EarthCamScraper(),))
+    monkeypatch.setattr(finder.session, "get", fake_get)
+
+    streams = finder.find_streams("Test City", max_pages=1, max_results=5)
+    urls = sorted(stream.url for stream in streams)
+
+    assert urls == [
+        "https://cdn.example.com/live/another_stream.m3u8",
+        "https://videos-3.earthcam.com/fecnetwork/iframe_stream.m3u8",
+    ]
+    assert headers_seen[iframe_url][0]["Referer"] == detail_url
+    assert headers_seen[config_url][0]["X-Requested-With"] == "XMLHttpRequest"
 
 
 def test_camera_stream_finder_combines_scrapers(monkeypatch):
