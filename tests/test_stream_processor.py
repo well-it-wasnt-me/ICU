@@ -30,9 +30,21 @@ def dummy_camera_config():
     }
 
 @pytest.fixture
-def dummy_stream_processor(dummy_reference_images):
+def dummy_notifier():
+    class DummyNotifier:
+        def __init__(self):
+            self.calls = []
+
+        def notify_detection(self, **payload):
+            self.calls.append(payload)
+
+    return DummyNotifier()
+
+
+@pytest.fixture
+def dummy_stream_processor(dummy_reference_images, dummy_notifier):
     face_recognizer = DummyFaceRecognizer()
-    return StreamProcessor(face_recognizer, dummy_reference_images)
+    return StreamProcessor(face_recognizer, dummy_reference_images, notifier=dummy_notifier)
 
 def test_get_frames_from_stream_local_webcam(monkeypatch):
     class DummyVideoCapture:
@@ -58,29 +70,42 @@ def test_get_frames_from_stream_local_webcam(monkeypatch):
     frames = list(itertools.islice(get_frames_from_stream("0"), 5))
     assert len(frames) == 5, "Expected 5 frames from the dummy webcam stream."
 
-def test_process_stream(dummy_stream_processor, dummy_camera_config, tmp_path):
+def test_process_stream(dummy_stream_processor, dummy_camera_config, dummy_notifier, tmp_path):
     # Change current working directory to the temporary path
+    cwd = os.getcwd()
     os.chdir(tmp_path)
-    with patch("stream_processor.get_frames_from_stream") as mock_get_frames:
-        mock_get_frames.return_value = [
-            np.zeros((480, 640, 3), dtype=np.uint8) for _ in range(5)
-        ]
-        dummy_stream_processor.process_stream(dummy_camera_config, distance_threshold=0.6)
+    try:
+        with patch("stream_processor.get_frames_from_stream") as mock_get_frames:
+            mock_get_frames.return_value = [
+                np.zeros((480, 640, 3), dtype=np.uint8) for _ in range(5)
+            ]
+            dummy_stream_processor.process_stream(dummy_camera_config, distance_threshold=0.6)
 
-        capture_dir = os.path.join(tmp_path, "captures", "TestCamera")
-        assert os.path.exists(capture_dir), "Capture directory was not created."
-        captured_files = os.listdir(capture_dir)
-        # Expect 10 files: 5 annotated frames and 5 side-by-side images
-        assert len(captured_files) == 10, (
-            "Expected 10 captured files (5 annotated frames and 5 side-by-side images)."
-        )
-        # Verify that all filenames are unique (i.e. no overwriting occurred)
-        assert len(set(captured_files)) == 10, "Duplicate filenames detected. Filenames should be unique."
+            capture_dir = os.path.join(tmp_path, "captures", "TestCamera")
+            assert os.path.exists(capture_dir), "Capture directory was not created."
+            captured_files = os.listdir(capture_dir)
+            # Expect 10 files: 5 annotated frames and 5 side-by-side images
+            assert len(captured_files) == 10, (
+                "Expected 10 captured files (5 annotated frames and 5 side-by-side images)."
+            )
+            # Verify that all filenames are unique (i.e. no overwriting occurred)
+            assert len(set(captured_files)) == 10, "Duplicate filenames detected. Filenames should be unique."
+            assert len(dummy_notifier.calls) == 5, "Notifier should be called for each detection."
+            assert all("capture_path" in call for call in dummy_notifier.calls), "Notifier payload missing capture_path."
+            assert all("side_by_side_path" in call for call in dummy_notifier.calls), "Notifier payload missing side_by_side_path."
+    finally:
+        os.chdir(cwd)
 
 def test_process_stream_logging(dummy_stream_processor, dummy_camera_config, caplog):
     with patch("stream_processor.get_frames_from_stream") as mock_get_frames:
         mock_get_frames.return_value = [np.zeros((480, 640, 3), dtype=np.uint8) for _ in range(5)]
         with caplog.at_level("INFO"):
             dummy_stream_processor.process_stream(dummy_camera_config, distance_threshold=0.6)
-        assert any("Detected known face: TestPerson" in record.message for record in caplog.records), \
-            "Expected log message about detected face not found."
+        assert any("Detected known face: TestPerson at 60%" in record.message for record in caplog.records), \
+            "Expected log message about detected face with confidence not found."
+
+
+def test_calculate_confidence():
+    assert StreamProcessor._calculate_confidence(0.0) == 100.0
+    assert StreamProcessor._calculate_confidence(0.4) == 60.0
+    assert StreamProcessor._calculate_confidence(1.2) == 0.0

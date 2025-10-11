@@ -11,3 +11,4 @@ def test_help_output():
     assert result.returncode == 0, "Help command failed."
     # Check that the output contains expected text (e.g., usage information)
     assert "usage:" in result.stdout.lower(), "Help text does not contain usage information."
+    assert "--find-camera" in result.stdout, "Help text should mention --find-camera option."
