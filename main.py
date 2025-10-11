@@ -22,6 +22,10 @@ detect_face_module.imresample = ImageUtils.custom_imresample
 from logger_setup import logger
 from face_recognizer import FaceRecognizer
 from stream_processor import StreamProcessor
+from notifications import NotificationManager
+from resource_monitor import ResourceMonitor
+from tui_manager import TuiManager
+from stream_finder import CameraStreamFinder, DiscoveredStream
 
 
 def main():
@@ -42,8 +46,20 @@ def main():
     parser.add_argument('--distance_threshold', type=float, default=0.5, help='Distance threshold for recognition')
     parser.add_argument('--train', action='store_true', help='Train the model')
     parser.add_argument('--use_gpu', action='store_true', help='Use GPU with facenet-pytorch')
+    parser.add_argument('--enable_tui', action='store_true', help='Display live terminal dashboard')
+    parser.add_argument('--show_preview', action='store_true', help='Show realtime camera preview windows')
+    parser.add_argument('--preview_scale', type=float, default=0.5, help='Scaling factor for preview display')
+    parser.add_argument('--target_processing_fps', type=float, default=0.0,
+                        help='Target processing rate per camera (0 disables rate limiting)')
+    parser.add_argument('--cpu_pressure_threshold', type=float, default=85.0,
+                        help='CPU usage threshold to trigger adaptive throttling')
+    parser.add_argument('--find-camera', action='store_true',
+                        help='Interactively search for public camera streams by city')
     args = parser.parse_args()
 
+    if args.find_camera:
+        handle_camera_lookup()
+        return
     # Convert images in training directory to RGB (if needed)
     ImageUtils.convert_images_to_rgb(args.train_dir)
 
@@ -99,10 +115,51 @@ def main():
     if args.use_gpu:
         face_recognizer.initialize_facenet_pytorch_models()
 
+    settings = config.get('settings', {})
+    enable_tui = args.enable_tui or settings.get('enable_tui', False)
+    show_preview = args.show_preview or settings.get('show_preview', False)
+    preview_scale = settings.get('preview_scale', args.preview_scale)
+    target_processing_fps = settings.get('target_processing_fps', args.target_processing_fps)
+    cpu_pressure_threshold = settings.get('cpu_pressure_threshold', args.cpu_pressure_threshold)
+
+    target_fps = target_processing_fps if target_processing_fps and target_processing_fps > 0 else None
+    resource_monitor = None
+    if enable_tui or target_fps or cpu_pressure_threshold > 0:
+        resource_monitor = ResourceMonitor()
+        resource_monitor.start()
+
+    notifications_cfg = config.get('notifications', {})
+    telegram_cfg = notifications_cfg.get('telegram', {}) if notifications_cfg else {}
+
+    notifier = None
+    bot_token = telegram_cfg.get('bot_token')
+    chat_id = telegram_cfg.get('chat_id')
+    if bot_token and chat_id:
+        notifier = NotificationManager(
+            telegram_bot_token=bot_token,
+            telegram_chat_id=chat_id,
+            timeout=telegram_cfg.get('timeout', 10),
+            max_workers=telegram_cfg.get('max_workers', 2),
+        )
+    elif telegram_cfg and (bot_token or chat_id):
+        logger.warning("Incomplete Telegram configuration detected. Notifications disabled.")
+
+    tui_manager = None
+    if enable_tui:
+        tui_manager = TuiManager(resource_monitor=resource_monitor)
+        tui_manager.start()
+
     stream_processor = StreamProcessor(
         face_recognizer=face_recognizer,
         reference_images=reference_images,
-        base_capture_dir='captures'
+        base_capture_dir='captures',
+        notifier=notifier,
+        tui=tui_manager,
+        show_preview=show_preview,
+        preview_scale=preview_scale,
+        target_processing_fps=target_fps,
+        resource_monitor=resource_monitor,
+        cpu_pressure_threshold=cpu_pressure_threshold,
     )
 
     # Start processing each camera in a separate thread
@@ -121,6 +178,52 @@ def main():
         t.join()
 
     logger.info("All camera threads finished.")
+    if notifier:
+        notifier.shutdown()
+    if tui_manager:
+        tui_manager.stop()
+    if resource_monitor:
+        resource_monitor.stop()
+
+
+def handle_camera_lookup():
+    city = input("Enter a city to find public camera streams: ").strip()
+    if not city:
+        logger.error("No city provided. Aborting search.")
+        return
+
+    finder = CameraStreamFinder()
+    streams = finder.find_streams(city)
+    if not streams:
+        logger.info("No camera streams found for city '%s'.", city)
+        return
+
+    city_slug = city.strip().lower().replace(" ", "_")
+    output_path = f"camera_streams_{city_slug}.yaml"
+    try:
+        serialized = [
+            _serialize_stream(stream)
+            for stream in streams
+        ]
+        with open(output_path, "w", encoding="utf-8") as f:
+            yaml.safe_dump(serialized, f, sort_keys=False)
+
+        logger.info("Discovered %s stream(s):", len(streams))
+        for stream in streams:
+            logger.info("  [%s] %s", stream.protocol.upper(), stream.url)
+        logger.info("Saved results to %s", output_path)
+    except OSError as exc:
+        logger.error("Failed to write camera search results: %s", exc)
+
+
+def _serialize_stream(stream: DiscoveredStream) -> dict:
+    data = {
+        "url": stream.url,
+        "protocol": stream.protocol,
+    }
+    if stream.headers:
+        data["headers"] = stream.headers
+    return data
 
 
 if __name__ == "__main__":
