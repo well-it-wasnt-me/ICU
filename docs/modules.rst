@@ -8,4 +8,5 @@ ICU - Main Components
    image_utils
    logger_setup
    main
+   stream_finder
    stream_processor
