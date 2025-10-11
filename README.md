@@ -59,6 +59,42 @@ Don't worry...it's easier than assembling IKEA furniture.
 
 Just rename/copy `cameras-example.yaml` to `cameras.yaml` and fill in the blank !
 
+```yaml
+cameras:
+  - name: "Laptop WebCam"
+    stream_url: "0"
+    process_frame_interval: 15
+    capture_cooldown: 120
+
+settings:
+  enable_tui: true
+  show_preview: false
+  preview_scale: 0.5
+  target_processing_fps: 2.0
+  cpu_pressure_threshold: 85.0
+
+notifications:
+  telegram:
+    bot_token: "123456:ABC"  # Never commit the real token!
+    chat_id: "123456789"
+    timeout: 10
+    max_workers: 2
+```
+
+`settings` lets you keep dashboard/preview/tuning options alongside the camera list, while the `notifications.telegram` block holds the bot credentials used to send alerts whenever a known person is detected.
+
+When configured, Telegram alerts include both the captured frame and the comparison image so you can verify the match without digging into the filesystem.
+
+### Hunting For Public Cameras
+
+Need some streams to test with? Run the helper to scrape public (already exposed) feeds:
+
+```bash
+python main.py --find-camera
+```
+
+You'll be asked for a city name, and the script will query a couple of public indexes (RTSP and HLS). Any results are echoed to the console and saved under `camera_streams_<city>.yaml`, including protocol and any required headers so you can copy/paste them straight into `cameras.yaml`. Remember that these feeds are public because someone left them exposed—use them responsibly.
+
 ## Usage
 Alright, you've made it this far without breaking anything, kudos to you ! Time to run the script:
 
@@ -149,8 +185,8 @@ options:
 * The confidence level shown is "backward" (lower value = higher accuracy...I know...I should stop drinking)
 
 ## Roadmap
-1. [ ] Implement notification (telegram and/or other)  
-2. [ ] Resource optimization
+1. [X] Implement notification (telegram and/or other)  
+2. [X] Resource optimization
 3. [ ] Integrate [Nerve](https://github.com/evilsocket/nerve) with custom tasklet 
 3. [ ] Automatic Doc Generation 
 
