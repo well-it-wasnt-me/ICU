@@ -9,13 +9,19 @@ import os
 import threading
 import time
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Callable, Dict, Optional
 import av
 import cv2
 from image_utils import ImageUtils
 from logger_setup import logger
 from notifications import NotificationManager
 from resource_monitor import ResourceMonitor
+from runtime_events import (
+    DetectionEvent,
+    RuntimeEvent,
+    StreamLifecycleEvent,
+    StreamMetricsEvent,
+)
 
 
 def get_frames_from_stream(url, headers=None, reconnect_interval=300, stop_event: Optional[threading.Event] = None):
@@ -148,6 +154,7 @@ class StreamProcessor:
         resource_monitor: Optional[ResourceMonitor] = None,
         cpu_pressure_threshold: float = 85.0,
         pressure_backoff_factor: float = 2.0,
+        event_publisher: Optional[Callable[[RuntimeEvent], None]] = None,
     ):
         """
         Initialize the StreamProcessor.
@@ -167,6 +174,7 @@ class StreamProcessor:
             0 if not target_processing_fps else max(0.0, 1.0 / target_processing_fps)
         )
         self._stop_event = threading.Event()
+        self._event_publisher = event_publisher
 
     def process_stream(self, camera_config, distance_threshold):
         """
@@ -191,8 +199,12 @@ class StreamProcessor:
         capture_cooldown = camera_config.get('capture_cooldown', 60)
 
         logger.info(f"[{name}] Connecting to the video stream...")
+        self._emit_event(StreamLifecycleEvent(camera_name=name, status="connecting"))
         frames = get_frames_from_stream(stream_url, headers=headers, stop_event=self._stop_event)
         frame_count = 0
+        processed_frames = 0
+        skipped_frames = 0
+        connected_emitted = False
 
         # Create directory to store captured images
         capture_dir = os.path.join(self.base_capture_dir, name)
@@ -209,21 +221,37 @@ class StreamProcessor:
                 frame_count += 1
                 if self._stop_event.is_set():
                     break
+                if not connected_emitted:
+                    self._emit_event(StreamLifecycleEvent(camera_name=name, status="connected"))
+                    connected_emitted = True
 
                 if not self._should_process_frame(frame_count, process_frame_interval):
+                    skipped_frames += 1
                     continue
 
                 now = time.time()
                 min_interval = self._current_min_interval()
                 if now - last_processed_at < min_interval:
+                    skipped_frames += 1
                     continue
                 last_processed_at = now
-
+                start_time = time.perf_counter()
                 img_small = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
 
                 predictions = self.face_recognizer.predict(
                     img_small,
                     distance_threshold=distance_threshold
+                )
+                latency_ms = (time.perf_counter() - start_time) * 1000.0
+                processed_frames += 1
+                self._emit_event(
+                    StreamMetricsEvent(
+                        camera_name=name,
+                        frame_count=frame_count,
+                        processed_frames=processed_frames,
+                        skipped_frames=skipped_frames,
+                        last_latency_ms=latency_ms,
+                    )
                 )
 
                 for (pred_name, face_dist) in predictions:
@@ -240,6 +268,15 @@ class StreamProcessor:
                     # Skip saving if within the cooldown period
                     if (current_time - last_time) < capture_cooldown:
                         logger.info(f"[{name}] Skipping save for {pred_name}, still in cooldown.")
+                        self._emit_event(
+                            DetectionEvent(
+                                camera_name=name,
+                                person_name=pred_name,
+                                confidence=confidence,
+                                distance=face_dist,
+                                cooldown_active=True,
+                            )
+                        )
                         continue
 
                     # Annotate the frame with a timestamp
@@ -281,11 +318,28 @@ class StreamProcessor:
                             side_by_side_path=side_filepath,
                             timestamp=datetime.utcnow(),
                         )
+                    self._emit_event(
+                        DetectionEvent(
+                            camera_name=name,
+                            person_name=pred_name,
+                            confidence=confidence,
+                            distance=face_dist,
+                            capture_path=filepath,
+                            side_by_side_path=side_filepath,
+                        )
+                    )
 
         except KeyboardInterrupt:
             logger.info(f"[{name}] Interrupted by user. Exiting...")
         except Exception as e:
             logger.error(f"[{name}] An error occurred: {e}")
+            self._emit_event(
+                StreamLifecycleEvent(
+                    camera_name=name,
+                    status="error",
+                    message=str(e),
+                )
+            )
         finally:
             logger.info(f"[{name}] Stream processing terminated.")
             if hasattr(frames, "close"):
@@ -293,6 +347,7 @@ class StreamProcessor:
                     frames.close()
                 except Exception:
                     pass
+            self._emit_event(StreamLifecycleEvent(camera_name=name, status="stopped"))
 
     def request_stop(self) -> None:
         """
@@ -324,3 +379,11 @@ class StreamProcessor:
         Convert face distance (0 = identical, 1 = different) into a percentage confidence.
         """
         return max(0.0, min(100.0, (1.0 - min(face_distance, 1.0)) * 100.0))
+
+    def _emit_event(self, event: RuntimeEvent) -> None:
+        if not self._event_publisher:
+            return
+        try:
+            self._event_publisher(event)
+        except Exception:
+            logger.debug("Failed to publish runtime event", exc_info=True)
