@@ -27,7 +27,7 @@ scipy==1.14.1
 setuptools==68.2.0
 sympy==1.13.3
 threadpoolctl==3.5.0
-torch==2.2.2
+torch==2.8.0
 torchaudio==2.2.2
 torchvision==0.17.2
 tqdm==4.67.1
