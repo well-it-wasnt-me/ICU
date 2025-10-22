@@ -49,4 +49,12 @@ Copy the samples and then fill in the blanks::
 
 ``configs/cameras.yaml`` should contain only your camera definitions, while
 ``configs/app.yaml`` keeps runtime settings (like throttling) and integrations
-such as Telegram.
+such as Telegram. You can also configure logging there::
+
+   settings:
+     target_processing_fps: 2.0
+     cpu_pressure_threshold: 85.0
+
+   logging:
+     level: INFO
+     file: face_recognition.log

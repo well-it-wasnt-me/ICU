@@ -23,6 +23,10 @@ def test_camera_and_app_config_parsing(tmp_path):
         chat_id: "456"
         timeout: 5
         max_workers: 1
+
+    logging:
+      level: WARNING
+      file: custom.log
     """
 
     camera_path = tmp_path / "cameras.yaml"
@@ -48,3 +52,8 @@ def test_camera_and_app_config_parsing(tmp_path):
     assert telegram, "'notifications.telegram' section missing in app config."
     assert telegram["bot_token"] == "abc:123"
     assert telegram["timeout"] == 5
+
+    logging_cfg = app_cfg.get("logging")
+    assert logging_cfg, "'logging' section missing in app config."
+    assert logging_cfg["level"] == "WARNING"
+    assert logging_cfg["file"] == "custom.log"

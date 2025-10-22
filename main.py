@@ -19,7 +19,7 @@ from image_utils import ImageUtils
 # Override the original imresample with custom_imresample
 detect_face_module.imresample = ImageUtils.custom_imresample
 
-from logger_setup import logger
+from logger_setup import logger, configure_logging
 from face_recognizer import FaceRecognizer
 from stream_processor import StreamProcessor
 from notifications import NotificationManager
@@ -137,6 +137,8 @@ def main():
     settings = app_config.get('settings', {})
     target_processing_fps = settings.get('target_processing_fps', args.target_processing_fps)
     cpu_pressure_threshold = settings.get('cpu_pressure_threshold', args.cpu_pressure_threshold)
+
+    configure_logging(app_config)
 
     target_fps = target_processing_fps if target_processing_fps and target_processing_fps > 0 else None
     resource_monitor = None

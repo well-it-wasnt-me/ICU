@@ -87,6 +87,10 @@ notifications:
     chat_id: "123456789"
     timeout: 10
     max_workers: 2
+
+logging:
+  level: INFO
+  file: face_recognition.log
 ```
 
 `settings` tunes the per-camera processing rate, and `notifications.telegram` holds the bot credentials used to send alerts whenever a known person is detected.
