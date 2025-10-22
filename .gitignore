@@ -2,6 +2,8 @@
 *.clf
 *.log
 cameras.yaml
+configs/cameras.yaml
+configs/app.yaml
 venv
 captures/**/*
 poi/**/*
