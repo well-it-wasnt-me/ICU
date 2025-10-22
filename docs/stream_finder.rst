@@ -1,7 +1,7 @@
 stream_finder module
 ====================
 
-The :mod:`stream_finder` helpers make it easier to populate your ``cameras.yaml`` file.
+The :mod:`stream_finder` helpers make it easier to populate your ``configs/cameras.yaml`` file.
 They aggregate multiple public camera directories, normalize the responses, and return
 ready-to-use stream definitions. Two providers are bundled:
 

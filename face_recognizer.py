@@ -12,8 +12,9 @@ import math
 import os
 import pickle
 import sys
-
+import threading
 import cv2
+from contextlib import nullcontext
 import face_recognition
 import torch
 from PIL import Image
@@ -44,6 +45,7 @@ class FaceRecognizer:
         self.device = device if device else self.get_device(use_gpu)
         self.knn_clf = knn_clf
         self.models = None  # Tuple of (MTCNN, InceptionResnetV1) when GPU is used.
+        self._dlib_lock = threading.Lock() if not use_gpu else None
 
     @staticmethod
     def get_device(use_gpu):
@@ -146,17 +148,19 @@ class FaceRecognizer:
                     X.append(embeddings[0])
                     y.append(class_dir)
                 else:
-                    face_bounding_boxes = face_recognition.face_locations(image)
-                    if len(face_bounding_boxes) != 1:
-                        if verbose:
-                            logger.warning(
-                                f"Image {img_path} not suitable: "
-                                f"{'No face found' if len(face_bounding_boxes) < 1 else 'More than one face found'}"
-                            )
-                        continue
+                    lock = self._dlib_lock or nullcontext()
+                    with lock:
+                        face_bounding_boxes = face_recognition.face_locations(image)
+                        if len(face_bounding_boxes) != 1:
+                            if verbose:
+                                logger.warning(
+                                    f"Image {img_path} not suitable: "
+                                    f"{'No face found' if len(face_bounding_boxes) < 1 else 'More than one face found'}"
+                                )
+                            continue
 
-                    encoding = face_recognition.face_encodings(
-                        image, known_face_locations=face_bounding_boxes)[0]
+                        encoding = face_recognition.face_encodings(
+                            image, known_face_locations=face_bounding_boxes)[0]
                     X.append(encoding)
                     y.append(class_dir)
 
@@ -260,11 +264,15 @@ class FaceRecognizer:
             return predictions
 
         else:
-            X_face_locations = face_recognition.face_locations(X_frame)
-            if len(X_face_locations) == 0:
-                return []
-
-            faces_encodings = face_recognition.face_encodings(X_frame, known_face_locations=X_face_locations)
+            lock = self._dlib_lock or nullcontext()
+            with lock:
+                X_face_locations = face_recognition.face_locations(X_frame)
+                if len(X_face_locations) == 0:
+                    return []
+                faces_encodings = face_recognition.face_encodings(
+                    X_frame,
+                    known_face_locations=X_face_locations
+                )
             closest_distances = self.knn_clf.kneighbors(faces_encodings, n_neighbors=1)
             are_matches = [closest_distances[0][i][0] <= distance_threshold
                            for i in range(len(faces_encodings))]

@@ -1,21 +1,21 @@
 import yaml
 
-def test_config_parsing(tmp_path):
+
+def test_camera_and_app_config_parsing(tmp_path):
     """
-    Write a sample cameras.yaml file and verify that it is parsed correctly.
+    Verify that camera and application configuration YAML files load independently.
     """
-    sample_config = """
+    camera_yaml = """
     cameras:
       - name: TestCam
         stream_url: http://example.com/stream
         process_frame_interval: 10
         capture_cooldown: 30
-
+    """
+    app_yaml = """
     settings:
-      enable_tui: true
-      show_preview: false
-      preview_scale: 0.6
       target_processing_fps: 3.0
+      cpu_pressure_threshold: 80.0
 
     notifications:
       telegram:
@@ -24,25 +24,27 @@ def test_config_parsing(tmp_path):
         timeout: 5
         max_workers: 1
     """
-    config_file = tmp_path / "cameras.yaml"
-    config_file.write_text(sample_config)
 
-    # Parse the YAML file
-    config = yaml.safe_load(config_file.read_text())
+    camera_path = tmp_path / "cameras.yaml"
+    app_path = tmp_path / "app.yaml"
+    camera_path.write_text(camera_yaml)
+    app_path.write_text(app_yaml)
 
-    # Assert that the config has the expected structure
-    assert "cameras" in config, "Key 'cameras' missing in config."
-    assert isinstance(config["cameras"], list), "'cameras' should be a list."
-    camera = config["cameras"][0]
-    assert camera["name"] == "TestCam", "Camera name does not match."
-    assert camera["stream_url"] == "http://example.com/stream", "Stream URL not parsed correctly."
+    camera_cfg = yaml.safe_load(camera_path.read_text())
+    app_cfg = yaml.safe_load(app_path.read_text())
 
-    settings = config.get("settings")
-    assert settings, "'settings' section missing."
-    assert settings["enable_tui"] is True, "enable_tui flag not parsed correctly."
-    assert settings["preview_scale"] == 0.6, "preview_scale not parsed correctly."
+    assert "cameras" in camera_cfg, "Camera config missing 'cameras' key."
+    assert len(camera_cfg["cameras"]) == 1, "Unexpected number of cameras."
+    camera = camera_cfg["cameras"][0]
+    assert camera["name"] == "TestCam"
+    assert camera["stream_url"] == "http://example.com/stream"
 
-    telegram = config.get("notifications", {}).get("telegram")
-    assert telegram, "'notifications.telegram' section missing."
-    assert telegram["bot_token"] == "abc:123", "Telegram bot token mismatch."
-    assert telegram["timeout"] == 5, "Telegram timeout mismatch."
+    settings = app_cfg.get("settings")
+    assert settings, "'settings' section missing in app config."
+    assert settings["target_processing_fps"] == 3.0
+    assert settings["cpu_pressure_threshold"] == 80.0
+
+    telegram = app_cfg.get("notifications", {}).get("telegram")
+    assert telegram, "'notifications.telegram' section missing in app config."
+    assert telegram["bot_token"] == "abc:123"
+    assert telegram["timeout"] == 5

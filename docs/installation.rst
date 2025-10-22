@@ -38,8 +38,15 @@ Think of it as a playpen for your Python packages.
 Configuration
 ----------------
 
-Before you run the script, you need to set up the `cameras.yaml` file.
+Before you run the script, you need to set up the configuration files.
 
 Don't worry...it's easier than assembling IKEA furniture.
 
-Just rename/copy `cameras-example.yaml` to `cameras.yaml` and fill in the blank !
+Copy the samples and then fill in the blanks::
+
+   cp cameras-example.yaml configs/cameras.yaml
+   cp configs/app-example.yaml configs/app.yaml
+
+``configs/cameras.yaml`` should contain only your camera definitions, while
+``configs/app.yaml`` keeps runtime settings (like throttling) and integrations
+such as Telegram.

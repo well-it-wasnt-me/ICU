@@ -6,6 +6,7 @@ Includes a generator to yield frames from a stream and a class to handle stream 
 """
 
 import os
+import threading
 import time
 from datetime import datetime
 from typing import Dict, Optional
@@ -15,10 +16,9 @@ from image_utils import ImageUtils
 from logger_setup import logger
 from notifications import NotificationManager
 from resource_monitor import ResourceMonitor
-from tui_manager import TuiManager
 
 
-def get_frames_from_stream(url, headers=None, reconnect_interval=300):
+def get_frames_from_stream(url, headers=None, reconnect_interval=300, stop_event: Optional[threading.Event] = None):
     """
     Generator function to yield video frames from a specified stream.
 
@@ -27,6 +27,7 @@ def get_frames_from_stream(url, headers=None, reconnect_interval=300):
     :param url: URL of the video stream or an index (as a string) for a local webcam.
     :param headers: Optional dictionary of HTTP headers for network streams.
     :param reconnect_interval: Time in seconds after which to reconnect to the stream otherwise you'll fill the entire hard disk
+    :param stop_event: Optional threading.Event used to request termination of the stream.
     :yield: Video frame as a numpy array in BGR format.
     """
     start_time = time.time()
@@ -39,58 +40,94 @@ def get_frames_from_stream(url, headers=None, reconnect_interval=300):
             return
 
         # Continuously capture frames from the local webcam
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                logger.error(f"Failed to grab frame from local webcam {cam_index}. Reconnecting...")
-                cap.release()
-                time.sleep(2)
-                cap = cv2.VideoCapture(cam_index)
-                start_time = time.time()  # Reset the reconnect timer
-                continue
-            yield frame
+        try:
+            while True:
+                if stop_event and stop_event.is_set():
+                    break
+                ret, frame = cap.read()
+                if not ret:
+                    logger.error(f"Failed to grab frame from local webcam {cam_index}. Reconnecting...")
+                    cap.release()
+                    time.sleep(2)
+                    cap = cv2.VideoCapture(cam_index)
+                    start_time = time.time()  # Reset the reconnect timer
+                    continue
+                yield frame
 
-            # Reconnect after the specified interval
-            if time.time() - start_time > reconnect_interval:
-                logger.info(f"Reconnect interval reached for webcam {cam_index}. Re-opening.")
-                cap.release()
-                time.sleep(2)
-                cap = cv2.VideoCapture(cam_index)
-                start_time = time.time()
+                if stop_event and stop_event.is_set():
+                    break
+
+                # Reconnect after the specified interval
+                if time.time() - start_time > reconnect_interval:
+                    logger.info(f"Reconnect interval reached for webcam {cam_index}. Re-opening.")
+                    cap.release()
+                    time.sleep(2)
+                    cap = cv2.VideoCapture(cam_index)
+                    start_time = time.time()
+        finally:
+            cap.release()
 
     except ValueError:
         # URL is not an integer; treat as a network stream URL
         container = None
-        while True:
-            try:
-                if container is None:
-                    if headers:
-                        headers_str = '\r\n'.join([f"{key}: {value}" for key, value in headers.items()])
-                        options = {'headers': headers_str}
-                        container = av.open(url, options=options)
-                    else:
-                        container = av.open(url)
-                    start_time = time.time()  # Reset timer upon connection
-                    stream = container.streams.video[0]
+        try:
+            while True:
+                if stop_event and stop_event.is_set():
+                    break
+                try:
+                    if container is None:
+                        if headers:
+                            headers_str = '\r\n'.join([f"{key}: {value}" for key, value in headers.items()])
+                            options = {'headers': headers_str}
+                            container = av.open(url, options=options)
+                        else:
+                            container = av.open(url)
+                        start_time = time.time()  # Reset timer upon connection
+                        stream = container.streams.video[0]
 
-                # Decode each frame from the stream container
-                for frame in container.decode(stream):
-                    img = frame.to_ndarray(format='bgr24')
-                    yield img
+                    # Decode each frame from the stream container
+                    while True:
+                        try:
+                            frame = next(container.decode(stream))
+                        except StopIteration:
+                            break
+                        except av.AVError as decode_err:
+                            logger.warning(f"[Decode] {url}: {decode_err}. Skipping frame.")
+                            continue
 
-                    # Reconnect after the specified interval
-                    if time.time() - start_time > reconnect_interval:
-                        logger.info("Reconnect interval reached for stream. Restarting it.")
-                        container.close()
-                        container = None
+                        if stop_event and stop_event.is_set():
+                            break
+
+                        try:
+                            img = frame.to_ndarray(format='bgr24')
+                        except av.AVError as convert_err:
+                            logger.warning(f"[Convert] {url}: {convert_err}. Dropping frame.")
+                            continue
+
+                        yield img
+
+                        if stop_event and stop_event.is_set():
+                            break
+
+                        # Reconnect after the specified interval
+                        if time.time() - start_time > reconnect_interval:
+                            logger.info("Reconnect interval reached for stream. Restarting it.")
+                            container.close()
+                            container = None
+                            break
+
+                    if stop_event and stop_event.is_set():
                         break
 
-            except Exception as e:
-                logger.error(f"Failed to open stream {url}: {e}")
-                if container is not None:
-                    container.close()
-                container = None
-                time.sleep(5)
+                except Exception as e:
+                    logger.error(f"Failed to open stream {url}: {e}")
+                    if container is not None:
+                        container.close()
+                    container = None
+                    time.sleep(5)
+        finally:
+            if container is not None:
+                container.close()
 
 
 class StreamProcessor:
@@ -107,9 +144,6 @@ class StreamProcessor:
         reference_images,
         base_capture_dir: str = 'captures',
         notifier: Optional[NotificationManager] = None,
-        tui: Optional[TuiManager] = None,
-        show_preview: bool = False,
-        preview_scale: float = 0.5,
         target_processing_fps: Optional[float] = None,
         resource_monitor: Optional[ResourceMonitor] = None,
         cpu_pressure_threshold: float = 85.0,
@@ -126,15 +160,13 @@ class StreamProcessor:
         self.reference_images = reference_images
         self.base_capture_dir = base_capture_dir
         self.notifier = notifier
-        self.tui = tui
-        self.show_preview = show_preview
-        self.preview_scale = preview_scale if preview_scale > 0 else 1.0
         self.resource_monitor = resource_monitor
         self.cpu_pressure_threshold = cpu_pressure_threshold
         self.pressure_backoff_factor = pressure_backoff_factor
         self.min_processing_interval = (
             0 if not target_processing_fps else max(0.0, 1.0 / target_processing_fps)
         )
+        self._stop_event = threading.Event()
 
     def process_stream(self, camera_config, distance_threshold):
         """
@@ -159,10 +191,7 @@ class StreamProcessor:
         capture_cooldown = camera_config.get('capture_cooldown', 60)
 
         logger.info(f"[{name}] Connecting to the video stream...")
-        if self.tui:
-            self.tui.update_camera(name, "connecting", stream_url)
-
-        frames = get_frames_from_stream(stream_url, headers=headers)
+        frames = get_frames_from_stream(stream_url, headers=headers, stop_event=self._stop_event)
         frame_count = 0
 
         # Create directory to store captured images
@@ -174,19 +203,12 @@ class StreamProcessor:
         last_saved: Dict[str, float] = {}
 
         logger.info(f"[{name}] CONNECTED. Starting analysis process...")
-        if self.tui:
-            self.tui.update_camera(name, "online", "analyzing")
-
         try:
             last_processed_at = 0.0
             for frame in frames:
                 frame_count += 1
-
-                if self.show_preview:
-                    preview_frame = frame
-                    if 0 < self.preview_scale != 1.0:
-                        preview_frame = cv2.resize(frame, (0, 0), fx=self.preview_scale, fy=self.preview_scale)
-                    cv2.imshow(name, preview_frame)
+                if self._stop_event.is_set():
+                    break
 
                 if not self._should_process_frame(frame_count, process_frame_interval):
                     continue
@@ -211,8 +233,6 @@ class StreamProcessor:
                     confidence = self._calculate_confidence(face_dist)
 
                     logger.info(f"[{name}] Detected known face: {pred_name} at {int(confidence)}%")
-                    if self.tui:
-                        self.tui.notify_detection(name, pred_name, confidence)
 
                     current_time = time.time()
                     last_time = last_saved.get(pred_name, 0)
@@ -262,24 +282,26 @@ class StreamProcessor:
                             timestamp=datetime.utcnow(),
                         )
 
-                # Check if the 'q' key is pressed for a graceful exit
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-
         except KeyboardInterrupt:
             logger.info(f"[{name}] Interrupted by user. Exiting...")
-            if self.tui:
-                self.tui.update_camera(name, "interrupted")
         except Exception as e:
             logger.error(f"[{name}] An error occurred: {e}")
-            if self.tui:
-                self.tui.update_camera(name, "error", str(e))
         finally:
             logger.info(f"[{name}] Stream processing terminated.")
-            if self.tui:
-                self.tui.update_camera(name, "offline", "stopped")
-            if self.show_preview:
-                cv2.destroyWindow(name)
+            if hasattr(frames, "close"):
+                try:
+                    frames.close()
+                except Exception:
+                    pass
+
+    def request_stop(self) -> None:
+        """
+        Signal the processor to stop processing streams.
+        """
+        self._stop_event.set()
+
+    def stop_requested(self) -> bool:
+        return self._stop_event.is_set()
 
     def _should_process_frame(self, frame_count: int, base_interval: int) -> bool:
         if base_interval <= 1:

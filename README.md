@@ -52,12 +52,19 @@ Without these, the script is about as useful as a chocolate teapot.
 If you see a bunch of text flying by, that's good. It means stuff is happening.
 
 ## Configuration
-Before you run the script, you need to set up the `cameras.yaml` file. 
+Before you run the script, you need to set up the configuration files. 
 
 Don't worry...it's easier than assembling IKEA furniture.
-### Create the cameras.yaml File
+### Create the configuration files
 
-Just rename/copy `cameras-example.yaml` to `cameras.yaml` and fill in the blank !
+Copy the sample files into `configs/` and edit them to match your setup:
+
+```bash
+cp cameras-example.yaml configs/cameras.yaml
+cp configs/app-example.yaml configs/app.yaml
+```
+
+`configs/cameras.yaml` holds only the camera definitions:
 
 ```yaml
 cameras:
@@ -65,11 +72,12 @@ cameras:
     stream_url: "0"
     process_frame_interval: 15
     capture_cooldown: 120
+```
 
+While `configs/app.yaml` keeps application-wide settings and integrations:
+
+```yaml
 settings:
-  enable_tui: true
-  show_preview: false
-  preview_scale: 0.5
   target_processing_fps: 2.0
   cpu_pressure_threshold: 85.0
 
@@ -81,7 +89,7 @@ notifications:
     max_workers: 2
 ```
 
-`settings` lets you keep dashboard/preview/tuning options alongside the camera list, while the `notifications.telegram` block holds the bot credentials used to send alerts whenever a known person is detected.
+`settings` tunes the per-camera processing rate, and `notifications.telegram` holds the bot credentials used to send alerts whenever a known person is detected.
 
 When configured, Telegram alerts include both the captured frame and the comparison image so you can verify the match without digging into the filesystem.
 
@@ -93,7 +101,7 @@ Need some streams to test with? Run the helper to scrape public (already exposed
 python main.py --find-camera
 ```
 
-You'll be asked for a city name, and the script will query a couple of public indexes (RTSP and HLS). Any results are echoed to the console and saved under `camera_streams_<city>.yaml`, including protocol and any required headers so you can copy/paste them straight into `cameras.yaml`. Remember that these feeds are public because someone left them exposed—use them responsibly.
+You'll be asked for a city name, and the script will query a couple of public indexes (RTSP and HLS). Any results are echoed to the console and saved under `camera_streams_<city>.yaml`, including protocol and any required headers so you can copy/paste them straight into `configs/cameras.yaml`. Remember that these feeds are public because someone left them exposed—use them responsibly.
 
 ## Usage
 Alright, you've made it this far without breaking anything, kudos to you ! Time to run the script:
@@ -138,7 +146,10 @@ If all went fine you should see something like this:
 Remember: use the `--use_gpu` only if you have a GPU to use
 
 ```bash
-python main.py --config cameras.yaml --model_save_path trained_knn_model_gpu.clf
+python main.py \
+  --camera_config configs/cameras.yaml \
+  --app_config configs/app.yaml \
+  --model_save_path trained_knn_model_gpu.clf
 ```
 If all went ok you should see something like this:
 
@@ -188,7 +199,7 @@ options:
 1. [X] Implement notification (telegram and/or other)  
 2. [X] Resource optimization
 3. [ ] Integrate [Nerve](https://github.com/evilsocket/nerve) with custom tasklet 
-3. [ ] Automatic Doc Generation 
+3. [X] Automatic Doc Generation 
 
 ## Conclusion
 Well, that's all she wrote. If you run into any issues, feel free to do nothing and don't bother me.

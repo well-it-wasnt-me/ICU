@@ -54,7 +54,10 @@ Remember: use the ``--use_gpu`` only if you have a GPU to use
 
 .. code:: bash
 
-   python main.py --config cameras.yaml --model_save_path trained_knn_model_gpu.clf
+   python main.py \
+     --camera_config configs/cameras.yaml \
+     --app_config configs/app.yaml \
+     --model_save_path trained_knn_model_gpu.clf
 
 If all went ok you should see something like this:
 
@@ -82,7 +85,7 @@ ICU uses :class:`stream_finder.CameraStreamFinder` to query both Insecam and Ear
 retries Insecam pages that respond with HTTP 403, follows EarthCam iframe embeds and
 JSON configs, and writes the consolidated results to ``camera_streams_<city>.yaml``.
 Each entry includes the protocol and any headers (such as ``Referer``) that you should
-copy into ``cameras.yaml`` before monitoring the stream.
+copy into ``configs/cameras.yaml`` before monitoring the stream.
 
 ICU Arguments
 ~~~~~~~~~~~~~
@@ -93,9 +96,9 @@ ICU Arguments
 
    usage: main.py [-h] [--train_dir TRAIN_DIR]
                   [--model_save_path MODEL_SAVE_PATH] [--n_neighbors N_NEIGHBORS]
-                  [--config CONFIG] [--distance_threshold DISTANCE_THRESHOLD]
-                  [--train] [--use_gpu] [--enable_tui] [--show_preview]
-                  [--preview_scale PREVIEW_SCALE]
+                  [--camera_config CAMERA_CONFIG] [--app_config APP_CONFIG]
+                  [--distance_threshold DISTANCE_THRESHOLD]
+                  [--train] [--use_gpu]
                   [--target_processing_fps TARGET_PROCESSING_FPS]
                   [--cpu_pressure_threshold CPU_PRESSURE_THRESHOLD]
                   [--find-camera]
@@ -110,15 +113,14 @@ ICU Arguments
                            Path to save/load KNN model
      --n_neighbors N_NEIGHBORS
                            Number of neighbors for KNN
-     --config CONFIG       Path to YAML config
+     --camera_config CAMERA_CONFIG
+                           Path to camera configuration file
+     --app_config APP_CONFIG
+                           Path to application configuration file
      --distance_threshold DISTANCE_THRESHOLD
                            Distance threshold for recognition
      --train               Train the model
      --use_gpu             Use GPU with facenet-pytorch
-     --enable_tui          Display live terminal dashboard
-     --show_preview        Show realtime camera preview windows
-     --preview_scale PREVIEW_SCALE
-                           Scaling factor for preview display
      --target_processing_fps TARGET_PROCESSING_FPS
                            Target processing rate per camera (0 disables rate
                            limiting)

@@ -24,7 +24,6 @@ from face_recognizer import FaceRecognizer
 from stream_processor import StreamProcessor
 from notifications import NotificationManager
 from resource_monitor import ResourceMonitor
-from tui_manager import TuiManager
 from stream_finder import CameraStreamFinder, DiscoveredStream
 
 
@@ -42,13 +41,13 @@ def main():
     parser.add_argument('--model_save_path', type=str, default='trained_knn_model.clf',
                         help='Path to save/load KNN model')
     parser.add_argument('--n_neighbors', type=int, default=None, help='Number of neighbors for KNN')
-    parser.add_argument('--config', type=str, default='cameras.yaml', help='Path to YAML config')
+    parser.add_argument('--camera_config', '--config', dest='camera_config', type=str,
+                        default='configs/cameras.yaml', help='Path to camera configuration file')
+    parser.add_argument('--app_config', type=str, default='configs/app.yaml',
+                        help='Path to application configuration file')
     parser.add_argument('--distance_threshold', type=float, default=0.5, help='Distance threshold for recognition')
     parser.add_argument('--train', action='store_true', help='Train the model')
     parser.add_argument('--use_gpu', action='store_true', help='Use GPU with facenet-pytorch')
-    parser.add_argument('--enable_tui', action='store_true', help='Display live terminal dashboard')
-    parser.add_argument('--show_preview', action='store_true', help='Show realtime camera preview windows')
-    parser.add_argument('--preview_scale', type=float, default=0.5, help='Scaling factor for preview display')
     parser.add_argument('--target_processing_fps', type=float, default=0.0,
                         help='Target processing rate per camera (0 disables rate limiting)')
     parser.add_argument('--cpu_pressure_threshold', type=float, default=85.0,
@@ -92,20 +91,28 @@ def main():
 
     face_recognizer.load_model(args.model_save_path)
 
-    # Load camera configuration from YAML file
-    if not os.path.exists(args.config):
-        logger.error(f"Configuration file {args.config} does not exist.")
+    # Load camera configuration
+    camera_config_path = args.camera_config
+    if not os.path.exists(camera_config_path):
+        logger.error(f"Camera configuration file {camera_config_path} does not exist.")
         return
 
     try:
-        with open(args.config, 'r') as file:
-            config = yaml.safe_load(file)
-            cameras = config.get('cameras', [])
-            if not cameras:
-                logger.error("No camera configurations found in the YAML file.")
-                return
+        with open(camera_config_path, 'r') as file:
+            camera_config = yaml.safe_load(file) or {}
     except yaml.YAMLError as exc:
-        logger.error(f"Error parsing YAML file: {exc}")
+        logger.error(f"Error parsing camera configuration: {exc}")
+        return
+
+    if isinstance(camera_config, list):
+        cameras = camera_config
+    elif isinstance(camera_config, dict):
+        cameras = camera_config.get('cameras', [])
+    else:
+        cameras = []
+
+    if not cameras:
+        logger.error("No camera definitions found in the camera configuration file.")
         return
 
     # Load reference images for side-by-side screenshot captures
@@ -115,20 +122,29 @@ def main():
     if args.use_gpu:
         face_recognizer.initialize_facenet_pytorch_models()
 
-    settings = config.get('settings', {})
-    enable_tui = args.enable_tui or settings.get('enable_tui', False)
-    show_preview = args.show_preview or settings.get('show_preview', False)
-    preview_scale = settings.get('preview_scale', args.preview_scale)
+    app_config_path = args.app_config
+    app_config = {}
+    if app_config_path and os.path.exists(app_config_path):
+        try:
+            with open(app_config_path, 'r') as file:
+                app_config = yaml.safe_load(file) or {}
+        except yaml.YAMLError as exc:
+            logger.error(f"Error parsing application configuration: {exc}")
+            return
+    else:
+        logger.info(f"Application configuration file '{app_config_path}' not found. Using CLI/default settings.")
+
+    settings = app_config.get('settings', {})
     target_processing_fps = settings.get('target_processing_fps', args.target_processing_fps)
     cpu_pressure_threshold = settings.get('cpu_pressure_threshold', args.cpu_pressure_threshold)
 
     target_fps = target_processing_fps if target_processing_fps and target_processing_fps > 0 else None
     resource_monitor = None
-    if enable_tui or target_fps or cpu_pressure_threshold > 0:
+    if target_fps or cpu_pressure_threshold > 0:
         resource_monitor = ResourceMonitor()
         resource_monitor.start()
 
-    notifications_cfg = config.get('notifications', {})
+    notifications_cfg = app_config.get('notifications', {})
     telegram_cfg = notifications_cfg.get('telegram', {}) if notifications_cfg else {}
 
     notifier = None
@@ -144,19 +160,11 @@ def main():
     elif telegram_cfg and (bot_token or chat_id):
         logger.warning("Incomplete Telegram configuration detected. Notifications disabled.")
 
-    tui_manager = None
-    if enable_tui:
-        tui_manager = TuiManager(resource_monitor=resource_monitor)
-        tui_manager.start()
-
     stream_processor = StreamProcessor(
         face_recognizer=face_recognizer,
         reference_images=reference_images,
         base_capture_dir='captures',
         notifier=notifier,
-        tui=tui_manager,
-        show_preview=show_preview,
-        preview_scale=preview_scale,
         target_processing_fps=target_fps,
         resource_monitor=resource_monitor,
         cpu_pressure_threshold=cpu_pressure_threshold,
@@ -174,14 +182,22 @@ def main():
         threads.append(t)
         time.sleep(0.5)
 
-    for t in threads:
-        t.join()
+    try:
+        while any(t.is_alive() for t in threads):
+            if stream_processor.stop_requested():
+                break
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        logger.info("Interrupted by user. Stopping streams...")
+        stream_processor.request_stop()
+    finally:
+        stream_processor.request_stop()
+        for t in threads:
+            t.join()
 
     logger.info("All camera threads finished.")
     if notifier:
         notifier.shutdown()
-    if tui_manager:
-        tui_manager.stop()
     if resource_monitor:
         resource_monitor.stop()
 
