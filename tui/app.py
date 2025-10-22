@@ -4,10 +4,10 @@ Textual application entry point for ICU.
 
 from __future__ import annotations
 
+import logging
 import os
 from datetime import datetime
 from typing import Dict, Optional
-
 from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -86,6 +86,11 @@ class IcuTextualApp(App[None]):
         self.streams_view: Optional[StreamsView] = None
         self.logs_view: Optional[LogsView] = None
         self.settings_view: Optional[SettingsView] = None
+        self.log_file_path: Optional[str] = None
+        self._log_tail_position: int = 0
+        self._log_tail_buffer: str = ""
+        self._log_poll_timer = None
+        self._log_tail_window_bytes: int = 32768
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -127,7 +132,7 @@ class IcuTextualApp(App[None]):
                         )
                         yield self.settings_view
                 with Vertical(id="secondary"):
-                    self.log_panel = Log()
+                    self.log_panel = Log(max_lines=500)
                     yield self.log_panel
         self.resource_footer = ResourceFooter()
         yield self.resource_footer
@@ -138,8 +143,14 @@ class IcuTextualApp(App[None]):
         self.set_interval(0.5, self._drain_runtime_events)
         self.set_interval(2.0, self._refresh_resource_metrics)
         await self._load_configs()
+        self._resolve_log_file_path(self.app_config)
+        self._initialize_log_tail()
+        self._log_poll_timer = self.set_interval(1.0, self._poll_log_file)
 
     async def on_unmount(self, event: events.Unmount) -> None:
+        if self._log_poll_timer:
+            self._log_poll_timer.stop()
+            self._log_poll_timer = None
         if self.stream_supervisor and self.stream_supervisor.is_running():
             self.stream_supervisor.stop()
 
@@ -224,6 +235,8 @@ class IcuTextualApp(App[None]):
 
     async def action_reload_configs(self) -> None:
         await self._load_configs()
+        self._resolve_log_file_path(self.app_config)
+        self._initialize_log_tail()
 
     async def action_quit(self) -> None:
         if self.stream_supervisor and self.stream_supervisor.is_running():
@@ -355,6 +368,7 @@ class IcuTextualApp(App[None]):
         self.target_processing_fps = settings.get("target_processing_fps")
         self.cpu_pressure_threshold = settings.get("cpu_pressure_threshold", self.cpu_pressure_threshold)
         self.pressure_backoff_factor = settings.get("pressure_backoff_factor", self.pressure_backoff_factor)
+        self._resolve_log_file_path(config)
         if self.settings_view:
             self.settings_view.update_values(
                 distance_threshold=self.distance_threshold,
@@ -477,6 +491,117 @@ class IcuTextualApp(App[None]):
         else:
             self._log(event.message or f"Training phase: {event.phase}")
 
+    def _resolve_log_file_path(self, config: Optional[dict] = None) -> Optional[str]:
+        candidate: Optional[str] = None
+        if config:
+            logging_cfg = config.get("logging", {})
+            if isinstance(logging_cfg, dict):
+                value = logging_cfg.get("file")
+                if value:
+                    candidate = os.path.abspath(os.fspath(value))
+
+        if not candidate and self.log_file_path:
+            candidate = self.log_file_path
+
+        if not candidate:
+            candidate = self._detect_log_file_from_handlers()
+
+        if not candidate:
+            candidate = os.path.abspath("face_recognition.log")
+
+        self.log_file_path = candidate
+        return candidate
+
+    @staticmethod
+    def _detect_log_file_from_handlers() -> Optional[str]:
+        for handler in logging.getLogger().handlers:
+            if isinstance(handler, logging.FileHandler):
+                try:
+                    return os.path.abspath(handler.baseFilename)
+                except (AttributeError, TypeError):
+                    return handler.baseFilename
+        return None
+
+    def _initialize_log_tail(self) -> None:
+        path = self.log_file_path
+        if not path or not os.path.exists(path):
+            return
+        try:
+            with open(path, "rb") as fh:
+                fh.seek(0, os.SEEK_END)
+                size = fh.tell()
+                start = max(0, size - self._log_tail_window_bytes)
+                fh.seek(start, os.SEEK_SET)
+                data = fh.read()
+        except OSError:
+            return
+
+        text = data.decode("utf-8", errors="replace") if data else ""
+        lines = text.splitlines()
+        if start > 0 and lines:
+            lines = lines[1:]
+
+        if self.log_panel:
+            self.log_panel.clear()
+            max_lines = getattr(self.log_panel, "max_lines", None)
+            if max_lines:
+                lines = lines[-max_lines:]
+            for line in lines:
+                self.log_panel.write_line(line)
+
+        try:
+            self._log_tail_position = os.path.getsize(path)
+        except OSError:
+            self._log_tail_position = 0
+        self._log_tail_buffer = ""
+
+    def _poll_log_file(self) -> None:
+        path = self.log_file_path
+        if not path:
+            return
+        try:
+            size = os.path.getsize(path)
+        except OSError:
+            return
+
+        if size < self._log_tail_position:
+            self._log_tail_position = 0
+
+        try:
+            with open(path, "r", encoding="utf-8", errors="replace") as fh:
+                fh.seek(self._log_tail_position)
+                data = fh.read()
+                self._log_tail_position = fh.tell()
+        except OSError:
+            return
+
+        if not data:
+            return
+
+        chunk = self._log_tail_buffer + data
+        if not chunk:
+            return
+
+        if chunk.endswith("\n"):
+            lines = chunk.splitlines()
+            self._log_tail_buffer = ""
+        else:
+            lines = chunk.splitlines()
+            if chunk and not chunk.endswith("\n"):
+                if lines:
+                    self._log_tail_buffer = lines.pop()
+                else:
+                    self._log_tail_buffer = chunk
+                    lines = []
+            else:
+                self._log_tail_buffer = ""
+
+        if not lines or not self.log_panel:
+            return
+
+        for line in lines:
+            self.log_panel.write_line(line)
+
     def _refresh_resource_metrics(self) -> None:
         if not self.stream_supervisor:
             return
@@ -509,5 +634,5 @@ class IcuTextualApp(App[None]):
 
     def _log(self, message: str) -> None:
         logger.info(message)
-        if self.log_panel:
+        if self.log_panel and (not self.log_file_path or not os.path.exists(self.log_file_path)):
             self.log_panel.write_line(message)
