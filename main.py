@@ -8,6 +8,7 @@ and initiating the stream processing.
 
 import argparse
 import os
+import sys
 import yaml
 import threading
 import time
@@ -151,6 +152,54 @@ def main():
     notifications_cfg = app_config.get('notifications', {})
     telegram_cfg = notifications_cfg.get('telegram', {}) if notifications_cfg else {}
 
+    retrain_requested = threading.Event()
+
+    def _request_retrain_from_telegram() -> None:
+        if retrain_requested.is_set():
+            logger.info("Retrain already scheduled via Telegram; ignoring duplicate request.")
+            return
+        logger.info("Retrain requested via Telegram; streams will stop once current work completes.")
+        retrain_requested.set()
+
+    def _run_retraining_workflow() -> tuple[bool, str]:
+        logger.info("Starting retraining workflow for updated POI images.")
+        try:
+            ImageUtils.convert_images_to_rgb(args.train_dir)
+        except Exception as exc:  # pylint: disable=broad-except
+            logger.exception("Failed to preprocess training data for retraining.")
+            message = f"Retraining aborted: failed to preprocess images ({exc})."
+            return False, message
+
+        trainer = FaceRecognizer(use_gpu=args.use_gpu)
+        try:
+            if args.use_gpu:
+                trainer.initialize_facenet_pytorch_models()
+        except Exception as exc:  # pylint: disable=broad-except
+            logger.exception("Failed to initialise GPU resources for retraining.")
+            message = f"Retraining aborted: failed to initialise GPU models ({exc})."
+            return False, message
+
+        try:
+            knn_clf = trainer.train(
+                args.train_dir,
+                model_save_path=args.model_save_path,
+                n_neighbors=args.n_neighbors,
+                knn_algo='ball_tree',
+                verbose=True,
+            )
+        except Exception as exc:  # pylint: disable=broad-except
+            logger.exception("Retraining failed while fitting the classifier.")
+            return False, f"Retraining failed during classifier training: {exc}"
+
+        if knn_clf is None:
+            message = "Retraining failed: no valid training samples were found."
+            logger.error(message)
+            return False, message
+
+        message = f"Retraining completed. Model saved to {args.model_save_path}."
+        logger.info(message)
+        return True, message
+
     notifier = None
     bot_token = telegram_cfg.get('bot_token')
     chat_id = telegram_cfg.get('chat_id')
@@ -160,6 +209,10 @@ def main():
             telegram_chat_id=chat_id,
             timeout=telegram_cfg.get('timeout', 10),
             max_workers=telegram_cfg.get('max_workers', 2),
+            train_dir=args.train_dir,
+            enable_command_handler=telegram_cfg.get('enable_commands', True),
+            command_poll_timeout=telegram_cfg.get('command_poll_timeout', 20),
+            retrain_handler=_request_retrain_from_telegram,
         )
     elif telegram_cfg and (bot_token or chat_id):
         logger.warning("Incomplete Telegram configuration detected. Notifications disabled.")
@@ -231,8 +284,13 @@ def main():
         threads.append(t)
         time.sleep(0.5)
 
+    retrain_stop_requested = False
     try:
         while any(t.is_alive() for t in threads):
+            if retrain_requested.is_set() and not retrain_stop_requested:
+                logger.info("Stopping active streams to retrain the model with new POI images.")
+                stream_processor.request_stop()
+                retrain_stop_requested = True
             if stream_processor.stop_requested():
                 break
             time.sleep(0.1)
@@ -245,6 +303,21 @@ def main():
             t.join()
 
     logger.info("All camera threads finished.")
+
+    if retrain_requested.is_set():
+        if notifier:
+            notifier.send_operator_message("Starting retraining with the new POI images...")
+        success, status_message = _run_retraining_workflow()
+        if notifier:
+            notifier.send_operator_message(status_message)
+        if success:
+            if notifier:
+                notifier.shutdown()
+            if resource_monitor:
+                resource_monitor.stop()
+            logger.info("Restarting application to load the updated model.")
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+
     if notifier:
         notifier.shutdown()
     if resource_monitor:

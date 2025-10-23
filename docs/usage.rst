@@ -77,6 +77,19 @@ Everytime the script will find a face not only you’ll find a screenshot
 of that frame inside the folder captures but also a side by side view of
 what the camera is seeing and the image used for the match.
 
+Add POIs from Telegram
+~~~~~~~~~~~~~~~~~~~~~~
+
+With Telegram notifications enabled, you can add new people of interest straight from chat:
+
+1. Send ``add_poi`` to your bot.
+2. The bot replies ``name`` — answer with the person’s display name.
+3. The bot asks for ``picture(s)`` — upload one or more photos.
+4. When finished, reply with ``done`` (or ``cancel`` to abort).
+5. The bot will then ask whether to retrain immediately — reply ``yes`` to stop streams, retrain, and restart ICU with the updated model (or ``no`` to handle it later).
+
+The images are written to the training directory (``poi/<NAME>`` by default), converted to RGB, and ready for your next training run. Confirming the retrain prompt triggers an automatic stop → retrain → restart sequence so the new person is recognised immediately.
+
 Finding Public Streams
 ~~~~~~~~~~~~~~~~~~~~~~
 

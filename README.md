@@ -87,6 +87,8 @@ notifications:
     chat_id: "123456789"
     timeout: 10
     max_workers: 2
+    enable_commands: true    # Allow Telegram add_poi workflow
+    command_poll_timeout: 20 # Seconds to wait when long-polling updates
 
 logging:
   level: INFO
@@ -188,6 +190,18 @@ If all went ok you should see something like this:
 
 Everytime the script will find a face not only you'll find a screenshot of that frame inside the folder captures but also a side by side view of
 what the camera is seeing and the image used for the match.
+
+### Add POIs from Telegram
+
+With Telegram notifications enabled, you can add new people-of-interest without touching the filesystem:
+
+1. Send `add_poi` to your bot.
+2. The bot replies `name` — answer with the display name for the person.
+3. The bot then asks for `picture(s)` — upload one or more photos (or screenshots) for that person.
+4. When you're done, reply with `done`. Send `cancel` at any point to abort.
+5. The bot will then offer to retrain immediately; reply `yes` to stop streams, retrain, and restart ICU with the new model (or `no` to handle it later).
+
+The images are saved under the configured training directory (default `poi/<NAME>`), converted to RGB, and ready for the next training run. When you confirm the retrain step, ICU pauses streaming, rebuilds the classifier, and relaunches itself so detections include the new POI right away.
 
 ## Script Arguments
 ```bash
