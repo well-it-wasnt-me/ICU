@@ -141,6 +141,10 @@ class TrainView(Static):
         if self.use_gpu_checkbox:
             self.use_gpu_checkbox.value = use_gpu
 
+    def current_config(self) -> "TrainConfig":
+        """Return the configuration currently shown in the UI."""
+        return self._gather_config()
+
     def _gather_config(self) -> "TrainConfig":
         train_dir = self.train_dir_input.value if self.train_dir_input else self._train_dir
         model_path = self.model_path_input.value if self.model_path_input else self._model_path
