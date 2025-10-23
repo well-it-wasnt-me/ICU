@@ -38,10 +38,7 @@ jobs:
           path: docs/_build/html
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          publish_branch: gh-pages
-          github_token: ${{ secrets.GH_PAGE_SECR }}
-          publish_dir: docs/_build/
-          force_orphan: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
