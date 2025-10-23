@@ -1,9 +1,0 @@
-.idea
-*.clf
-*.log
-cameras.yaml
-venv
-captures/**/*
-poi/**/*
-docs/_build
-tests/summary.md
