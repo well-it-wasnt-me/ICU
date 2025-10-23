@@ -12,7 +12,13 @@ import itertools
 class DummyFaceRecognizer:
     def predict(self, img, distance_threshold):
         # Simulate face recognition by returning a dummy prediction
-        return [("TestPerson", 0.4)]
+        return [
+            {
+                "name": "TestPerson",
+                "distance": 0.4,
+                "location": (30.0, 120.0, 150.0, 60.0),
+            }
+        ]
 
 @pytest.fixture
 def dummy_reference_images():

@@ -9,7 +9,7 @@ import os
 import threading
 import time
 from datetime import datetime
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, Tuple
 import av
 import cv2
 from image_utils import ImageUtils
@@ -261,7 +261,11 @@ class StreamProcessor:
                     )
                 )
 
-                for (pred_name, face_dist) in predictions:
+                scaled_frame_shape = img_small.shape
+                for prediction in predictions:
+                    pred_name = prediction.get("name", "unknown")
+                    face_dist = prediction.get("distance", 1.0)
+                    location_small = prediction.get("location")
                     if pred_name == "unknown":
                         continue  # Skip if face is not recognized
 
@@ -286,8 +290,18 @@ class StreamProcessor:
                         )
                         continue
 
+                    frame_with_box = frame.copy()
+                    if location_small and scaled_frame_shape:
+                        scaled_location = self._scale_face_location(
+                            location_small,
+                            frame.shape,
+                            scaled_frame_shape
+                        )
+                        if scaled_location:
+                            self._draw_recognition_box(frame_with_box, scaled_location)
+
                     # Annotate the frame with a timestamp
-                    annotated_frame = ImageUtils.add_timestamp(frame.copy())
+                    annotated_frame = ImageUtils.add_timestamp(frame_with_box)
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
                     filename = f"{name}_{pred_name}_{timestamp}.jpg"
                     filepath = os.path.join(capture_dir, filename)
@@ -301,7 +315,7 @@ class StreamProcessor:
                     # Create a side-by-side screenshot with the reference image
                     ref_img = self.reference_images.get(pred_name, None)
                     side_by_side = ImageUtils.create_side_by_side_screenshot(
-                        frame,
+                        frame_with_box,
                         ref_img,
                         camera_name=name,
                         person_name=pred_name,
@@ -334,7 +348,7 @@ class StreamProcessor:
                             capture_path=filepath,
                             side_by_side_path=side_filepath,
                         )
-                )
+                    )
 
                 self._process_license_plates(name, frame)
 
@@ -388,6 +402,47 @@ class StreamProcessor:
         Convert face distance (0 = identical, 1 = different) into a percentage confidence.
         """
         return max(0.0, min(100.0, (1.0 - min(face_distance, 1.0)) * 100.0))
+
+    @staticmethod
+    def _scale_face_location(
+        location: Tuple[float, float, float, float],
+        original_shape: Tuple[int, int, int],
+        scaled_shape: Tuple[int, int, int],
+    ) -> Optional[Tuple[int, int, int, int]]:
+        """
+        Scale a face location from a resized frame back to the original frame dimensions.
+        """
+        if not location:
+            return None
+        orig_h, orig_w = original_shape[:2]
+        scaled_h, scaled_w = scaled_shape[:2]
+        if scaled_h == 0 or scaled_w == 0:
+            return None
+        scale_y = orig_h / float(scaled_h)
+        scale_x = orig_w / float(scaled_w)
+        top, right, bottom, left = location
+        top = int(round(top * scale_y))
+        right = int(round(right * scale_x))
+        bottom = int(round(bottom * scale_y))
+        left = int(round(left * scale_x))
+        top = max(0, min(orig_h - 1, top))
+        right = max(0, min(orig_w - 1, right))
+        bottom = max(0, min(orig_h - 1, bottom))
+        left = max(0, min(orig_w - 1, left))
+        return top, right, bottom, left
+
+    @staticmethod
+    def _draw_recognition_box(
+        frame,
+        location: Tuple[int, int, int, int],
+        color=(0, 0, 255),
+        thickness=2,
+    ) -> None:
+        """
+        Draw a rectangle around the recognized face on the provided frame.
+        """
+        top, right, bottom, left = location
+        cv2.rectangle(frame, (left, top), (right, bottom), color, thickness)
 
     def _emit_event(self, event: RuntimeEvent) -> None:
         if not self._event_publisher:
