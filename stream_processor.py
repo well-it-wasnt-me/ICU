@@ -15,12 +15,15 @@ import cv2
 from image_utils import ImageUtils
 from logger_setup import logger
 from notifications import NotificationManager
+from plate_monitor import PlateDetectionHandler, PlateHandlingResult
+from plate_recognizer import PlateRecognizer
 from resource_monitor import ResourceMonitor
 from runtime_events import (
     DetectionEvent,
     RuntimeEvent,
     StreamLifecycleEvent,
     StreamMetricsEvent,
+    PlateDetectionEvent,
 )
 
 
@@ -155,6 +158,8 @@ class StreamProcessor:
         cpu_pressure_threshold: float = 85.0,
         pressure_backoff_factor: float = 2.0,
         event_publisher: Optional[Callable[[RuntimeEvent], None]] = None,
+        plate_recognizer: Optional[PlateRecognizer] = None,
+        plate_handler: Optional[PlateDetectionHandler] = None,
     ):
         """
         Initialize the StreamProcessor.
@@ -175,6 +180,8 @@ class StreamProcessor:
         )
         self._stop_event = threading.Event()
         self._event_publisher = event_publisher
+        self.plate_recognizer = plate_recognizer
+        self.plate_handler = plate_handler
 
     def process_stream(self, camera_config, distance_threshold):
         """
@@ -327,7 +334,9 @@ class StreamProcessor:
                             capture_path=filepath,
                             side_by_side_path=side_filepath,
                         )
-                    )
+                )
+
+                self._process_license_plates(name, frame)
 
         except KeyboardInterrupt:
             logger.info(f"[{name}] Interrupted by user. Exiting...")
@@ -387,3 +396,34 @@ class StreamProcessor:
             self._event_publisher(event)
         except Exception:
             logger.debug("Failed to publish runtime event", exc_info=True)
+
+    def _process_license_plates(self, camera_name: str, frame) -> None:
+        if not self.plate_recognizer or not self.plate_handler:
+            return
+        detections = self.plate_recognizer.detect(frame)
+        if not detections:
+            return
+        for detection in detections:
+            result = self.plate_handler.handle(
+                camera_name=camera_name,
+                frame=frame,
+                detection=detection,
+                timestamp=datetime.utcnow(),
+            )
+            self._log_plate_result(camera_name, result)
+            self._emit_event(result.to_event(camera_name))
+
+    @staticmethod
+    def _log_plate_result(camera_name: str, result: PlateHandlingResult) -> None:
+        base_msg = (
+            f"[{camera_name}] Detected plate: {result.plate} "
+            f"({result.confidence:.0f}% confidence, count={result.occurrences})"
+        )
+        if result.watchlist_hit:
+            logger.warning(base_msg + " [WATCHLIST HIT]")
+        else:
+            logger.info(base_msg)
+        if result.cooldown_active:
+            logger.info(
+                f"[{camera_name}] Skipping capture for plate {result.plate}; cooldown active."
+            )

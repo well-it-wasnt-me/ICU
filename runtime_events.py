@@ -56,6 +56,20 @@ class DetectionEvent(RuntimeEvent):
 
 
 @dataclass(slots=True)
+class PlateDetectionEvent(RuntimeEvent):
+    """Notification that a license plate has been recognized."""
+
+    camera_name: str = ""
+    plate: str = ""
+    confidence: float = 0.0
+    occurrences: int = 0
+    watchlist_hit: bool = False
+    capture_path: Optional[str] = None
+    crop_path: Optional[str] = None
+    cooldown_active: bool = False
+
+
+@dataclass(slots=True)
 class TrainingEvent(RuntimeEvent):
     """Updates covering the lifecycle of a training session."""
 

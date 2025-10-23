@@ -91,11 +91,28 @@ notifications:
 logging:
   level: INFO
   file: face_recognition.log
+
+plates:
+  enabled: false
+  watchlist: []
+  alert_on_watchlist: true
+  alert_on_every_plate: false
+  capture_cooldown: 30
+  storage:
+    base_dir: captures/plates
+    summary_file: plates_summary.json
+    max_captures_per_plate: 20
+  ocr:
+    languages:
+      - en
+    use_gpu: false
 ```
 
 `settings` tunes the per-camera processing rate, and `notifications.telegram` holds the bot credentials used to send alerts whenever a known person is detected.
 
 When configured, Telegram alerts include both the captured frame and the comparison image so you can verify the match without digging into the filesystem.
+
+Enabling the optional `plates` block turns on automatic licence plate detection via EasyOCR. Specify a `watchlist` of plate numbers (case-insensitive) you want to be alerted about. Captured plates are stored under `captures/plates/<camera>/<plate>/` and summarised in `plates_summary.json`, including the number of times each plate has been seen. Set `alert_on_every_plate` to `true` if you want Telegram notifications for every plate, or keep it `false` to only notify on watchlist hits. The first run will download EasyOCR models – make sure outbound network access is available.
 
 ### Hunting For Public Cameras
 

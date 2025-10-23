@@ -64,6 +64,35 @@ class NotificationManager:
         }
         self._executor.submit(self._send_telegram_message, payload)
 
+    def notify_plate_detection(
+        self,
+        camera_name: str,
+        plate_number: str,
+        confidence: float,
+        occurrences: int,
+        capture_path: Optional[str] = None,
+        crop_path: Optional[str] = None,
+        timestamp: Optional[datetime] = None,
+        watchlist_hit: bool = False,
+    ) -> None:
+        """
+        Queue a notification about a license plate detection.
+        """
+        if not self.enabled:
+            return
+
+        payload = {
+            "camera": camera_name,
+            "plate": plate_number,
+            "confidence": confidence,
+            "occurrences": occurrences,
+            "capture": capture_path,
+            "crop": crop_path,
+            "timestamp": timestamp or datetime.utcnow(),
+            "watchlist_hit": watchlist_hit,
+        }
+        self._executor.submit(self._send_plate_message, payload)
+
     def shutdown(self) -> None:
         """
         Flush outstanding notifications and release resources.
@@ -99,6 +128,31 @@ class NotificationManager:
         if not sent_any:
             self._send_text_message(text)
 
+    def _send_plate_message(self, payload: dict) -> None:
+        assert self._session is not None
+        text = self._format_plate_message(payload)
+        capture_path = payload.get("capture")
+        crop_path = payload.get("crop")
+
+        sent_any = False
+        if capture_path and os.path.exists(capture_path):
+            sent_any = self._send_photo(
+                image_path=capture_path,
+                caption=text,
+            )
+        elif capture_path:
+            logger.warning("Plate capture path %s not found, skipping photo.", capture_path)
+
+        if crop_path and os.path.exists(crop_path):
+            crop_caption = self._format_plate_crop_caption(payload)
+            self._send_photo(image_path=crop_path, caption=crop_caption)
+            sent_any = True
+        elif crop_path:
+            logger.warning("Plate crop path %s not found, skipping photo.", crop_path)
+
+        if not sent_any:
+            self._send_text_message(text)
+
     @staticmethod
     def _format_message(payload: dict) -> str:
         ts = payload["timestamp"].strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -119,6 +173,35 @@ class NotificationManager:
             f"Camera: {payload['camera']}\n"
             f"Person: {payload['person']}\n"
             f"Confidence: {confidence}%"
+        )
+
+    @staticmethod
+    def _format_plate_message(payload: dict) -> str:
+        ts = payload["timestamp"].strftime("%Y-%m-%d %H:%M:%S UTC")
+        confidence = round(payload["confidence"], 2)
+        occurrences = payload.get("occurrences", 1)
+        watchlist = payload.get("watchlist_hit", False)
+        watchlist_line = "Watchlist: YES" if watchlist else "Watchlist: no"
+        return (
+            f"ICU Plate Alert\n"
+            f"Camera: {payload['camera']}\n"
+            f"Plate: {payload['plate']}\n"
+            f"Confidence: {confidence}%\n"
+            f"Occurrences: {occurrences}\n"
+            f"{watchlist_line}\n"
+            f"Detected at: {ts}"
+        )
+
+    @staticmethod
+    def _format_plate_crop_caption(payload: dict) -> str:
+        confidence = round(payload["confidence"], 2)
+        occurrences = payload.get("occurrences", 1)
+        return (
+            f"Plate crop\n"
+            f"Camera: {payload['camera']}\n"
+            f"Plate: {payload['plate']}\n"
+            f"Confidence: {confidence}%\n"
+            f"Occurrences: {occurrences}"
         )
 
     def _send_text_message(self, text: str) -> None:

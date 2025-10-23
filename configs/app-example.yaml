@@ -12,3 +12,18 @@ notifications:
 logging:
   level: INFO
   file: face_recognition.log
+
+plates:
+  enabled: false
+  watchlist: []
+  alert_on_watchlist: true
+  alert_on_every_plate: false
+  capture_cooldown: 30
+  storage:
+    base_dir: captures/plates
+    summary_file: plates_summary.json
+    max_captures_per_plate: 20
+  ocr:
+    languages:
+      - en
+    use_gpu: false
