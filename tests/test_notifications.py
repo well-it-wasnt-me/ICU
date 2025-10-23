@@ -47,7 +47,11 @@ def notification_manager(monkeypatch):
     dummy_session = DummySession()
     monkeypatch.setattr("requests.Session", lambda: dummy_session)
 
-    manager = NotificationManager(telegram_bot_token="token", telegram_chat_id="chat")
+    manager = NotificationManager(
+        telegram_bot_token="token",
+        telegram_chat_id="chat",
+        enable_command_handler=False,
+    )
     manager._executor = ImmediateExecutor()
     manager._session = dummy_session
     yield manager, dummy_session

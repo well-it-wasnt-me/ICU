@@ -160,6 +160,9 @@ def main():
             telegram_chat_id=chat_id,
             timeout=telegram_cfg.get('timeout', 10),
             max_workers=telegram_cfg.get('max_workers', 2),
+            train_dir=args.train_dir,
+            enable_command_handler=telegram_cfg.get('enable_commands', True),
+            command_poll_timeout=telegram_cfg.get('command_poll_timeout', 20),
         )
     elif telegram_cfg and (bot_token or chat_id):
         logger.warning("Incomplete Telegram configuration detected. Notifications disabled.")

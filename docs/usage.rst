@@ -77,6 +77,18 @@ Everytime the script will find a face not only you’ll find a screenshot
 of that frame inside the folder captures but also a side by side view of
 what the camera is seeing and the image used for the match.
 
+Add POIs from Telegram
+~~~~~~~~~~~~~~~~~~~~~~
+
+With Telegram notifications enabled, you can add new people of interest straight from chat:
+
+1. Send ``add_poi`` to your bot.
+2. The bot replies ``name`` — answer with the person’s display name.
+3. The bot asks for ``picture(s)`` — upload one or more photos.
+4. When finished, reply with ``done`` (or ``cancel`` to abort).
+
+The images are written to the training directory (``poi/<NAME>`` by default), converted to RGB, and ready for your next training run. Retrain the KNN model to include the new person in live recognition.
+
 Finding Public Streams
 ~~~~~~~~~~~~~~~~~~~~~~
 
