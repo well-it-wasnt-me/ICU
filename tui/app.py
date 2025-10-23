@@ -4,9 +4,12 @@ Textual application entry point for ICU.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
+import threading
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, Optional
 from textual import events
 from textual.app import App, ComposeResult
@@ -91,6 +94,9 @@ class IcuTextualApp(App[None]):
         self._log_tail_buffer: str = ""
         self._log_poll_timer = None
         self._log_tail_window_bytes: int = 32768
+        self._telegram_retrain_event = threading.Event()
+        self._telegram_training_inflight = False
+        self._restart_streams_after_training = False
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -153,6 +159,9 @@ class IcuTextualApp(App[None]):
             self._log_poll_timer = None
         if self.stream_supervisor and self.stream_supervisor.is_running():
             self.stream_supervisor.stop()
+        if self.notification_manager:
+            self.notification_manager.shutdown()
+            self.notification_manager = None
 
     async def on_navigation_selection(self, event: NavigationSelection) -> None:
         self._log(f"Selected navigation item {event.item_id!r}")
@@ -188,6 +197,7 @@ class IcuTextualApp(App[None]):
                 model_path=self.model_path,
                 use_gpu=self.use_gpu,
             )
+        self._configure_notifier_from_app_config()
         if self.settings_view:
             self.settings_view.update_values(
                 distance_threshold=self.distance_threshold,
@@ -254,6 +264,8 @@ class IcuTextualApp(App[None]):
         self.train_dir = config.train_dir
         self.model_path = config.model_path
         self.use_gpu = config.use_gpu
+        if self.notification_manager:
+            self.notification_manager.train_dir = Path(self.train_dir)
         if self.train_view:
             self.train_view.update_values(
                 train_dir=self.train_dir,
@@ -306,7 +318,12 @@ class IcuTextualApp(App[None]):
             self._log(f"[red]Failed to load model: {exc}[/]")
             return
 
-        notifier = self._create_notifier(self.app_config)
+        notifier = self.notification_manager
+        if notifier is None:
+            notifier = self._create_notifier(self.app_config)
+            self.notification_manager = notifier
+        if notifier:
+            notifier.train_dir = Path(self.train_dir)
         self.stream_supervisor = StreamSupervisor(
             recognizer,
             notifier=notifier,
@@ -383,6 +400,7 @@ class IcuTextualApp(App[None]):
                 model_path=self.model_path,
                 use_gpu=self.use_gpu,
             )
+        self._configure_notifier_from_app_config()
 
     async def _load_camera_config(self) -> None:
         try:
@@ -406,6 +424,97 @@ class IcuTextualApp(App[None]):
                 self.camera_board.update_camera(state)
             if self.streams_view:
                 self.streams_view.update_camera(state)
+
+    def _configure_notifier_from_app_config(self) -> None:
+        if self.notification_manager:
+            self.notification_manager.train_dir = Path(self.train_dir)
+            self.notification_manager.set_retrain_handler(self._queue_telegram_retrain_request)
+            return
+        manager = self._create_notifier(self.app_config)
+        if manager:
+            manager.train_dir = Path(self.train_dir)
+            manager.set_retrain_handler(self._queue_telegram_retrain_request)
+            self.notification_manager = manager
+
+    def _current_train_config(self) -> TrainView.TrainConfig:
+        if self.train_view:
+            return self.train_view.current_config()
+        return TrainView.TrainConfig(
+            train_dir=self.train_dir,
+            model_path=self.model_path,
+            use_gpu=self.use_gpu,
+            n_neighbors=None,
+        )
+
+    def _queue_telegram_retrain_request(self) -> None:
+        if self._telegram_retrain_event.is_set():
+            if self.notification_manager:
+                self.notification_manager.send_operator_message(
+                    "A retraining request is already in progress; I'll let you know once it finishes."
+                )
+            return
+
+        self._telegram_retrain_event.set()
+
+        def schedule() -> None:
+            self._log("[cyan]Retrain requested via Telegram.[/]")
+            asyncio.create_task(self._handle_telegram_retrain_request())
+
+        try:
+            self.call_from_thread(schedule)
+        except Exception as exc:  # pylint: disable=broad-except
+            logger.error("Failed to schedule Telegram retraining: %s", exc)
+            self._telegram_retrain_event.clear()
+            if self.notification_manager:
+                self.notification_manager.send_operator_message(
+                    f"Unable to start retraining automatically: {exc}"
+                )
+
+    async def _handle_telegram_retrain_request(self) -> None:
+        if self.training_manager.is_running():
+            message = "Retraining skipped because another training session is already running."
+            self._log(f"[yellow]{message}[/]")
+            if self.notification_manager:
+                self.notification_manager.send_operator_message(message)
+            self._telegram_retrain_event.clear()
+            self._restart_streams_after_training = False
+            return
+
+        was_running = bool(self.stream_supervisor and self.stream_supervisor.is_running())
+        if was_running:
+            self._log("Stopping streams before retraining...")
+            await self._stop_streams()
+
+        config = self._current_train_config()
+        self._restart_streams_after_training = was_running
+        self._telegram_training_inflight = True
+        if self.notification_manager:
+            self.notification_manager.send_operator_message("Starting retraining with the new POI images...")
+
+        try:
+            self._start_training(config)
+        except Exception as exc:  # pylint: disable=broad-except
+            self._telegram_training_inflight = False
+            self._telegram_retrain_event.clear()
+            self._log(f"[red]Failed to start retraining: {exc}[/]")
+            if self.notification_manager:
+                self.notification_manager.send_operator_message(f"Retraining failed to start: {exc}")
+            if was_running:
+                asyncio.create_task(self._start_streams())
+            self._restart_streams_after_training = False
+
+    def _handle_telegram_training_outcome(self, *, success: bool, message: Optional[str]) -> None:
+        if not self._telegram_training_inflight:
+            return
+        self._telegram_training_inflight = False
+        self._telegram_retrain_event.clear()
+        notice = message or ("Retraining completed." if success else "Retraining failed.")
+        if self.notification_manager:
+            self.notification_manager.send_operator_message(notice)
+        restart = self._restart_streams_after_training
+        self._restart_streams_after_training = False
+        if restart:
+            asyncio.create_task(self._start_streams())
 
     def _drain_runtime_events(self) -> None:
         for event in self.event_bus.drain():
@@ -477,6 +586,7 @@ class IcuTextualApp(App[None]):
 
         if event.phase == "failed":
             self._log(f"[red]Training failed: {event.message}[/]")
+            self._handle_telegram_training_outcome(success=False, message=event.message)
         elif event.phase == "completed":
             self._log(f"[green]{event.message}[/]")
             model_path = event.details.get("model_path") if event.details else None
@@ -488,6 +598,7 @@ class IcuTextualApp(App[None]):
                         model_path=self.model_path,
                         use_gpu=self.use_gpu,
                     )
+            self._handle_telegram_training_outcome(success=True, message=event.message)
         else:
             self._log(event.message or f"Training phase: {event.phase}")
 
@@ -625,6 +736,7 @@ class IcuTextualApp(App[None]):
                 train_dir=self.train_dir,
                 enable_command_handler=telegram_cfg.get("enable_commands", True),
                 command_poll_timeout=telegram_cfg.get("command_poll_timeout", 20),
+                retrain_handler=self._queue_telegram_retrain_request,
             )
         return None
 
