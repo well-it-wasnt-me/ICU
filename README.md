@@ -199,8 +199,9 @@ With Telegram notifications enabled, you can add new people-of-interest without 
 2. The bot replies `name` — answer with the display name for the person.
 3. The bot then asks for `picture(s)` — upload one or more photos (or screenshots) for that person.
 4. When you're done, reply with `done`. Send `cancel` at any point to abort.
+5. The bot will then offer to retrain immediately; reply `yes` to stop streams, retrain, and restart ICU with the new model (or `no` to handle it later).
 
-The images are saved under the configured training directory (default `poi/<NAME>`), converted to RGB, and ready for the next training run. Remember to retrain the KNN model so the new POI is recognised.
+The images are saved under the configured training directory (default `poi/<NAME>`), converted to RGB, and ready for the next training run. When you confirm the retrain step, ICU pauses streaming, rebuilds the classifier, and relaunches itself so detections include the new POI right away.
 
 ## Script Arguments
 ```bash

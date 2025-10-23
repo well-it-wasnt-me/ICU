@@ -86,8 +86,9 @@ With Telegram notifications enabled, you can add new people of interest straight
 2. The bot replies ``name`` — answer with the person’s display name.
 3. The bot asks for ``picture(s)`` — upload one or more photos.
 4. When finished, reply with ``done`` (or ``cancel`` to abort).
+5. The bot will then ask whether to retrain immediately — reply ``yes`` to stop streams, retrain, and restart ICU with the updated model (or ``no`` to handle it later).
 
-The images are written to the training directory (``poi/<NAME>`` by default), converted to RGB, and ready for your next training run. Retrain the KNN model to include the new person in live recognition.
+The images are written to the training directory (``poi/<NAME>`` by default), converted to RGB, and ready for your next training run. Confirming the retrain prompt triggers an automatic stop → retrain → restart sequence so the new person is recognised immediately.
 
 Finding Public Streams
 ~~~~~~~~~~~~~~~~~~~~~~

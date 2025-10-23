@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Callable, Dict, Optional
 
 import requests
 from requests.exceptions import RequestException
@@ -52,6 +52,7 @@ class NotificationManager:
         train_dir: str = "poi",
         enable_command_handler: bool = True,
         command_poll_timeout: int = 20,
+        retrain_handler: Optional[Callable[[], None]] = None,
     ) -> None:
         self.telegram_bot_token = telegram_bot_token
         self.telegram_chat_id = telegram_chat_id
@@ -69,12 +70,25 @@ class NotificationManager:
         self._last_update_id: Optional[int] = None
         self._sessions: Dict[str, AddPoiSession] = {}
         self._enable_command_handler = enable_command_handler
+        self._retrain_handler = retrain_handler
         if self.enabled and enable_command_handler:
             self._start_command_handler()
 
     @property
     def enabled(self) -> bool:
         return bool(self.telegram_bot_token and self.telegram_chat_id)
+
+    def set_retrain_handler(self, handler: Optional[Callable[[], None]]) -> None:
+        """Register or replace the callback invoked when a retrain is requested."""
+        self._retrain_handler = handler
+
+    def send_operator_message(self, text: str) -> None:
+        """
+        Queue a plain text Telegram message using the notification executor.
+        """
+        if not self.enabled or not self._session:
+            return
+        self._executor.submit(self._send_text_message, text)
 
     # Telegram command handling -------------------------------------------------
 
@@ -178,6 +192,9 @@ class NotificationManager:
 
         if text:
             lower_text = text.lower()
+            if session and session.stage == "awaiting_retrain_confirmation":
+                self._handle_retrain_confirmation(chat_id_str, session, lower_text)
+                return
             if lower_text == "add_poi":
                 if session:
                     self._send_text_message(
@@ -213,6 +230,43 @@ class NotificationManager:
     def _start_add_poi_session(self, chat_id_str: str) -> None:
         self._sessions[chat_id_str] = AddPoiSession(stage="awaiting_name")
         self._send_text_message("name")
+
+    def _handle_retrain_confirmation(
+        self,
+        chat_id_str: str,
+        session: AddPoiSession,
+        lower_text: str,
+    ) -> None:
+        if lower_text in {"yes", "y"}:
+            if self._retrain_handler:
+                self._send_text_message(
+                    "Starting training with the new images. Streams will restart after training completes."
+                )
+                self._sessions.pop(chat_id_str, None)
+                self._executor.submit(self._invoke_retrain_handler)
+            else:
+                self._send_text_message(
+                    "Automatic retraining is not configured for this bot. Please retrain manually when ready."
+                )
+                self._sessions.pop(chat_id_str, None)
+            return
+
+        if lower_text in {"no", "n", "cancel"}:
+            self._send_text_message("Okay, skipping automatic training for now.")
+            self._sessions.pop(chat_id_str, None)
+            return
+
+        self._send_text_message("Please reply with 'yes' or 'no', or type 'cancel' to abort.")
+
+    def _invoke_retrain_handler(self) -> None:
+        handler = self._retrain_handler
+        if not handler:
+            return
+        try:
+            handler()
+        except Exception as exc:  # pylint: disable=broad-except
+            logger.error("Retrain handler raised an error: %s", exc)
+            self.send_operator_message(f"Automatic retraining failed to start: {exc}")
 
     def _cancel_session(self, chat_id_str: str, aborted_by_user: bool = False) -> None:
         session = self._sessions.pop(chat_id_str, None)
@@ -352,7 +406,7 @@ class NotificationManager:
         return destination
 
     def _finalize_session(self, chat_id_str: str) -> None:
-        session = self._sessions.pop(chat_id_str, None)
+        session = self._sessions.get(chat_id_str)
         if not session:
             self._send_text_message("No add_poi session is currently active.")
             return
@@ -364,6 +418,7 @@ class NotificationManager:
 
         saved = session.photo_count
         directory = session.directory
+        remove_session = True
         if directory and directory.exists() and saved > 0:
             try:
                 ImageUtils.convert_images_to_rgb(str(directory))
@@ -372,9 +427,17 @@ class NotificationManager:
 
             person_label = session.original_name or session.slug or "POI"
             plural = "photo" if saved == 1 else "photos"
-            self._send_text_message(
-                f"Added {saved} {plural} for '{person_label}'. Remember to retrain the model to include this POI."
-            )
+            message = f"Added {saved} {plural} for '{person_label}'."
+            if not self._retrain_handler:
+                message += " Remember to retrain the model to include this POI."
+            self._send_text_message(message)
+
+            if self._retrain_handler:
+                session.stage = "awaiting_retrain_confirmation"
+                remove_session = False
+                self._send_text_message(
+                    "Retrain with the new images and restart now? Reply 'yes' or 'no'."
+                )
         else:
             if directory and not session.preexisting_directory:
                 try:
@@ -383,6 +446,9 @@ class NotificationManager:
                 except OSError as exc:
                     logger.warning("Failed to remove empty POI directory %s: %s", directory, exc)
             self._send_text_message("No photos were received. The add_poi session has been cancelled.")
+
+        if remove_session:
+            self._sessions.pop(chat_id_str, None)
 
     @staticmethod
     def _sanitize_name(raw_name: str) -> str:
