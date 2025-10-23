@@ -113,3 +113,37 @@ def test_notify_detection_falls_back_to_text(notification_manager, monkeypatch):
     assert sent, "Expected fallback text message to be sent."
     assert all(entry[0] != "photo" for entry in sent), "Photo should not be sent when files are missing."
     assert sent[0][0] == "text", "Should fall back to sending a text message."
+
+
+def test_notify_plate_detection(notification_manager, tmp_path, monkeypatch):
+    manager, session = notification_manager
+    capture = tmp_path / "plate.jpg"
+    crop = tmp_path / "crop.jpg"
+    capture.write_bytes(b"fake")
+    crop.write_bytes(b"fake")
+
+    sent = []
+    monkeypatch.setattr(
+        manager,
+        "_send_photo",
+        lambda image_path, caption: sent.append(("photo", Path(image_path).name, caption)) or True,
+    )
+    monkeypatch.setattr(
+        manager,
+        "_send_text_message",
+        lambda text: sent.append(("text", text)),
+    )
+
+    manager.notify_plate_detection(
+        camera_name="Cam",
+        plate_number="ABC123",
+        confidence=87.5,
+        occurrences=3,
+        capture_path=str(capture),
+        crop_path=str(crop),
+        watchlist_hit=True,
+    )
+
+    assert [entry[0] for entry in sent] == ["photo", "photo"], "Expected two plate photos to be sent."
+    assert "plate.jpg" in sent[0][1]
+    assert "crop.jpg" in sent[1][1]

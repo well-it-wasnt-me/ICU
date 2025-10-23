@@ -25,6 +25,8 @@ from stream_processor import StreamProcessor
 from notifications import NotificationManager
 from resource_monitor import ResourceMonitor
 from stream_finder import CameraStreamFinder, DiscoveredStream
+from plate_monitor import PlateDetectionHandler, PlateStore
+from plate_recognizer import PlateRecognizer
 
 
 def main():
@@ -162,6 +164,49 @@ def main():
     elif telegram_cfg and (bot_token or chat_id):
         logger.warning("Incomplete Telegram configuration detected. Notifications disabled.")
 
+    plates_cfg = app_config.get('plates', {}) if app_config else {}
+    plate_recognizer = None
+    plate_handler = None
+    if plates_cfg.get('enabled'):
+        try:
+            plate_recognizer = PlateRecognizer(
+                cascade_path=plates_cfg.get('cascade_path'),
+                ocr_languages=plates_cfg.get('ocr', {}).get('languages'),
+                ocr_gpu=plates_cfg.get('ocr', {}).get('use_gpu', False),
+                min_confidence=plates_cfg.get('min_confidence', 0.5),
+                min_plate_length=plates_cfg.get('min_plate_length', 4),
+                max_plate_length=plates_cfg.get('max_plate_length', 10),
+                max_detections_per_frame=plates_cfg.get('max_detections_per_frame', 5),
+            )
+        except Exception as exc:
+            logger.error("Failed to initialise plate recognizer: %s", exc)
+            plate_recognizer = None
+
+        if plate_recognizer and plate_recognizer.enabled:
+            storage_cfg = plates_cfg.get('storage', {})
+            base_dir = storage_cfg.get('base_dir', os.path.join('captures', 'plates'))
+            summary_filename = storage_cfg.get('summary_file', 'plates_summary.json')
+            max_captures = storage_cfg.get('max_captures_per_plate', 20)
+            plate_store = PlateStore(
+                base_dir=base_dir,
+                summary_filename=summary_filename,
+                max_captures_per_plate=max_captures,
+            )
+            notify_toggle = plates_cfg.get('use_notifications', True)
+            handler_notifier = notifier if notify_toggle else None
+            plate_handler = PlateDetectionHandler(
+                store=plate_store,
+                notifier=handler_notifier,
+                watchlist=tuple(plates_cfg.get('watchlist', [])),
+                alert_on_every_plate=plates_cfg.get('alert_on_every_plate', False),
+                alert_on_watchlist=plates_cfg.get('alert_on_watchlist', True),
+                capture_cooldown=plates_cfg.get('capture_cooldown', 30),
+                crop_padding=plates_cfg.get('crop_padding', 8),
+            )
+        elif plate_recognizer and not plate_recognizer.enabled:
+            logger.warning("Plate recognition disabled: OCR backend unavailable.")
+            plate_recognizer = None
+
     stream_processor = StreamProcessor(
         face_recognizer=face_recognizer,
         reference_images=reference_images,
@@ -170,6 +215,8 @@ def main():
         target_processing_fps=target_fps,
         resource_monitor=resource_monitor,
         cpu_pressure_threshold=cpu_pressure_threshold,
+        plate_recognizer=plate_recognizer,
+        plate_handler=plate_handler,
     )
 
     # Start processing each camera in a separate thread
