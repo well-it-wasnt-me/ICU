@@ -227,7 +227,8 @@ class FaceRecognizer:
 
         :param X_frame: A numpy array representing the image frame (BGR format).
         :param distance_threshold: A float specifying the threshold for valid face matching.
-        :return: A list of tuples, each containing the predicted identity and the corresponding face distance.
+        :return: A list of dictionaries, each containing the predicted identity, face distance, and location
+                 within the provided frame (as a tuple of (top, right, bottom, left)).
         """
         if not self.knn_clf:
             raise Exception("KNN classifier not loaded or trained.")
@@ -256,11 +257,24 @@ class FaceRecognizer:
 
             predictions = []
             for i, (pred, rec, box) in enumerate(zip(self.knn_clf.predict(embeddings), are_matches, boxes)):
-                face_distance = closest_distances[0][i][0]
+                face_distance = float(closest_distances[0][i][0])
+                location = self._mtcnn_box_to_location(box, X_frame.shape)
                 if rec:
-                    predictions.append((pred, face_distance))
+                    predictions.append(
+                        {
+                            "name": pred,
+                            "distance": face_distance,
+                            "location": location,
+                        }
+                    )
                 else:
-                    predictions.append(("unknown", face_distance))
+                    predictions.append(
+                        {
+                            "name": "unknown",
+                            "distance": face_distance,
+                            "location": location,
+                        }
+                    )
             return predictions
 
         else:
@@ -279,9 +293,53 @@ class FaceRecognizer:
 
             predictions = []
             for i, (pred, rec) in enumerate(zip(self.knn_clf.predict(faces_encodings), are_matches)):
-                distance = closest_distances[0][i][0]
+                distance = float(closest_distances[0][i][0])
+                location = self._clip_location(X_face_locations[i], X_frame.shape)
                 if rec:
-                    predictions.append((pred, distance))
+                    predictions.append(
+                        {
+                            "name": pred,
+                            "distance": distance,
+                            "location": location,
+                        }
+                    )
                 else:
-                    predictions.append(("unknown", distance))
+                    predictions.append(
+                        {
+                            "name": "unknown",
+                            "distance": distance,
+                            "location": location,
+                        }
+                    )
             return predictions
+
+    @staticmethod
+    def _clip_location(location, frame_shape):
+        """
+        Ensure the face location stays within the frame boundaries.
+
+        :param location: Tuple in (top, right, bottom, left) format.
+        :param frame_shape: Shape tuple from the frame (height, width, channels).
+        :return: Tuple of floats in (top, right, bottom, left) format within frame bounds.
+        """
+        top, right, bottom, left = location
+        height, width = frame_shape[:2]
+        max_y = max(0, height - 1)
+        max_x = max(0, width - 1)
+        top = float(max(0, min(max_y, top)))
+        right = float(max(0, min(max_x, right)))
+        bottom = float(max(0, min(max_y, bottom)))
+        left = float(max(0, min(max_x, left)))
+        return top, right, bottom, left
+
+    @staticmethod
+    def _mtcnn_box_to_location(box, frame_shape):
+        """
+        Convert an MTCNN bounding box to (top, right, bottom, left) format and clamp it.
+
+        :param box: Bounding box from MTCNN in (left, top, right, bottom) order.
+        :param frame_shape: Shape tuple from the frame (height, width, channels).
+        :return: Tuple of floats in (top, right, bottom, left) format.
+        """
+        left, top, right, bottom = box
+        return FaceRecognizer._clip_location((top, right, bottom, left), frame_shape)
