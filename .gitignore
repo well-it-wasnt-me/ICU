@@ -4,6 +4,7 @@
 cameras.yaml
 configs/cameras.yaml
 configs/app.yaml
+configs/plates_watchlist.txt
 venv
 captures/**/*
 poi/**/*

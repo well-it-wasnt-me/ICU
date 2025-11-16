@@ -11,10 +11,10 @@ import shutil
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, Tuple
 
 import requests
 from requests.exceptions import RequestException
@@ -33,13 +33,14 @@ class AddPoiSession:
     directory: Optional[Path] = None
     preexisting_directory: bool = False
     photo_count: int = 0
+    started_at: datetime = field(default_factory=datetime.utcnow)
 
 
 class NotificationManager:
     """
     Manage outbound notifications for detection events.
 
-    Currently supports Telegram messages through the bot API. Messages are sent
+    Currently, supports Telegram messages through the bot API. Messages are sent
     on a background thread so the recognition pipeline is not blocked.
     """
 
@@ -71,6 +72,7 @@ class NotificationManager:
         self._sessions: Dict[str, AddPoiSession] = {}
         self._enable_command_handler = enable_command_handler
         self._retrain_handler = retrain_handler
+        self._add_plate_handler: Optional[Callable[[str], Tuple[bool, str]]] = None
         if self.enabled and enable_command_handler:
             self._start_command_handler()
 
@@ -81,6 +83,13 @@ class NotificationManager:
     def set_retrain_handler(self, handler: Optional[Callable[[], None]]) -> None:
         """Register or replace the callback invoked when a retrain is requested."""
         self._retrain_handler = handler
+
+    def set_plate_watchlist_handler(
+        self,
+        handler: Optional[Callable[[str], Tuple[bool, str]]],
+    ) -> None:
+        """Register a callback that adds plates to the watchlist."""
+        self._add_plate_handler = handler
 
     def send_operator_message(self, text: str) -> None:
         """
@@ -188,32 +197,20 @@ class NotificationManager:
             return
 
         session = self._sessions.get(chat_id_str)
-        text = (message.get("text") or "").strip()
+        text_raw = message.get("text") or ""
+        text = text_raw.strip()
 
         if text:
-            lower_text = text.lower()
-            if session and session.stage == "awaiting_retrain_confirmation":
-                self._handle_retrain_confirmation(chat_id_str, session, lower_text)
+            normalized = text.lower().lstrip("/")
+            if session and session.stage == "awaiting_retrain_confirmation" and normalized in {"yes", "y", "no", "n", "cancel"}:
+                self._handle_retrain_confirmation(chat_id_str, session, normalized)
                 return
-            if lower_text == "add_poi":
-                if session:
-                    self._send_text_message(
-                        "An add_poi session is already in progress. Send photos or 'done', or type 'cancel' to abort."
-                    )
-                else:
-                    self._start_add_poi_session(chat_id_str)
-                return
-            if lower_text == "cancel":
-                if session:
-                    self._cancel_session(chat_id_str, aborted_by_user=True)
-                else:
-                    self._send_text_message("No add_poi session is currently active.")
-                return
-            if lower_text == "done":
-                if session:
-                    self._finalize_session(chat_id_str)
-                else:
-                    self._send_text_message("No add_poi session is currently active.")
+
+            command, args = self._extract_command(text)
+            if command:
+                if self._handle_command(chat_id_str, session, command, args):
+                    return
+                self._send_text_message("Unknown command. Send /help for a list of available commands.")
                 return
 
             if session and session.stage == "awaiting_name":
@@ -227,9 +224,172 @@ class NotificationManager:
         elif "photo" in message:
             self._send_text_message("Send 'add_poi' first so I know where to store these photos.")
 
-    def _start_add_poi_session(self, chat_id_str: str) -> None:
-        self._sessions[chat_id_str] = AddPoiSession(stage="awaiting_name")
-        self._send_text_message("name")
+    def _start_add_poi_session(self, chat_id_str: str, initial_name: Optional[str] = None) -> None:
+        session = AddPoiSession(stage="awaiting_name")
+        self._sessions[chat_id_str] = session
+        if initial_name:
+            self._set_session_name(chat_id_str, session, initial_name)
+        else:
+            self._send_text_message("name")
+
+    @staticmethod
+    def _extract_command(text: str) -> Tuple[Optional[str], str]:
+        stripped = text.strip()
+        if not stripped:
+            return None, ""
+
+        if stripped.startswith("/"):
+            command_part, _, args = stripped.partition(" ")
+            command = command_part[1:]
+            if "@" in command:
+                command = command.split("@", 1)[0]
+            return command.lower(), args.strip()
+
+        lowered = stripped.lower()
+        aliases = {"add_poi", "done", "cancel", "help", "status", "list_poi", "add_plate"}
+        if lowered in aliases:
+            return lowered, ""
+        return None, ""
+
+    def _handle_command(
+        self,
+        chat_id_str: str,
+        session: Optional[AddPoiSession],
+        command: str,
+        args: str,
+    ) -> bool:
+        if command == "help":
+            self._send_help_message()
+            return True
+
+        if command == "status":
+            self._send_session_status(session)
+            return True
+
+        if command == "list_poi":
+            self._handle_list_poi()
+            return True
+
+        if command == "add_plate":
+            if not self._add_plate_handler:
+                self._send_text_message("Plate management is not enabled for this bot.")
+                return True
+            plate_value = args.strip()
+            if not plate_value:
+                self._send_text_message("Usage: /add_plate <PLATE_NUMBER>")
+                return True
+            success, response = self._add_plate_handler(plate_value)
+            self._send_text_message(response)
+            return True
+
+        if command == "add_poi":
+            if session:
+                self._send_text_message(
+                    "An add_poi session is already in progress. Send photos or 'done', or type 'cancel' to abort."
+                )
+                return True
+            initial_name = args.strip() or None
+            self._start_add_poi_session(chat_id_str, initial_name=initial_name)
+            return True
+
+        if command == "cancel":
+            if session:
+                self._cancel_session(chat_id_str, aborted_by_user=True)
+            else:
+                self._send_text_message("No add_poi session is currently active.")
+            return True
+
+        if command == "done":
+            if session:
+                self._finalize_session(chat_id_str)
+            else:
+                self._send_text_message("No add_poi session is currently active.")
+            return True
+
+        return False
+
+    def _send_help_message(self) -> None:
+        commands = [
+            "/add_poi [Name] — start adding a person of interest (include the name to skip the prompt).",
+            "/status — show the current add_poi session progress.",
+            "/list_poi — list the known people already stored on disk.",
+            "/add_plate <PLATE> — add a licence plate to the watchlist.",
+            "/done — finish the current add_poi session once all photos are uploaded.",
+            "/cancel — abort the current session and discard any unstored photos.",
+            "/help — display this help message.",
+        ]
+        body = "Telegram commands:\n" + "\n".join(commands)
+        self._send_text_message(body)
+
+    def _send_session_status(self, session: Optional[AddPoiSession]) -> None:
+        if not session:
+            self._send_text_message("No add_poi session is currently active.")
+            return
+
+        stage_labels = {
+            "awaiting_name": "Waiting for the person's name",
+            "collecting_photos": "Collecting training photos",
+            "awaiting_retrain_confirmation": "Waiting for retrain confirmation",
+        }
+        hints = {
+            "awaiting_name": "Reply with the person's name to continue.",
+            "collecting_photos": "Send more photos or reply with 'done' when finished.",
+            "awaiting_retrain_confirmation": "Reply 'yes' to retrain now or 'no' to skip.",
+        }
+
+        stage = stage_labels.get(session.stage, session.stage)
+        since = session.started_at.strftime("%Y-%m-%d %H:%M UTC")
+        person = session.original_name or "(not set yet)"
+        plural = "photo" if session.photo_count == 1 else "photos"
+        message = (
+            "Current add_poi session:\n"
+            f"- Stage: {stage}\n"
+            f"- Name: {person}\n"
+            f"- Stored: {session.photo_count} {plural}\n"
+            f"- Started: {since}"
+        )
+        hint = hints.get(session.stage)
+        if hint:
+            message += f"\n\nNext step: {hint}"
+        self._send_text_message(message)
+
+    def _handle_list_poi(self) -> None:
+        try:
+            candidates = sorted(
+                [p for p in self.train_dir.iterdir() if p.is_dir()],
+                key=lambda path: path.name.lower(),
+            )
+        except FileNotFoundError:
+            self._send_text_message(
+                f"The training directory '{self.train_dir}' does not exist yet. Add a POI first."
+            )
+            return
+        except OSError as exc:
+            logger.error("Unable to inspect training directory %s: %s", self.train_dir, exc)
+            self._send_text_message("Could not read the training directory. Try again later.")
+            return
+
+        if not candidates:
+            self._send_text_message("No people of interest have been stored yet.")
+            return
+
+        lines = []
+        limit = 20
+        for idx, folder in enumerate(candidates[:limit], start=1):
+            try:
+                count = sum(1 for item in folder.iterdir() if item.is_file())
+            except OSError as exc:
+                logger.warning("Failed to count files in %s: %s", folder, exc)
+                count = 0
+            plural = "file" if count == 1 else "files"
+            lines.append(f"{idx}. {folder.name} ({count} {plural})")
+
+        remaining = len(candidates) - limit
+        if remaining > 0:
+            lines.append(f"...and {remaining} more.")
+
+        message = "People already known:\n" + "\n".join(lines)
+        self._send_text_message(message)
 
     def _handle_retrain_confirmation(
         self,

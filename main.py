@@ -240,6 +240,9 @@ def main():
             base_dir = storage_cfg.get('base_dir', os.path.join('captures', 'plates'))
             summary_filename = storage_cfg.get('summary_file', 'plates_summary.json')
             max_captures = storage_cfg.get('max_captures_per_plate', 20)
+            watchlist_file = plates_cfg.get('watchlist_file')
+            if watchlist_file is None:
+                watchlist_file = os.path.join('configs', 'plates_watchlist.txt')
             plate_store = PlateStore(
                 base_dir=base_dir,
                 summary_filename=summary_filename,
@@ -255,7 +258,10 @@ def main():
                 alert_on_watchlist=plates_cfg.get('alert_on_watchlist', True),
                 capture_cooldown=plates_cfg.get('capture_cooldown', 30),
                 crop_padding=plates_cfg.get('crop_padding', 8),
+                watchlist_file=watchlist_file,
             )
+            if notifier:
+                notifier.set_plate_watchlist_handler(plate_handler.add_plate_to_watchlist)
         elif plate_recognizer and not plate_recognizer.enabled:
             logger.warning("Plate recognition disabled: OCR backend unavailable.")
             plate_recognizer = None

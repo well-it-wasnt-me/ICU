@@ -18,6 +18,7 @@ logging:
 plates:
   enabled: false
   watchlist: []
+  watchlist_file: configs/plates_watchlist.txt
   alert_on_watchlist: true
   alert_on_every_plate: false
   capture_cooldown: 30

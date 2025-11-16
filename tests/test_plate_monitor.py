@@ -1,6 +1,9 @@
 import json
 import os
+import sys
 from datetime import datetime, timedelta
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import numpy as np
 
@@ -79,3 +82,24 @@ def test_plate_handler_cooldown(tmp_path):
     with open(store.summary_path, "r", encoding="utf-8") as handle:
         summary = json.load(handle)
     assert summary["cameras"]["TestCam"]["ABC123"]["count"] == 2
+
+
+def test_add_plate_to_watchlist_persists(tmp_path):
+    store = PlateStore(base_dir=str(tmp_path))
+    watchlist_file = tmp_path / "watchlist.txt"
+    handler = PlateDetectionHandler(
+        store=store,
+        notifier=None,
+        watchlist=("ABC123",),
+        watchlist_file=str(watchlist_file),
+    )
+
+    success, message = handler.add_plate_to_watchlist("XYZ-999")
+    assert success is True
+    assert "XYZ999" in handler.watchlist
+    with open(watchlist_file, "r", encoding="utf-8") as handle:
+        lines = [line.strip() for line in handle if line.strip()]
+    assert "XYZ999" in lines
+
+    success, message = handler.add_plate_to_watchlist("xyz999")
+    assert success is False, "Duplicate plates should not be added twice."

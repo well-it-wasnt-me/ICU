@@ -151,3 +151,22 @@ def test_notify_plate_detection(notification_manager, tmp_path, monkeypatch):
     assert [entry[0] for entry in sent] == ["photo", "photo"], "Expected two plate photos to be sent."
     assert "plate.jpg" in sent[0][1]
     assert "crop.jpg" in sent[1][1]
+
+
+def test_add_plate_command(notification_manager, monkeypatch):
+    manager, session = notification_manager
+    messages = []
+    monkeypatch.setattr(manager, "_send_text_message", lambda text: messages.append(text))
+
+    captured = {}
+
+    def fake_add_plate(value: str):
+        captured["plate"] = value
+        return True, f"Plate {value} stored."
+
+    manager.set_plate_watchlist_handler(fake_add_plate)
+    handled = manager._handle_command("chat", None, "add_plate", "XYZ123")
+
+    assert handled is True
+    assert captured["plate"] == "XYZ123"
+    assert messages[-1] == "Plate XYZ123 stored."

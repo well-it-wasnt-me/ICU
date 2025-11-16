@@ -9,7 +9,8 @@ import os
 import threading
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, Optional, Tuple
+from pathlib import Path
+from typing import Dict, Optional, Set, Tuple
 
 import cv2
 import numpy as np
@@ -140,6 +141,7 @@ class PlateDetectionHandler:
         alert_on_watchlist: bool = True,
         capture_cooldown: int = 30,
         crop_padding: int = 8,
+        watchlist_file: Optional[str] = None,
     ) -> None:
         self.store = store
         self.notifier = notifier
@@ -147,7 +149,9 @@ class PlateDetectionHandler:
         self.alert_on_watchlist = alert_on_watchlist
         self.capture_cooldown = max(0, capture_cooldown)
         self.crop_padding = max(0, crop_padding)
-        self.watchlist = {_normalise_plate(entry) for entry in (watchlist or ())}
+        self._watchlist_file = Path(watchlist_file).expanduser() if watchlist_file else None
+        self._watchlist_lock = threading.Lock()
+        self.watchlist = self._load_watchlist(watchlist)
         self._last_capture: Dict[Tuple[str, str], float] = {}
 
     def handle(
@@ -182,7 +186,7 @@ class PlateDetectionHandler:
             crop_path=crop_path,
         )
 
-        watchlist_hit = plate_key in self.watchlist
+        watchlist_hit = self._is_watchlist_hit(plate_key)
         should_notify = (
             (watchlist_hit and self.alert_on_watchlist)
             or (self.alert_on_every_plate and not cooldown_active)
@@ -218,6 +222,66 @@ class PlateDetectionHandler:
         )
 
     # Internal helpers -------------------------------------------------
+
+    def _load_watchlist(self, initial: Optional[Tuple[str, ...]]) -> Set[str]:
+        entries = {
+            plate
+            for plate in (_normalise_plate(entry) for entry in (initial or ()))
+            if plate
+        }
+        if self._watchlist_file:
+            entries.update(self._load_watchlist_file())
+        return entries
+
+    def _load_watchlist_file(self) -> Set[str]:
+        if not self._watchlist_file or not self._watchlist_file.exists():
+            return set()
+        try:
+            with open(self._watchlist_file, "r", encoding="utf-8") as handle:
+                return {
+                    plate
+                    for plate in (_normalise_plate(line.strip()) for line in handle)
+                    if plate
+                }
+        except OSError as exc:
+            logger.error("Failed to read plate watchlist file %s: %s", self._watchlist_file, exc)
+            return set()
+
+    def _is_watchlist_hit(self, plate_key: str) -> bool:
+        if not plate_key:
+            return False
+        with self._watchlist_lock:
+            return plate_key in self.watchlist
+
+    def add_plate_to_watchlist(self, plate_value: str) -> Tuple[bool, str]:
+        """
+        Add a plate to the in-memory (and optional persisted) watchlist.
+        Returns (success, human_message).
+        """
+        normalized = _normalise_plate(plate_value)
+        if not normalized:
+            return False, "Invalid plate value. Use letters/numbers only."
+
+        with self._watchlist_lock:
+            if normalized in self.watchlist:
+                return False, f"Plate '{normalized}' is already on the watchlist."
+            self.watchlist.add(normalized)
+
+        if self._watchlist_file:
+            try:
+                self._watchlist_file.parent.mkdir(parents=True, exist_ok=True)
+                # Ensure duplicates are not written multiple times.
+                existing = self._load_watchlist_file()
+                if normalized not in existing:
+                    with open(self._watchlist_file, "a", encoding="utf-8") as handle:
+                        handle.write(f"{normalized}\n")
+            except OSError as exc:
+                logger.error("Failed to update plate watchlist file %s: %s", self._watchlist_file, exc)
+                return True, (
+                    f"Plate '{normalized}' added to the active watchlist, but failed to update the watchlist file."
+                )
+
+        return True, f"Plate '{normalized}' added to the watchlist."
 
     def _is_in_cooldown(self, camera_name: str, plate: str, timestamp: datetime) -> bool:
         if self.capture_cooldown == 0:
