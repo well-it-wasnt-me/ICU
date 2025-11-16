@@ -97,6 +97,7 @@ logging:
 plates:
   enabled: false
   watchlist: []
+  watchlist_file: configs/plates_watchlist.txt
   alert_on_watchlist: true
   alert_on_every_plate: false
   capture_cooldown: 30
@@ -115,6 +116,27 @@ plates:
 When configured, Telegram alerts include both the captured frame and the comparison image so you can verify the match without digging into the filesystem.
 
 Enabling the optional `plates` block turns on automatic licence plate detection via EasyOCR. Specify a `watchlist` of plate numbers (case-insensitive) you want to be alerted about. Captured plates are stored under `captures/plates/<camera>/<plate>/` and summarised in `plates_summary.json`, including the number of times each plate has been seen. Set `alert_on_every_plate` to `true` if you want Telegram notifications for every plate, or keep it `false` to only notify on watchlist hits. The first run will download EasyOCR models – make sure outbound network access is available.
+
+### Enable Telegram Notifications
+
+1. [Create a bot](https://core.telegram.org/bots#3-how-do-i-create-a-bot) with `@BotFather` and copy the API token it gives you.
+2. Send any message to your new bot (or add it to a private channel) so Telegram creates a chat for it.
+3. Open `https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates` in a browser (or run `curl`) to read the JSON payload that contains the numeric `chat` → `id` for that conversation. That is the `chat_id`.
+4. Fill in the `notifications.telegram` block inside `configs/app.yaml`:
+
+   ```yaml
+   notifications:
+     telegram:
+       bot_token: "123456:ABCDEF"
+       chat_id: "123456789"
+       enable_commands: true
+       timeout: 10
+       max_workers: 2
+   ```
+
+5. Launch ICU normally (`python main.py`). When the bot token and chat id are valid, the app automatically spins up a background poller that listens for commands such as `/add_poi`, `/status`, `/list_poi`, `/done`, `/cancel` and `/help`.
+
+If you only want outbound notifications (no command handler) set `enable_commands: false`.
 
 ### Hunting For Public Cameras
 
@@ -195,13 +217,36 @@ what the camera is seeing and the image used for the match.
 
 With Telegram notifications enabled, you can add new people-of-interest without touching the filesystem:
 
-1. Send `add_poi` to your bot.
-2. The bot replies `name` — answer with the display name for the person.
+1. Send `/add_poi` to your bot (or `/add_poi Alice` to skip the name prompt).
+2. The bot replies `name` — answer with the display name for the person if you didn't provide it inline.
 3. The bot then asks for `picture(s)` — upload one or more photos (or screenshots) for that person.
-4. When you're done, reply with `done`. Send `cancel` at any point to abort.
+4. When you're done, reply with `done` (or tap `/done`). Send `/cancel` at any point to abort.
 5. The bot will then offer to retrain immediately; reply `yes` to stop streams, retrain, and restart ICU with the new model (or `no` to handle it later).
 
 The images are saved under the configured training directory (default `poi/<NAME>`), converted to RGB, and ready for the next training run. When you confirm the retrain step, ICU pauses streaming, rebuilds the classifier, and relaunches itself so detections include the new POI right away.
+
+Extra Telegram commands for convenience:
+
+- `/add_poi [Name]` — start a session (include the name inline to skip the prompt).
+- `/add_plate <Plate>` — append a licence plate to the watchlist (persisted to `configs/plates_watchlist.txt`).
+- `/status` — show the current progress of the add_poi session (name, photos, timestamps, next step).
+- `/list_poi` — list the already-stored POIs from disk so you know what exists.
+- `/done` — finish the current session once you're done uploading images.
+- `/cancel` — abort the current session and discard temporary files.
+- `/help` — show a cheat sheet with all supported commands.
+
+### Plate Monitor & Watchlist
+
+ICU can also look for licence plates inside each camera frame:
+
+1. Edit `configs/app.yaml` and set `plates.enabled: true`. The sample config already contains sensible defaults for storage, watchlists, cooldowns, and OCR options.
+2. Populate the `plates.watchlist` array with plate numbers you care about. Matching is case-insensitive and ignores spaces/dashes.
+3. Point `watchlist_file` at a writable path (defaults to `configs/plates_watchlist.txt`). The bot appends new entries here so they survive restarts.
+4. (Optional) Flip `alert_on_every_plate: true` to receive notifications for every detection, not just watchlist hits. You can also disable plate messages entirely by setting `plates.use_notifications: false`.
+5. Start ICU as usual. The first run downloads OCR models (EasyOCR) so expect a longer setup the first time.
+6. When a plate is detected, ICU writes annotated captures plus crops under `captures/plates/<camera>/<plate>/` and appends metadata to `plates_summary.json`. If Telegram notifications are enabled, the bot posts the capture/crop plus whether the plate was on your watchlist.
+
+Need to add a plate while you’re away from the keyboard? Send `/add_plate <PlateNumber>` to the bot. The plate is normalised (uppercase, punctuation removed), added to the active watchlist immediately, and persisted to `watchlist_file` so it’s still there after a restart. Use `/list_poi` separately to keep tabs on face-training folders.
 
 ## Script Arguments
 ```bash
@@ -225,7 +270,20 @@ options:
                         Distance threshold
   --train               Train the model
   --use_gpu             Use GPU with facenet-pytorch
+
+## Documentation
+
+The documentation is now powered by [MkDocs](https://www.mkdocs.org/) +
+[mkdocstrings](https://mkdocstrings.github.io/). To preview it locally:
+
+```bash
+pip install -r docs/requirements.txt
+mkdocs serve
 ```
+
+Point your browser to the address shown in the terminal (defaults to
+http://127.0.0.1:8000/) to browse the live docs. Use `mkdocs build` to produce a
+static site inside `site/` for deployment.
 
 ## Known Issues
 * The confidence level shown is "backward" (lower value = higher accuracy...I know...I should stop drinking)

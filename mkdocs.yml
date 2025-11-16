@@ -1,0 +1,57 @@
+site_name: ICU
+site_description: Documentation for the ICU camera monitoring toolkit.
+site_url: ""
+
+theme:
+  name: readthedocs
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Usage: usage.md
+  - Reference:
+      - Overview: modules.md
+      - face_recognizer: face_recognizer.md
+      - image_utils: image_utils.md
+      - logger_setup: logger_setup.md
+      - main: main.md
+      - notifications: notifications.md
+      - plate_monitor: plate_monitor.md
+      - plate_recognizer: plate_recognizer.md
+      - resource_monitor: resource_monitor.md
+      - runtime_events: runtime_events.md
+      - stream_finder: stream_finder.md
+      - stream_processor: stream_processor.md
+      - textual_app: textual_app.md
+      - TUI:
+          - Overview: tui.md
+          - tui.services: tui.services.md
+          - tui.views: tui.views.md
+          - tui.widgets: tui.widgets.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            members_order: source
+            show_if_no_docstring: true
+            inherited_members: true
+            show_root_heading: false
+            show_signature: true
+            show_signature_annotations: true
+            show_source: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+  - tables
