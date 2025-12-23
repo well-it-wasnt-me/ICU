@@ -1,0 +1,3043 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>tui.views - ICU</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "tui.views";
+        var mkdocs_page_input_path = "tui.views.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICU
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../modules/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../face_recognizer/">face_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../image_utils/">image_utils</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logger_setup/">logger_setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../main/">main</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notifications/">notifications</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_monitor/">plate_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_recognizer/">plate_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../resource_monitor/">resource_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../runtime_events/">runtime_events</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_finder/">stream_finder</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_processor/">stream_processor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../textual_app/">textual_app</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >TUI</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../tui/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.services/">tui.services</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">tui.views</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#tui.views">views</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.views.__all__">__all__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.views.LogsView">LogsView</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.LogsView.DEFAULT_CSS">DEFAULT_CSS</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.LogsView.table">table</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.LogsView.clear_button">clear_button</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.LogsView.Clear">Clear</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.LogsView.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.LogsView.compose">compose</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.LogsView.on_button_pressed">on_button_pressed</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.LogsView.add_detection">add_detection</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.views.SettingsView">SettingsView</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.DEFAULT_CSS">DEFAULT_CSS</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.distance_threshold_input">distance_threshold_input</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.target_fps_input">target_fps_input</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.cpu_threshold_input">cpu_threshold_input</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.backoff_input">backoff_input</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.use_gpu_checkbox">use_gpu_checkbox</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.SettingsData">SettingsData</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.Apply">Apply</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.Reload">Reload</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.compose">compose</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.on_button_pressed">on_button_pressed</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.SettingsView.update_values">update_values</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.views.StreamsView">StreamsView</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.DEFAULT_CSS">DEFAULT_CSS</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.running">running</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.status_label">status_label</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.start_button">start_button</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.stop_button">stop_button</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.camera_board">camera_board</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.Start">Start</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.Stop">Stop</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.compose">compose</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.watch_running">watch_running</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.on_button_pressed">on_button_pressed</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.StreamsView.update_camera">update_camera</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.views.TrainView">TrainView</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.DEFAULT_CSS">DEFAULT_CSS</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.train_dir_input">train_dir_input</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.model_path_input">model_path_input</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.n_neighbors_input">n_neighbors_input</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.use_gpu_checkbox">use_gpu_checkbox</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.status_label">status_label</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.train_button">train_button</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.Submit">Submit</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.TrainConfig">TrainConfig</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.compose">compose</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.set_status">set_status</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.set_running">set_running</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.on_button_pressed">on_button_pressed</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.update_values">update_values</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.views.TrainView.current_config">current_config</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.widgets/">tui.widgets</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICU</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">TUI</li>
+      <li class="breadcrumb-item active">tui.views</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="tuiviews-module">tui.views module<a class="headerlink" href="#tuiviews-module" title="Permanent link">&para;</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="tui.views"></a>
+    <div class="doc doc-contents first">
+
+        <p>High-level views for Textual content switcher panes.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="tui.views.__all__" class="doc doc-heading">
+            <code class="highlight language-python">__all__ = ['LogsView', 'SettingsView', 'StreamsView', 'TrainView']</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#tui.views.__all__" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.views.LogsView" class="doc doc-heading">
+            <code>LogsView</code>
+
+
+<a href="#tui.views.LogsView" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.containers.Vertical">Vertical</span></code></p>
+
+
+
+        <p>Display detection history.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/logs.py</code></summary>
+                <pre class="highlight"><code class="language-python">class LogsView(Vertical):
+    """Display detection history."""
+
+    DEFAULT_CSS = """
+    LogsView {
+        layout: vertical;
+        padding: 1;
+        border: tall $surface 10%;
+    }
+
+    LogsView .actions {
+        layout: horizontal;
+    }
+
+    LogsView .actions Button {
+        margin-right: 1;
+    }
+
+    LogsView DataTable {
+        height: 1fr;
+    }
+    """
+
+    class Clear(Message):
+        """User requested to clear detection history."""
+
+        def __init__(self, sender: "LogsView") -&gt; None:
+            super().__init__()
+            self.sender = sender
+
+    def __init__(self, *, id: str = "logs") -&gt; None:
+        super().__init__(id=id)
+        self.table = DataTable(zebra_stripes=True)
+        self.clear_button: Button | None = None
+        self._rows: List[str] = []
+        self._row_limit = 100
+
+    def compose(self):
+        yield Label("Recent Detections", classes="title")
+        self.clear_button = Button("Clear History", id="logs-clear", variant="default")
+        yield self.clear_button
+        self.table.add_columns("Time", "Camera", "Person", "Confidence", "Cooldown")
+        yield self.table
+
+    def on_button_pressed(self, event: Button.Pressed) -&gt; None:
+        if event.button is self.clear_button:
+            self.table.clear()
+            self._rows.clear()
+            self.post_message(self.Clear(self))
+
+    def add_detection(
+        self,
+        *,
+        timestamp: float,
+        camera: str,
+        person: str,
+        confidence: float,
+        cooldown_active: bool,
+    ) -&gt; None:
+        if len(self._rows) &gt;= self._row_limit:
+            oldest = self._rows.pop(0)
+            try:
+                self.table.remove_row(oldest)
+            except KeyError:
+                pass
+        time_label = datetime.fromtimestamp(timestamp).strftime("%H:%M:%S")
+        row_key = self.table.add_row(
+            time_label,
+            camera,
+            person,
+            f"{confidence:.1f}%",
+            "Yes" if cooldown_active else "No",
+        )
+        self._rows.append(row_key)</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.LogsView.DEFAULT_CSS" class="doc doc-heading">
+            <code class="highlight language-python">DEFAULT_CSS = '\n    LogsView {\n        layout: vertical;\n        padding: 1;\n        border: tall $surface 10%;\n    }\n\n    LogsView .actions {\n        layout: horizontal;\n    }\n\n    LogsView .actions Button {\n        margin-right: 1;\n    }\n\n    LogsView DataTable {\n        height: 1fr;\n    }\n    '</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.LogsView.DEFAULT_CSS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.LogsView.table" class="doc doc-heading">
+            <code class="highlight language-python">table = DataTable(zebra_stripes=True)</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.LogsView.table" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.LogsView.clear_button" class="doc doc-heading">
+            <code class="highlight language-python">clear_button: Button | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.LogsView.clear_button" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="tui.views.LogsView.Clear" class="doc doc-heading">
+            <code>Clear</code>
+
+
+<a href="#tui.views.LogsView.Clear" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.message.Message">Message</span></code></p>
+
+
+
+        <p>User requested to clear detection history.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/logs.py</code></summary>
+                <pre class="highlight"><code class="language-python">class Clear(Message):
+    """User requested to clear detection history."""
+
+    def __init__(self, sender: "LogsView") -&gt; None:
+        super().__init__()
+        self.sender = sender</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.LogsView.Clear.sender" class="doc doc-heading">
+            <code class="highlight language-python">sender = sender</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.LogsView.Clear.sender" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="tui.views.LogsView.Clear.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(sender: 'LogsView') -&gt; None</code>
+
+<a href="#tui.views.LogsView.Clear.__init__" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/logs.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, sender: "LogsView") -&gt; None:
+    super().__init__()
+    self.sender = sender</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.LogsView.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(*, id: str = 'logs') -&gt; None</code>
+
+<a href="#tui.views.LogsView.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/logs.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, *, id: str = "logs") -&gt; None:
+    super().__init__(id=id)
+    self.table = DataTable(zebra_stripes=True)
+    self.clear_button: Button | None = None
+    self._rows: List[str] = []
+    self._row_limit = 100</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.LogsView.compose" class="doc doc-heading">
+            <code class="highlight language-python">compose()</code>
+
+<a href="#tui.views.LogsView.compose" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/logs.py</code></summary>
+              <pre class="highlight"><code class="language-python">def compose(self):
+    yield Label("Recent Detections", classes="title")
+    self.clear_button = Button("Clear History", id="logs-clear", variant="default")
+    yield self.clear_button
+    self.table.add_columns("Time", "Camera", "Person", "Confidence", "Cooldown")
+    yield self.table</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.LogsView.on_button_pressed" class="doc doc-heading">
+            <code class="highlight language-python">on_button_pressed(event: Button.Pressed) -&gt; None</code>
+
+<a href="#tui.views.LogsView.on_button_pressed" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/logs.py</code></summary>
+              <pre class="highlight"><code class="language-python">def on_button_pressed(self, event: Button.Pressed) -&gt; None:
+    if event.button is self.clear_button:
+        self.table.clear()
+        self._rows.clear()
+        self.post_message(self.Clear(self))</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.LogsView.add_detection" class="doc doc-heading">
+            <code class="highlight language-python">add_detection(*, timestamp: float, camera: str, person: str, confidence: float, cooldown_active: bool) -&gt; None</code>
+
+<a href="#tui.views.LogsView.add_detection" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/logs.py</code></summary>
+              <pre class="highlight"><code class="language-python">def add_detection(
+    self,
+    *,
+    timestamp: float,
+    camera: str,
+    person: str,
+    confidence: float,
+    cooldown_active: bool,
+) -&gt; None:
+    if len(self._rows) &gt;= self._row_limit:
+        oldest = self._rows.pop(0)
+        try:
+            self.table.remove_row(oldest)
+        except KeyError:
+            pass
+    time_label = datetime.fromtimestamp(timestamp).strftime("%H:%M:%S")
+    row_key = self.table.add_row(
+        time_label,
+        camera,
+        person,
+        f"{confidence:.1f}%",
+        "Yes" if cooldown_active else "No",
+    )
+    self._rows.append(row_key)</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.views.SettingsView" class="doc doc-heading">
+            <code>SettingsView</code>
+
+
+<a href="#tui.views.SettingsView" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.containers.Vertical">Vertical</span></code></p>
+
+
+
+        <p>Allow users to adjust runtime options.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/settings.py</code></summary>
+                <pre class="highlight"><code class="language-python">class SettingsView(Vertical):
+    """Allow users to adjust runtime options."""
+
+    DEFAULT_CSS = """
+    SettingsView {
+        layout: vertical;
+        padding: 1;
+        border: tall $surface 10%;
+    }
+
+    SettingsView Grid {
+        grid-size: 2;
+        grid-columns: 24 1fr;
+        grid-gutter: 1 2;
+    }
+
+    SettingsView Input {
+        width: 1fr;
+    }
+
+    SettingsView .buttons {
+        layout: horizontal;
+    }
+
+    SettingsView .buttons Button {
+        margin-right: 1;
+    }
+    """
+
+    @dataclass
+    class SettingsData:
+        distance_threshold: float
+        target_processing_fps: Optional[float]
+        cpu_pressure_threshold: float
+        pressure_backoff_factor: float
+        use_gpu: bool
+
+    class Apply(Message):
+        """Emitted when settings should be applied."""
+
+        def __init__(self, sender: "SettingsView", data: "SettingsView.SettingsData") -&gt; None:
+            super().__init__()
+            self.sender = sender
+            self.data = data
+
+    class Reload(Message):
+        """Emitted when configs should be reloaded."""
+
+        def __init__(self, sender: "SettingsView") -&gt; None:
+            super().__init__()
+            self.sender = sender
+
+    def __init__(
+        self,
+        *,
+        distance_threshold: float,
+        target_processing_fps: Optional[float],
+        cpu_pressure_threshold: float,
+        pressure_backoff_factor: float,
+        use_gpu: bool,
+        id: str = "settings",
+    ) -&gt; None:
+        super().__init__(id=id)
+        self.distance_threshold_input: Input | None = None
+        self.target_fps_input: Input | None = None
+        self.cpu_threshold_input: Input | None = None
+        self.backoff_input: Input | None = None
+        self.use_gpu_checkbox: Checkbox | None = None
+
+        self._initial = self.SettingsData(
+            distance_threshold=distance_threshold,
+            target_processing_fps=target_processing_fps,
+            cpu_pressure_threshold=cpu_pressure_threshold,
+            pressure_backoff_factor=pressure_backoff_factor,
+            use_gpu=use_gpu,
+        )
+
+    def compose(self):
+        yield Label("Runtime Settings", classes="title")
+        with Grid():
+            yield Label("Distance threshold")
+            self.distance_threshold_input = Input(value=f"{self._initial.distance_threshold}")
+            yield self.distance_threshold_input
+
+            yield Label("Target FPS (blank = disabled)")
+            fps_value = "" if self._initial.target_processing_fps in (None, 0.0) else f"{self._initial.target_processing_fps}"
+            self.target_fps_input = Input(value=fps_value)
+            yield self.target_fps_input
+
+            yield Label("CPU pressure threshold")
+            self.cpu_threshold_input = Input(value=f"{self._initial.cpu_pressure_threshold}")
+            yield self.cpu_threshold_input
+
+            yield Label("Backoff factor")
+            self.backoff_input = Input(value=f"{self._initial.pressure_backoff_factor}")
+            yield self.backoff_input
+
+            yield Label("Use GPU")
+            self.use_gpu_checkbox = Checkbox(value=self._initial.use_gpu)
+            yield self.use_gpu_checkbox
+
+        with Horizontal(classes="buttons"):
+            yield Button("Apply", id="settings-apply", variant="success")
+            yield Button("Reload Configs", id="settings-reload", variant="primary")
+
+    def on_button_pressed(self, event: Button.Pressed) -&gt; None:
+        if event.button.id == "settings-apply":
+            data = self._gather_settings()
+            self.post_message(self.Apply(self, data))
+        elif event.button.id == "settings-reload":
+            self.post_message(self.Reload(self))
+
+    def update_values(
+        self,
+        *,
+        distance_threshold: float,
+        target_processing_fps: Optional[float],
+        cpu_pressure_threshold: float,
+        pressure_backoff_factor: float,
+        use_gpu: bool,
+    ) -&gt; None:
+        self._initial = self.SettingsData(
+            distance_threshold=distance_threshold,
+            target_processing_fps=target_processing_fps,
+            cpu_pressure_threshold=cpu_pressure_threshold,
+            pressure_backoff_factor=pressure_backoff_factor,
+            use_gpu=use_gpu,
+        )
+        if self.distance_threshold_input:
+            self.distance_threshold_input.value = f"{distance_threshold}"
+        if self.target_fps_input:
+            self.target_fps_input.value = (
+                "" if target_processing_fps in (None, 0.0) else f"{target_processing_fps}"
+            )
+        if self.cpu_threshold_input:
+            self.cpu_threshold_input.value = f"{cpu_pressure_threshold}"
+        if self.backoff_input:
+            self.backoff_input.value = f"{pressure_backoff_factor}"
+        if self.use_gpu_checkbox:
+            self.use_gpu_checkbox.value = use_gpu
+
+    def _gather_settings(self) -&gt; "SettingsData":
+        try:
+            distance = float(self.distance_threshold_input.value)
+        except (TypeError, ValueError):
+            distance = self._initial.distance_threshold
+
+        fps_input = self.target_fps_input.value.strip() if self.target_fps_input else ""
+        if fps_input:
+            try:
+                target_fps = float(fps_input)
+            except ValueError:
+                target_fps = self._initial.target_processing_fps
+        else:
+            target_fps = None
+
+        try:
+            cpu_threshold = float(self.cpu_threshold_input.value)
+        except (TypeError, ValueError):
+            cpu_threshold = self._initial.cpu_pressure_threshold
+
+        try:
+            backoff = float(self.backoff_input.value)
+        except (TypeError, ValueError):
+            backoff = self._initial.pressure_backoff_factor
+
+        use_gpu = self.use_gpu_checkbox.value if self.use_gpu_checkbox else self._initial.use_gpu
+
+        return self.SettingsData(
+            distance_threshold=distance,
+            target_processing_fps=target_fps,
+            cpu_pressure_threshold=cpu_threshold,
+            pressure_backoff_factor=backoff,
+            use_gpu=use_gpu,
+        )</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.SettingsView.DEFAULT_CSS" class="doc doc-heading">
+            <code class="highlight language-python">DEFAULT_CSS = '\n    SettingsView {\n        layout: vertical;\n        padding: 1;\n        border: tall $surface 10%;\n    }\n\n    SettingsView Grid {\n        grid-size: 2;\n        grid-columns: 24 1fr;\n        grid-gutter: 1 2;\n    }\n\n    SettingsView Input {\n        width: 1fr;\n    }\n\n    SettingsView .buttons {\n        layout: horizontal;\n    }\n\n    SettingsView .buttons Button {\n        margin-right: 1;\n    }\n    '</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.DEFAULT_CSS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.SettingsView.distance_threshold_input" class="doc doc-heading">
+            <code class="highlight language-python">distance_threshold_input: Input | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.distance_threshold_input" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.SettingsView.target_fps_input" class="doc doc-heading">
+            <code class="highlight language-python">target_fps_input: Input | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.target_fps_input" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.SettingsView.cpu_threshold_input" class="doc doc-heading">
+            <code class="highlight language-python">cpu_threshold_input: Input | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.cpu_threshold_input" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.SettingsView.backoff_input" class="doc doc-heading">
+            <code class="highlight language-python">backoff_input: Input | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.backoff_input" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.SettingsView.use_gpu_checkbox" class="doc doc-heading">
+            <code class="highlight language-python">use_gpu_checkbox: Checkbox | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.use_gpu_checkbox" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="tui.views.SettingsView.SettingsData" class="doc doc-heading">
+            <code>SettingsData</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.SettingsData" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/settings.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass
+class SettingsData:
+    distance_threshold: float
+    target_processing_fps: Optional[float]
+    cpu_pressure_threshold: float
+    pressure_backoff_factor: float
+    use_gpu: bool</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.SettingsView.SettingsData.distance_threshold" class="doc doc-heading">
+            <code class="highlight language-python">distance_threshold: float</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.SettingsData.distance_threshold" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.SettingsView.SettingsData.target_processing_fps" class="doc doc-heading">
+            <code class="highlight language-python">target_processing_fps: Optional[float]</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.SettingsData.target_processing_fps" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.SettingsView.SettingsData.cpu_pressure_threshold" class="doc doc-heading">
+            <code class="highlight language-python">cpu_pressure_threshold: float</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.SettingsData.cpu_pressure_threshold" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.SettingsView.SettingsData.pressure_backoff_factor" class="doc doc-heading">
+            <code class="highlight language-python">pressure_backoff_factor: float</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.SettingsData.pressure_backoff_factor" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.SettingsView.SettingsData.use_gpu" class="doc doc-heading">
+            <code class="highlight language-python">use_gpu: bool</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.SettingsData.use_gpu" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="tui.views.SettingsView.SettingsData.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(distance_threshold: float, target_processing_fps: Optional[float], cpu_pressure_threshold: float, pressure_backoff_factor: float, use_gpu: bool) -&gt; None</code>
+
+<a href="#tui.views.SettingsView.SettingsData.__init__" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="tui.views.SettingsView.Apply" class="doc doc-heading">
+            <code>Apply</code>
+
+
+<a href="#tui.views.SettingsView.Apply" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.message.Message">Message</span></code></p>
+
+
+
+        <p>Emitted when settings should be applied.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/settings.py</code></summary>
+                <pre class="highlight"><code class="language-python">class Apply(Message):
+    """Emitted when settings should be applied."""
+
+    def __init__(self, sender: "SettingsView", data: "SettingsView.SettingsData") -&gt; None:
+        super().__init__()
+        self.sender = sender
+        self.data = data</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.SettingsView.Apply.sender" class="doc doc-heading">
+            <code class="highlight language-python">sender = sender</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.Apply.sender" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.SettingsView.Apply.data" class="doc doc-heading">
+            <code class="highlight language-python">data = data</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.Apply.data" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="tui.views.SettingsView.Apply.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(sender: 'SettingsView', data: 'SettingsView.SettingsData') -&gt; None</code>
+
+<a href="#tui.views.SettingsView.Apply.__init__" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/settings.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, sender: "SettingsView", data: "SettingsView.SettingsData") -&gt; None:
+    super().__init__()
+    self.sender = sender
+    self.data = data</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="tui.views.SettingsView.Reload" class="doc doc-heading">
+            <code>Reload</code>
+
+
+<a href="#tui.views.SettingsView.Reload" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.message.Message">Message</span></code></p>
+
+
+
+        <p>Emitted when configs should be reloaded.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/settings.py</code></summary>
+                <pre class="highlight"><code class="language-python">class Reload(Message):
+    """Emitted when configs should be reloaded."""
+
+    def __init__(self, sender: "SettingsView") -&gt; None:
+        super().__init__()
+        self.sender = sender</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.SettingsView.Reload.sender" class="doc doc-heading">
+            <code class="highlight language-python">sender = sender</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.SettingsView.Reload.sender" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="tui.views.SettingsView.Reload.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(sender: 'SettingsView') -&gt; None</code>
+
+<a href="#tui.views.SettingsView.Reload.__init__" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/settings.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, sender: "SettingsView") -&gt; None:
+    super().__init__()
+    self.sender = sender</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.SettingsView.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(*, distance_threshold: float, target_processing_fps: Optional[float], cpu_pressure_threshold: float, pressure_backoff_factor: float, use_gpu: bool, id: str = 'settings') -&gt; None</code>
+
+<a href="#tui.views.SettingsView.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/settings.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(
+    self,
+    *,
+    distance_threshold: float,
+    target_processing_fps: Optional[float],
+    cpu_pressure_threshold: float,
+    pressure_backoff_factor: float,
+    use_gpu: bool,
+    id: str = "settings",
+) -&gt; None:
+    super().__init__(id=id)
+    self.distance_threshold_input: Input | None = None
+    self.target_fps_input: Input | None = None
+    self.cpu_threshold_input: Input | None = None
+    self.backoff_input: Input | None = None
+    self.use_gpu_checkbox: Checkbox | None = None
+
+    self._initial = self.SettingsData(
+        distance_threshold=distance_threshold,
+        target_processing_fps=target_processing_fps,
+        cpu_pressure_threshold=cpu_pressure_threshold,
+        pressure_backoff_factor=pressure_backoff_factor,
+        use_gpu=use_gpu,
+    )</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.SettingsView.compose" class="doc doc-heading">
+            <code class="highlight language-python">compose()</code>
+
+<a href="#tui.views.SettingsView.compose" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/settings.py</code></summary>
+              <pre class="highlight"><code class="language-python">def compose(self):
+    yield Label("Runtime Settings", classes="title")
+    with Grid():
+        yield Label("Distance threshold")
+        self.distance_threshold_input = Input(value=f"{self._initial.distance_threshold}")
+        yield self.distance_threshold_input
+
+        yield Label("Target FPS (blank = disabled)")
+        fps_value = "" if self._initial.target_processing_fps in (None, 0.0) else f"{self._initial.target_processing_fps}"
+        self.target_fps_input = Input(value=fps_value)
+        yield self.target_fps_input
+
+        yield Label("CPU pressure threshold")
+        self.cpu_threshold_input = Input(value=f"{self._initial.cpu_pressure_threshold}")
+        yield self.cpu_threshold_input
+
+        yield Label("Backoff factor")
+        self.backoff_input = Input(value=f"{self._initial.pressure_backoff_factor}")
+        yield self.backoff_input
+
+        yield Label("Use GPU")
+        self.use_gpu_checkbox = Checkbox(value=self._initial.use_gpu)
+        yield self.use_gpu_checkbox
+
+    with Horizontal(classes="buttons"):
+        yield Button("Apply", id="settings-apply", variant="success")
+        yield Button("Reload Configs", id="settings-reload", variant="primary")</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.SettingsView.on_button_pressed" class="doc doc-heading">
+            <code class="highlight language-python">on_button_pressed(event: Button.Pressed) -&gt; None</code>
+
+<a href="#tui.views.SettingsView.on_button_pressed" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/settings.py</code></summary>
+              <pre class="highlight"><code class="language-python">def on_button_pressed(self, event: Button.Pressed) -&gt; None:
+    if event.button.id == "settings-apply":
+        data = self._gather_settings()
+        self.post_message(self.Apply(self, data))
+    elif event.button.id == "settings-reload":
+        self.post_message(self.Reload(self))</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.SettingsView.update_values" class="doc doc-heading">
+            <code class="highlight language-python">update_values(*, distance_threshold: float, target_processing_fps: Optional[float], cpu_pressure_threshold: float, pressure_backoff_factor: float, use_gpu: bool) -&gt; None</code>
+
+<a href="#tui.views.SettingsView.update_values" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/settings.py</code></summary>
+              <pre class="highlight"><code class="language-python">def update_values(
+    self,
+    *,
+    distance_threshold: float,
+    target_processing_fps: Optional[float],
+    cpu_pressure_threshold: float,
+    pressure_backoff_factor: float,
+    use_gpu: bool,
+) -&gt; None:
+    self._initial = self.SettingsData(
+        distance_threshold=distance_threshold,
+        target_processing_fps=target_processing_fps,
+        cpu_pressure_threshold=cpu_pressure_threshold,
+        pressure_backoff_factor=pressure_backoff_factor,
+        use_gpu=use_gpu,
+    )
+    if self.distance_threshold_input:
+        self.distance_threshold_input.value = f"{distance_threshold}"
+    if self.target_fps_input:
+        self.target_fps_input.value = (
+            "" if target_processing_fps in (None, 0.0) else f"{target_processing_fps}"
+        )
+    if self.cpu_threshold_input:
+        self.cpu_threshold_input.value = f"{cpu_pressure_threshold}"
+    if self.backoff_input:
+        self.backoff_input.value = f"{pressure_backoff_factor}"
+    if self.use_gpu_checkbox:
+        self.use_gpu_checkbox.value = use_gpu</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.views.StreamsView" class="doc doc-heading">
+            <code>StreamsView</code>
+
+
+<a href="#tui.views.StreamsView" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.containers.Vertical">Vertical</span></code></p>
+
+
+
+        <p>Expose stream lifecycle controls and per-camera metrics.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/streams.py</code></summary>
+                <pre class="highlight"><code class="language-python">class StreamsView(Vertical):
+    """Expose stream lifecycle controls and per-camera metrics."""
+
+    DEFAULT_CSS = """
+    StreamsView {
+        layout: vertical;
+        padding: 1;
+        border: tall $surface 10%;
+    }
+
+    StreamsView .controls {
+        layout: horizontal;
+    }
+
+    StreamsView .controls Button {
+        margin-right: 1;
+    }
+    """
+
+    running: reactive[bool] = reactive(False)
+
+    class Start(Message):
+        """User requested stream start."""
+
+        def __init__(self, sender: "StreamsView") -&gt; None:
+            super().__init__()
+            self.sender = sender
+
+    class Stop(Message):
+        """User requested stream stop."""
+
+        def __init__(self, sender: "StreamsView") -&gt; None:
+            super().__init__()
+            self.sender = sender
+
+    def __init__(self, *, id: str = "streams") -&gt; None:
+        super().__init__(id=id)
+        self.status_label: Label | None = None
+        self.start_button: Button | None = None
+        self.stop_button: Button | None = None
+        self.camera_board = CameraBoard()
+
+    def compose(self):
+        yield Label("Stream Orchestration", classes="title")
+        with Horizontal(classes="controls"):
+            self.start_button = Button("Start Streams", id="streams-start", variant="success")
+            yield self.start_button
+            self.stop_button = Button("Stop Streams", id="streams-stop", variant="warning", disabled=True)
+            yield self.stop_button
+        self.status_label = Label("Streams idle.")
+        yield self.status_label
+        yield self.camera_board
+
+    def watch_running(self, running: bool) -&gt; None:
+        if self.status_label:
+            self.status_label.update("Streams running." if running else "Streams idle.")
+        if self.start_button:
+            self.start_button.disabled = running
+        if self.stop_button:
+            self.stop_button.disabled = not running
+
+    def on_button_pressed(self, event: Button.Pressed) -&gt; None:
+        if event.button is self.start_button:
+            self.post_message(self.Start(self))
+        elif event.button is self.stop_button:
+            self.post_message(self.Stop(self))
+
+    def update_camera(self, state) -&gt; None:
+        self.camera_board.update_camera(state)</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.StreamsView.DEFAULT_CSS" class="doc doc-heading">
+            <code class="highlight language-python">DEFAULT_CSS = '\n    StreamsView {\n        layout: vertical;\n        padding: 1;\n        border: tall $surface 10%;\n    }\n\n    StreamsView .controls {\n        layout: horizontal;\n    }\n\n    StreamsView .controls Button {\n        margin-right: 1;\n    }\n    '</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.StreamsView.DEFAULT_CSS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.StreamsView.running" class="doc doc-heading">
+            <code class="highlight language-python">running: reactive[bool] = reactive(False)</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.StreamsView.running" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.StreamsView.status_label" class="doc doc-heading">
+            <code class="highlight language-python">status_label: Label | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.StreamsView.status_label" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.StreamsView.start_button" class="doc doc-heading">
+            <code class="highlight language-python">start_button: Button | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.StreamsView.start_button" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.StreamsView.stop_button" class="doc doc-heading">
+            <code class="highlight language-python">stop_button: Button | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.StreamsView.stop_button" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.StreamsView.camera_board" class="doc doc-heading">
+            <code class="highlight language-python">camera_board = CameraBoard()</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.StreamsView.camera_board" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="tui.views.StreamsView.Start" class="doc doc-heading">
+            <code>Start</code>
+
+
+<a href="#tui.views.StreamsView.Start" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.message.Message">Message</span></code></p>
+
+
+
+        <p>User requested stream start.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/streams.py</code></summary>
+                <pre class="highlight"><code class="language-python">class Start(Message):
+    """User requested stream start."""
+
+    def __init__(self, sender: "StreamsView") -&gt; None:
+        super().__init__()
+        self.sender = sender</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.StreamsView.Start.sender" class="doc doc-heading">
+            <code class="highlight language-python">sender = sender</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.StreamsView.Start.sender" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="tui.views.StreamsView.Start.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(sender: 'StreamsView') -&gt; None</code>
+
+<a href="#tui.views.StreamsView.Start.__init__" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/streams.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, sender: "StreamsView") -&gt; None:
+    super().__init__()
+    self.sender = sender</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="tui.views.StreamsView.Stop" class="doc doc-heading">
+            <code>Stop</code>
+
+
+<a href="#tui.views.StreamsView.Stop" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.message.Message">Message</span></code></p>
+
+
+
+        <p>User requested stream stop.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/streams.py</code></summary>
+                <pre class="highlight"><code class="language-python">class Stop(Message):
+    """User requested stream stop."""
+
+    def __init__(self, sender: "StreamsView") -&gt; None:
+        super().__init__()
+        self.sender = sender</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.StreamsView.Stop.sender" class="doc doc-heading">
+            <code class="highlight language-python">sender = sender</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.StreamsView.Stop.sender" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="tui.views.StreamsView.Stop.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(sender: 'StreamsView') -&gt; None</code>
+
+<a href="#tui.views.StreamsView.Stop.__init__" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/streams.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, sender: "StreamsView") -&gt; None:
+    super().__init__()
+    self.sender = sender</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.StreamsView.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(*, id: str = 'streams') -&gt; None</code>
+
+<a href="#tui.views.StreamsView.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/streams.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, *, id: str = "streams") -&gt; None:
+    super().__init__(id=id)
+    self.status_label: Label | None = None
+    self.start_button: Button | None = None
+    self.stop_button: Button | None = None
+    self.camera_board = CameraBoard()</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.StreamsView.compose" class="doc doc-heading">
+            <code class="highlight language-python">compose()</code>
+
+<a href="#tui.views.StreamsView.compose" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/streams.py</code></summary>
+              <pre class="highlight"><code class="language-python">def compose(self):
+    yield Label("Stream Orchestration", classes="title")
+    with Horizontal(classes="controls"):
+        self.start_button = Button("Start Streams", id="streams-start", variant="success")
+        yield self.start_button
+        self.stop_button = Button("Stop Streams", id="streams-stop", variant="warning", disabled=True)
+        yield self.stop_button
+    self.status_label = Label("Streams idle.")
+    yield self.status_label
+    yield self.camera_board</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.StreamsView.watch_running" class="doc doc-heading">
+            <code class="highlight language-python">watch_running(running: bool) -&gt; None</code>
+
+<a href="#tui.views.StreamsView.watch_running" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/streams.py</code></summary>
+              <pre class="highlight"><code class="language-python">def watch_running(self, running: bool) -&gt; None:
+    if self.status_label:
+        self.status_label.update("Streams running." if running else "Streams idle.")
+    if self.start_button:
+        self.start_button.disabled = running
+    if self.stop_button:
+        self.stop_button.disabled = not running</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.StreamsView.on_button_pressed" class="doc doc-heading">
+            <code class="highlight language-python">on_button_pressed(event: Button.Pressed) -&gt; None</code>
+
+<a href="#tui.views.StreamsView.on_button_pressed" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/streams.py</code></summary>
+              <pre class="highlight"><code class="language-python">def on_button_pressed(self, event: Button.Pressed) -&gt; None:
+    if event.button is self.start_button:
+        self.post_message(self.Start(self))
+    elif event.button is self.stop_button:
+        self.post_message(self.Stop(self))</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.StreamsView.update_camera" class="doc doc-heading">
+            <code class="highlight language-python">update_camera(state) -&gt; None</code>
+
+<a href="#tui.views.StreamsView.update_camera" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/streams.py</code></summary>
+              <pre class="highlight"><code class="language-python">def update_camera(self, state) -&gt; None:
+    self.camera_board.update_camera(state)</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.views.TrainView" class="doc doc-heading">
+            <code>TrainView</code>
+
+
+<a href="#tui.views.TrainView" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.widgets.Static">Static</span></code></p>
+
+
+
+        <p>UI panel to configure and trigger training runs.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/train.py</code></summary>
+                <pre class="highlight"><code class="language-python">class TrainView(Static):
+    """
+    UI panel to configure and trigger training runs.
+    """
+
+    DEFAULT_CSS = """
+    TrainView {
+        layout: vertical;
+        padding: 1;
+        border: tall $surface 10%;
+        height: 1fr;
+        overflow: hidden auto;
+    }
+
+    TrainView Grid {
+        grid-size: 2;
+        grid-rows: auto;
+        grid-columns: 20 1fr;
+        grid-gutter: 1 2;
+        width: 100%;
+    }
+
+    TrainView Input {
+        width: 1fr;
+    }
+
+    TrainView .button-row {
+        layout: horizontal;
+        margin-top: 1;
+    }
+
+    TrainView .button-row Button {
+        margin-right: 1;
+    }
+
+    TrainView .status {
+        margin-top: 1;
+    }
+    """
+
+    class Submit(Message):
+        """Message emitted when the user requests training."""
+
+        def __init__(self, sender: "TrainView", config: "TrainView.TrainConfig") -&gt; None:
+            super().__init__()
+            self.sender = sender
+            self.config = config
+
+    @dataclass
+    class TrainConfig:
+        train_dir: str
+        model_path: str
+        use_gpu: bool
+        n_neighbors: Optional[int]
+
+    def __init__(
+        self,
+        *,
+        train_dir: str,
+        model_path: str,
+        use_gpu: bool,
+        id: str = "train",
+    ) -&gt; None:
+        super().__init__(id=id)
+        self._train_dir = train_dir
+        self._model_path = model_path
+        self._use_gpu = use_gpu
+
+        self.train_dir_input: Input | None = None
+        self.model_path_input: Input | None = None
+        self.n_neighbors_input: Input | None = None
+        self.use_gpu_checkbox: Checkbox | None = None
+        self.status_label: Label | None = None
+        self.train_button: Button | None = None
+
+    def compose(self):
+        yield Label("Train KNN Model", classes="title")
+        with Grid():
+            yield Label("Training directory")
+            self.train_dir_input = Input(value=self._train_dir, placeholder="poi")
+            yield self.train_dir_input
+
+            yield Label("Model output path")
+            self.model_path_input = Input(value=self._model_path, placeholder="trained_knn_model.clf")
+            yield self.model_path_input
+
+            yield Label("Neighbors (optional)")
+            self.n_neighbors_input = Input(placeholder="auto")
+            yield self.n_neighbors_input
+
+            yield Label("Use GPU")
+            self.use_gpu_checkbox = Checkbox(value=self._use_gpu)
+            yield self.use_gpu_checkbox
+
+        with Horizontal(classes="button-row"):
+            self.train_button = Button("Train Model", id="train-btn", variant="success")
+            yield self.train_button
+        self.status_label = Label("Ready.", classes="status")
+        yield self.status_label
+
+    def set_status(self, message: str | None, *, error: bool = False) -&gt; None:
+        if self.status_label:
+            text = message or ""
+            prefix = "[red]" if error else "[green]" if "completed" in text.lower() else ""
+            suffix = "[/]" if prefix else ""
+            self.status_label.update(f"{prefix}{text}{suffix}" if text else "Ready.")
+
+    def set_running(self, running: bool) -&gt; None:
+        if self.train_button:
+            self.train_button.disabled = running
+            self.train_button.label = "Training..." if running else "Train Model"
+
+    def on_button_pressed(self, event: Button.Pressed) -&gt; None:
+        if not self.train_button or event.button is not self.train_button:
+            return
+        config = self._gather_config()
+        self.post_message(self.Submit(self, config))
+
+    def update_values(self, *, train_dir: str, model_path: str, use_gpu: bool) -&gt; None:
+        self._train_dir = train_dir
+        self._model_path = model_path
+        self._use_gpu = use_gpu
+        if self.train_dir_input:
+            self.train_dir_input.value = train_dir
+        if self.model_path_input:
+            self.model_path_input.value = model_path
+        if self.use_gpu_checkbox:
+            self.use_gpu_checkbox.value = use_gpu
+
+    def current_config(self) -&gt; "TrainView.TrainConfig":
+        """Return the configuration currently shown in the UI."""
+        return self._gather_config()
+
+    def _gather_config(self) -&gt; "TrainView.TrainConfig":
+        train_dir = self.train_dir_input.value if self.train_dir_input else self._train_dir
+        model_path = self.model_path_input.value if self.model_path_input else self._model_path
+        use_gpu = self.use_gpu_checkbox.value if self.use_gpu_checkbox else self._use_gpu
+        n_neighbors_raw = self.n_neighbors_input.value if self.n_neighbors_input else ""
+        n_neighbors = None
+        if n_neighbors_raw.strip():
+            try:
+                n_val = int(n_neighbors_raw.strip())
+            except ValueError:
+                n_val = None
+            else:
+                if n_val &gt; 0:
+                    n_neighbors = n_val
+        return self.TrainConfig(
+            train_dir=train_dir.strip() or self._train_dir,
+            model_path=model_path.strip() or self._model_path,
+            use_gpu=use_gpu,
+            n_neighbors=n_neighbors,
+        )</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.TrainView.DEFAULT_CSS" class="doc doc-heading">
+            <code class="highlight language-python">DEFAULT_CSS = '\n    TrainView {\n        layout: vertical;\n        padding: 1;\n        border: tall $surface 10%;\n        height: 1fr;\n        overflow: hidden auto;\n    }\n\n    TrainView Grid {\n        grid-size: 2;\n        grid-rows: auto;\n        grid-columns: 20 1fr;\n        grid-gutter: 1 2;\n        width: 100%;\n    }\n\n    TrainView Input {\n        width: 1fr;\n    }\n\n    TrainView .button-row {\n        layout: horizontal;\n        margin-top: 1;\n    }\n\n    TrainView .button-row Button {\n        margin-right: 1;\n    }\n\n    TrainView .status {\n        margin-top: 1;\n    }\n    '</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.DEFAULT_CSS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.TrainView.train_dir_input" class="doc doc-heading">
+            <code class="highlight language-python">train_dir_input: Input | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.train_dir_input" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.TrainView.model_path_input" class="doc doc-heading">
+            <code class="highlight language-python">model_path_input: Input | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.model_path_input" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.TrainView.n_neighbors_input" class="doc doc-heading">
+            <code class="highlight language-python">n_neighbors_input: Input | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.n_neighbors_input" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.TrainView.use_gpu_checkbox" class="doc doc-heading">
+            <code class="highlight language-python">use_gpu_checkbox: Checkbox | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.use_gpu_checkbox" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.TrainView.status_label" class="doc doc-heading">
+            <code class="highlight language-python">status_label: Label | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.status_label" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.views.TrainView.train_button" class="doc doc-heading">
+            <code class="highlight language-python">train_button: Button | None = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.train_button" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="tui.views.TrainView.Submit" class="doc doc-heading">
+            <code>Submit</code>
+
+
+<a href="#tui.views.TrainView.Submit" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.message.Message">Message</span></code></p>
+
+
+
+        <p>Message emitted when the user requests training.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/train.py</code></summary>
+                <pre class="highlight"><code class="language-python">class Submit(Message):
+    """Message emitted when the user requests training."""
+
+    def __init__(self, sender: "TrainView", config: "TrainView.TrainConfig") -&gt; None:
+        super().__init__()
+        self.sender = sender
+        self.config = config</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.TrainView.Submit.sender" class="doc doc-heading">
+            <code class="highlight language-python">sender = sender</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.Submit.sender" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.TrainView.Submit.config" class="doc doc-heading">
+            <code class="highlight language-python">config = config</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.Submit.config" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="tui.views.TrainView.Submit.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(sender: 'TrainView', config: 'TrainView.TrainConfig') -&gt; None</code>
+
+<a href="#tui.views.TrainView.Submit.__init__" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/train.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, sender: "TrainView", config: "TrainView.TrainConfig") -&gt; None:
+    super().__init__()
+    self.sender = sender
+    self.config = config</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="tui.views.TrainView.TrainConfig" class="doc doc-heading">
+            <code>TrainConfig</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.TrainConfig" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/views/train.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass
+class TrainConfig:
+    train_dir: str
+    model_path: str
+    use_gpu: bool
+    n_neighbors: Optional[int]</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.TrainView.TrainConfig.train_dir" class="doc doc-heading">
+            <code class="highlight language-python">train_dir: str</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.TrainConfig.train_dir" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.TrainView.TrainConfig.model_path" class="doc doc-heading">
+            <code class="highlight language-python">model_path: str</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.TrainConfig.model_path" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.TrainView.TrainConfig.use_gpu" class="doc doc-heading">
+            <code class="highlight language-python">use_gpu: bool</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.TrainConfig.use_gpu" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="tui.views.TrainView.TrainConfig.n_neighbors" class="doc doc-heading">
+            <code class="highlight language-python">n_neighbors: Optional[int]</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.views.TrainView.TrainConfig.n_neighbors" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="tui.views.TrainView.TrainConfig.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(train_dir: str, model_path: str, use_gpu: bool, n_neighbors: Optional[int]) -&gt; None</code>
+
+<a href="#tui.views.TrainView.TrainConfig.__init__" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.TrainView.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(*, train_dir: str, model_path: str, use_gpu: bool, id: str = 'train') -&gt; None</code>
+
+<a href="#tui.views.TrainView.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/train.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(
+    self,
+    *,
+    train_dir: str,
+    model_path: str,
+    use_gpu: bool,
+    id: str = "train",
+) -&gt; None:
+    super().__init__(id=id)
+    self._train_dir = train_dir
+    self._model_path = model_path
+    self._use_gpu = use_gpu
+
+    self.train_dir_input: Input | None = None
+    self.model_path_input: Input | None = None
+    self.n_neighbors_input: Input | None = None
+    self.use_gpu_checkbox: Checkbox | None = None
+    self.status_label: Label | None = None
+    self.train_button: Button | None = None</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.TrainView.compose" class="doc doc-heading">
+            <code class="highlight language-python">compose()</code>
+
+<a href="#tui.views.TrainView.compose" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/train.py</code></summary>
+              <pre class="highlight"><code class="language-python">def compose(self):
+    yield Label("Train KNN Model", classes="title")
+    with Grid():
+        yield Label("Training directory")
+        self.train_dir_input = Input(value=self._train_dir, placeholder="poi")
+        yield self.train_dir_input
+
+        yield Label("Model output path")
+        self.model_path_input = Input(value=self._model_path, placeholder="trained_knn_model.clf")
+        yield self.model_path_input
+
+        yield Label("Neighbors (optional)")
+        self.n_neighbors_input = Input(placeholder="auto")
+        yield self.n_neighbors_input
+
+        yield Label("Use GPU")
+        self.use_gpu_checkbox = Checkbox(value=self._use_gpu)
+        yield self.use_gpu_checkbox
+
+    with Horizontal(classes="button-row"):
+        self.train_button = Button("Train Model", id="train-btn", variant="success")
+        yield self.train_button
+    self.status_label = Label("Ready.", classes="status")
+    yield self.status_label</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.TrainView.set_status" class="doc doc-heading">
+            <code class="highlight language-python">set_status(message: str | None, *, error: bool = False) -&gt; None</code>
+
+<a href="#tui.views.TrainView.set_status" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/train.py</code></summary>
+              <pre class="highlight"><code class="language-python">def set_status(self, message: str | None, *, error: bool = False) -&gt; None:
+    if self.status_label:
+        text = message or ""
+        prefix = "[red]" if error else "[green]" if "completed" in text.lower() else ""
+        suffix = "[/]" if prefix else ""
+        self.status_label.update(f"{prefix}{text}{suffix}" if text else "Ready.")</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.TrainView.set_running" class="doc doc-heading">
+            <code class="highlight language-python">set_running(running: bool) -&gt; None</code>
+
+<a href="#tui.views.TrainView.set_running" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/train.py</code></summary>
+              <pre class="highlight"><code class="language-python">def set_running(self, running: bool) -&gt; None:
+    if self.train_button:
+        self.train_button.disabled = running
+        self.train_button.label = "Training..." if running else "Train Model"</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.TrainView.on_button_pressed" class="doc doc-heading">
+            <code class="highlight language-python">on_button_pressed(event: Button.Pressed) -&gt; None</code>
+
+<a href="#tui.views.TrainView.on_button_pressed" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/train.py</code></summary>
+              <pre class="highlight"><code class="language-python">def on_button_pressed(self, event: Button.Pressed) -&gt; None:
+    if not self.train_button or event.button is not self.train_button:
+        return
+    config = self._gather_config()
+    self.post_message(self.Submit(self, config))</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.TrainView.update_values" class="doc doc-heading">
+            <code class="highlight language-python">update_values(*, train_dir: str, model_path: str, use_gpu: bool) -&gt; None</code>
+
+<a href="#tui.views.TrainView.update_values" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/train.py</code></summary>
+              <pre class="highlight"><code class="language-python">def update_values(self, *, train_dir: str, model_path: str, use_gpu: bool) -&gt; None:
+    self._train_dir = train_dir
+    self._model_path = model_path
+    self._use_gpu = use_gpu
+    if self.train_dir_input:
+        self.train_dir_input.value = train_dir
+    if self.model_path_input:
+        self.model_path_input.value = model_path
+    if self.use_gpu_checkbox:
+        self.use_gpu_checkbox.value = use_gpu</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.views.TrainView.current_config" class="doc doc-heading">
+            <code class="highlight language-python">current_config() -&gt; 'TrainView.TrainConfig'</code>
+
+<a href="#tui.views.TrainView.current_config" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the configuration currently shown in the UI.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/views/train.py</code></summary>
+              <pre class="highlight"><code class="language-python">def current_config(self) -&gt; "TrainView.TrainConfig":
+    """Return the configuration currently shown in the UI."""
+    return self._gather_config()</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../tui.services/" class="btn btn-neutral float-left" title="tui.services"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../tui.widgets/" class="btn btn-neutral float-right" title="tui.widgets">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../tui.services/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../tui.widgets/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

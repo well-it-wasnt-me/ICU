@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>tui.services - ICU</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "tui.services";
+        var mkdocs_page_input_path = "tui.services.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICU
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../modules/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../face_recognizer/">face_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../image_utils/">image_utils</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logger_setup/">logger_setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../main/">main</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notifications/">notifications</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_monitor/">plate_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_recognizer/">plate_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../resource_monitor/">resource_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../runtime_events/">runtime_events</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_finder/">stream_finder</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_processor/">stream_processor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../textual_app/">textual_app</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >TUI</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../tui/">Overview</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">tui.services</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#tui.services">services</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.services.__all__">__all__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.services.StreamSupervisor">StreamSupervisor</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.StreamSupervisor.face_recognizer">face_recognizer</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.StreamSupervisor.notifier">notifier</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.StreamSupervisor.event_bus">event_bus</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.StreamSupervisor.base_capture_dir">base_capture_dir</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.StreamSupervisor.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.StreamSupervisor.start">start</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.StreamSupervisor.stop">stop</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.StreamSupervisor.is_running">is_running</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.StreamSupervisor.current_snapshot">current_snapshot</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.services.TrainingManager">TrainingManager</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.TrainingManager.event_bus">event_bus</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.TrainingManager.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.TrainingManager.start">start</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.TrainingManager.is_running">is_running</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.TrainingManager.last_result">last_result</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.services.load_app_config">load_app_config</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.services.load_camera_config">load_camera_config</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.load_camera_config--parameters">Parameters</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.services.load_camera_config--returns">Returns</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.views/">tui.views</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.widgets/">tui.widgets</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICU</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">TUI</li>
+      <li class="breadcrumb-item active">tui.services</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="tuiservices-module">tui.services module<a class="headerlink" href="#tuiservices-module" title="Permanent link">&para;</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="tui.services"></a>
+    <div class="doc doc-contents first">
+
+        <p>Service layer for the Textual interface.</p>
+<p>These utilities encapsulate long-running tasks (streaming, training, discovery)
+so the UI can orchestrate them without duplicating business logic.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="tui.services.__all__" class="doc doc-heading">
+            <code class="highlight language-python">__all__ = ['load_app_config', 'load_camera_config', 'StreamSupervisor', 'TrainingManager']</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#tui.services.__all__" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.services.StreamSupervisor" class="doc doc-heading">
+            <code>StreamSupervisor</code>
+
+
+<a href="#tui.services.StreamSupervisor" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Manage lifecycle for multiple camera streams in a reusable fashion.</p>
+<p>The supervisor is responsible for spawning stream threads, wiring up resource
+monitoring, and relaying runtime events to the UI.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/services/streaming.py</code></summary>
+                <pre class="highlight"><code class="language-python">class StreamSupervisor:
+    """
+    Manage lifecycle for multiple camera streams in a reusable fashion.
+
+    The supervisor is responsible for spawning stream threads, wiring up resource
+    monitoring, and relaying runtime events to the UI.
+    """
+
+    def __init__(
+        self,
+        face_recognizer: FaceRecognizer,
+        notifier: Optional[NotificationManager] = None,
+        event_bus: Optional[RuntimeEventBus] = None,
+        base_capture_dir: str = "captures",
+    ) -&gt; None:
+        self.face_recognizer = face_recognizer
+        self.notifier = notifier
+        self.event_bus = event_bus
+        self.base_capture_dir = base_capture_dir
+
+        self._threads: list[threading.Thread] = []
+        self._resource_monitor: Optional[ResourceMonitor] = None
+        self._processor: Optional[StreamProcessor] = None
+        self._lock = threading.Lock()
+
+    def start(
+        self,
+        camera_configs: Iterable[dict],
+        distance_threshold: float,
+        train_dir: str,
+        target_processing_fps: Optional[float] = None,
+        cpu_pressure_threshold: float = 85.0,
+        pressure_backoff_factor: float = 2.0,
+    ) -&gt; None:
+        """
+        Start processing the provided camera configurations.
+        """
+        with self._lock:
+            if self._threads:
+                raise RuntimeError("Streaming is already running.")
+
+            target_interval = (
+                target_processing_fps if target_processing_fps and target_processing_fps &gt; 0 else None
+            )
+
+            resource_monitor: Optional[ResourceMonitor] = None
+            if target_interval or cpu_pressure_threshold &gt; 0:
+                resource_monitor = ResourceMonitor()
+                resource_monitor.start()
+
+            reference_images = self.face_recognizer.load_reference_images(train_dir)
+
+            processor = StreamProcessor(
+                face_recognizer=self.face_recognizer,
+                reference_images=reference_images,
+                base_capture_dir=self.base_capture_dir,
+                notifier=self.notifier,
+                target_processing_fps=target_interval,
+                resource_monitor=resource_monitor,
+                cpu_pressure_threshold=cpu_pressure_threshold,
+                pressure_backoff_factor=pressure_backoff_factor,
+                event_publisher=self._publish_event,
+            )
+
+            threads: list[threading.Thread] = []
+            for cam_config in camera_configs:
+                thread = threading.Thread(
+                    target=processor.process_stream,
+                    args=(cam_config, distance_threshold),
+                    daemon=True,
+                )
+                thread.start()
+                threads.append(thread)
+                time.sleep(0.3)
+
+            self._threads = threads
+            self._resource_monitor = resource_monitor
+            self._processor = processor
+
+    def stop(self) -&gt; None:
+        """
+        Request all stream threads to stop and wait for them to finish.
+        """
+        with self._lock:
+            processor = self._processor
+            threads = list(self._threads)
+            resource_monitor = self._resource_monitor
+
+            self._processor = None
+            self._threads = []
+            self._resource_monitor = None
+
+        if processor:
+            processor.request_stop()
+
+        for thread in threads:
+            thread.join(timeout=5.0)
+
+        if resource_monitor:
+            resource_monitor.stop()
+
+    def is_running(self) -&gt; bool:
+        with self._lock:
+            return any(thread.is_alive() for thread in self._threads)
+
+    def current_snapshot(self):
+        with self._lock:
+            monitor = self._resource_monitor
+        if monitor is None:
+            return None
+        return monitor.get_snapshot()
+
+    def _publish_event(self, event: RuntimeEvent) -&gt; None:
+        if self.event_bus is None:
+            return
+        self.event_bus.emit(event)</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.services.StreamSupervisor.face_recognizer" class="doc doc-heading">
+            <code class="highlight language-python">face_recognizer = face_recognizer</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.services.StreamSupervisor.face_recognizer" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.services.StreamSupervisor.notifier" class="doc doc-heading">
+            <code class="highlight language-python">notifier = notifier</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.services.StreamSupervisor.notifier" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.services.StreamSupervisor.event_bus" class="doc doc-heading">
+            <code class="highlight language-python">event_bus = event_bus</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.services.StreamSupervisor.event_bus" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.services.StreamSupervisor.base_capture_dir" class="doc doc-heading">
+            <code class="highlight language-python">base_capture_dir = base_capture_dir</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.services.StreamSupervisor.base_capture_dir" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.services.StreamSupervisor.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(face_recognizer: FaceRecognizer, notifier: Optional[NotificationManager] = None, event_bus: Optional[RuntimeEventBus] = None, base_capture_dir: str = 'captures') -&gt; None</code>
+
+<a href="#tui.services.StreamSupervisor.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/streaming.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(
+    self,
+    face_recognizer: FaceRecognizer,
+    notifier: Optional[NotificationManager] = None,
+    event_bus: Optional[RuntimeEventBus] = None,
+    base_capture_dir: str = "captures",
+) -&gt; None:
+    self.face_recognizer = face_recognizer
+    self.notifier = notifier
+    self.event_bus = event_bus
+    self.base_capture_dir = base_capture_dir
+
+    self._threads: list[threading.Thread] = []
+    self._resource_monitor: Optional[ResourceMonitor] = None
+    self._processor: Optional[StreamProcessor] = None
+    self._lock = threading.Lock()</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.services.StreamSupervisor.start" class="doc doc-heading">
+            <code class="highlight language-python">start(camera_configs: Iterable[dict], distance_threshold: float, train_dir: str, target_processing_fps: Optional[float] = None, cpu_pressure_threshold: float = 85.0, pressure_backoff_factor: float = 2.0) -&gt; None</code>
+
+<a href="#tui.services.StreamSupervisor.start" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Start processing the provided camera configurations.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/streaming.py</code></summary>
+              <pre class="highlight"><code class="language-python">def start(
+    self,
+    camera_configs: Iterable[dict],
+    distance_threshold: float,
+    train_dir: str,
+    target_processing_fps: Optional[float] = None,
+    cpu_pressure_threshold: float = 85.0,
+    pressure_backoff_factor: float = 2.0,
+) -&gt; None:
+    """
+    Start processing the provided camera configurations.
+    """
+    with self._lock:
+        if self._threads:
+            raise RuntimeError("Streaming is already running.")
+
+        target_interval = (
+            target_processing_fps if target_processing_fps and target_processing_fps &gt; 0 else None
+        )
+
+        resource_monitor: Optional[ResourceMonitor] = None
+        if target_interval or cpu_pressure_threshold &gt; 0:
+            resource_monitor = ResourceMonitor()
+            resource_monitor.start()
+
+        reference_images = self.face_recognizer.load_reference_images(train_dir)
+
+        processor = StreamProcessor(
+            face_recognizer=self.face_recognizer,
+            reference_images=reference_images,
+            base_capture_dir=self.base_capture_dir,
+            notifier=self.notifier,
+            target_processing_fps=target_interval,
+            resource_monitor=resource_monitor,
+            cpu_pressure_threshold=cpu_pressure_threshold,
+            pressure_backoff_factor=pressure_backoff_factor,
+            event_publisher=self._publish_event,
+        )
+
+        threads: list[threading.Thread] = []
+        for cam_config in camera_configs:
+            thread = threading.Thread(
+                target=processor.process_stream,
+                args=(cam_config, distance_threshold),
+                daemon=True,
+            )
+            thread.start()
+            threads.append(thread)
+            time.sleep(0.3)
+
+        self._threads = threads
+        self._resource_monitor = resource_monitor
+        self._processor = processor</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.services.StreamSupervisor.stop" class="doc doc-heading">
+            <code class="highlight language-python">stop() -&gt; None</code>
+
+<a href="#tui.services.StreamSupervisor.stop" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Request all stream threads to stop and wait for them to finish.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/streaming.py</code></summary>
+              <pre class="highlight"><code class="language-python">def stop(self) -&gt; None:
+    """
+    Request all stream threads to stop and wait for them to finish.
+    """
+    with self._lock:
+        processor = self._processor
+        threads = list(self._threads)
+        resource_monitor = self._resource_monitor
+
+        self._processor = None
+        self._threads = []
+        self._resource_monitor = None
+
+    if processor:
+        processor.request_stop()
+
+    for thread in threads:
+        thread.join(timeout=5.0)
+
+    if resource_monitor:
+        resource_monitor.stop()</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.services.StreamSupervisor.is_running" class="doc doc-heading">
+            <code class="highlight language-python">is_running() -&gt; bool</code>
+
+<a href="#tui.services.StreamSupervisor.is_running" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/streaming.py</code></summary>
+              <pre class="highlight"><code class="language-python">def is_running(self) -&gt; bool:
+    with self._lock:
+        return any(thread.is_alive() for thread in self._threads)</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.services.StreamSupervisor.current_snapshot" class="doc doc-heading">
+            <code class="highlight language-python">current_snapshot()</code>
+
+<a href="#tui.services.StreamSupervisor.current_snapshot" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/streaming.py</code></summary>
+              <pre class="highlight"><code class="language-python">def current_snapshot(self):
+    with self._lock:
+        monitor = self._resource_monitor
+    if monitor is None:
+        return None
+    return monitor.get_snapshot()</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.services.TrainingManager" class="doc doc-heading">
+            <code>TrainingManager</code>
+
+
+<a href="#tui.services.TrainingManager" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Execute model training asynchronously so the UI remains responsive.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/services/training.py</code></summary>
+                <pre class="highlight"><code class="language-python">class TrainingManager:
+    """
+    Execute model training asynchronously so the UI remains responsive.
+    """
+
+    def __init__(self, event_bus: Optional[RuntimeEventBus] = None) -&gt; None:
+        self.event_bus = event_bus
+        self._thread: Optional[threading.Thread] = None
+        self._lock = threading.Lock()
+        self._result: Optional[TrainingResult] = None
+
+    def start(
+        self,
+        train_dir: str,
+        model_save_path: str,
+        use_gpu: bool = False,
+        n_neighbors: Optional[int] = None,
+        knn_algo: str = "ball_tree",
+        verbose: bool = True,
+    ) -&gt; None:
+        with self._lock:
+            if self._thread and self._thread.is_alive():
+                raise RuntimeError("Training is already running.")
+            self._result = None
+            thread = threading.Thread(
+                target=self._run_training,
+                args=(train_dir, model_save_path, use_gpu, n_neighbors, knn_algo, verbose),
+                daemon=True,
+            )
+            self._thread = thread
+            thread.start()
+
+    def is_running(self) -&gt; bool:
+        thread = self._thread
+        return bool(thread and thread.is_alive())
+
+    def last_result(self) -&gt; Optional[TrainingResult]:
+        return self._result
+
+    def _run_training(
+        self,
+        train_dir: str,
+        model_save_path: str,
+        use_gpu: bool,
+        n_neighbors: Optional[int],
+        knn_algo: str,
+        verbose: bool,
+    ) -&gt; None:
+        self._emit(TrainingEvent(phase="starting", message="Preparing training data"))
+        try:
+            ImageUtils.convert_images_to_rgb(train_dir)
+        except Exception as exc:
+            message = f"Failed to preprocess training images: {exc}"
+            logger.exception(message)
+            self._record_result(False, message, None)
+            self._emit(TrainingEvent(phase="failed", message=message))
+            return
+
+        recognizer = FaceRecognizer(use_gpu=use_gpu)
+        if use_gpu:
+            self._emit(TrainingEvent(phase="progress", message="Initializing GPU models"))
+            recognizer.initialize_facenet_pytorch_models()
+
+        self._emit(TrainingEvent(phase="progress", message="Training KNN classifier"))
+        try:
+            knn_clf = recognizer.train(
+                train_dir,
+                model_save_path=model_save_path,
+                n_neighbors=n_neighbors,
+                knn_algo=knn_algo,
+                verbose=verbose,
+            )
+        except Exception as exc:
+            message = f"Training failed: {exc}"
+            logger.exception(message)
+            self._record_result(False, message, None)
+            self._emit(TrainingEvent(phase="failed", message=message))
+            return
+
+        if knn_clf is None:
+            message = "No valid training samples were found."
+            self._record_result(False, message, None)
+            self._emit(TrainingEvent(phase="failed", message=message))
+            return
+
+        message = f"Training completed. Model saved to {model_save_path}"
+        self._record_result(True, message, model_save_path)
+        self._emit(TrainingEvent(phase="completed", message=message, details={"model_path": model_save_path}))
+
+    def _record_result(self, success: bool, message: str, model_path: Optional[str]) -&gt; None:
+        self._result = TrainingResult(success=success, message=message, model_path=model_path)
+
+    def _emit(self, event: TrainingEvent) -&gt; None:
+        if self.event_bus is None:
+            return
+        self.event_bus.emit(event)</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.services.TrainingManager.event_bus" class="doc doc-heading">
+            <code class="highlight language-python">event_bus = event_bus</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.services.TrainingManager.event_bus" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.services.TrainingManager.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(event_bus: Optional[RuntimeEventBus] = None) -&gt; None</code>
+
+<a href="#tui.services.TrainingManager.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/training.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, event_bus: Optional[RuntimeEventBus] = None) -&gt; None:
+    self.event_bus = event_bus
+    self._thread: Optional[threading.Thread] = None
+    self._lock = threading.Lock()
+    self._result: Optional[TrainingResult] = None</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.services.TrainingManager.start" class="doc doc-heading">
+            <code class="highlight language-python">start(train_dir: str, model_save_path: str, use_gpu: bool = False, n_neighbors: Optional[int] = None, knn_algo: str = 'ball_tree', verbose: bool = True) -&gt; None</code>
+
+<a href="#tui.services.TrainingManager.start" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/training.py</code></summary>
+              <pre class="highlight"><code class="language-python">def start(
+    self,
+    train_dir: str,
+    model_save_path: str,
+    use_gpu: bool = False,
+    n_neighbors: Optional[int] = None,
+    knn_algo: str = "ball_tree",
+    verbose: bool = True,
+) -&gt; None:
+    with self._lock:
+        if self._thread and self._thread.is_alive():
+            raise RuntimeError("Training is already running.")
+        self._result = None
+        thread = threading.Thread(
+            target=self._run_training,
+            args=(train_dir, model_save_path, use_gpu, n_neighbors, knn_algo, verbose),
+            daemon=True,
+        )
+        self._thread = thread
+        thread.start()</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.services.TrainingManager.is_running" class="doc doc-heading">
+            <code class="highlight language-python">is_running() -&gt; bool</code>
+
+<a href="#tui.services.TrainingManager.is_running" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/training.py</code></summary>
+              <pre class="highlight"><code class="language-python">def is_running(self) -&gt; bool:
+    thread = self._thread
+    return bool(thread and thread.is_alive())</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.services.TrainingManager.last_result" class="doc doc-heading">
+            <code class="highlight language-python">last_result() -&gt; Optional[TrainingResult]</code>
+
+<a href="#tui.services.TrainingManager.last_result" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/training.py</code></summary>
+              <pre class="highlight"><code class="language-python">def last_result(self) -&gt; Optional[TrainingResult]:
+    return self._result</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tui.services.load_app_config" class="doc doc-heading">
+            <code class="highlight language-python">load_app_config(path: os.PathLike[str] | str) -&gt; Dict[str, Any]</code>
+
+<a href="#tui.services.load_app_config" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Load the main application configuration (app.yaml).</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/config.py</code></summary>
+              <pre class="highlight"><code class="language-python">def load_app_config(path: os.PathLike[str] | str) -&gt; Dict[str, Any]:
+    """
+    Load the main application configuration (app.yaml).
+    """
+    resolved = Path(path)
+    if not resolved.exists():
+        raise FileNotFoundError(f"Application configuration file '{resolved}' does not exist.")
+
+    with resolved.open("r") as handle:
+        data = yaml.safe_load(handle) or {}
+    return data</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tui.services.load_camera_config" class="doc doc-heading">
+            <code class="highlight language-python">load_camera_config(path: os.PathLike[str] | str) -&gt; Tuple[List[Dict[str, Any]], Dict[str, Any]]</code>
+
+<a href="#tui.services.load_camera_config" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Load the camera configuration file and return the list of camera entries.</p>
+<h4 id="tui.services.load_camera_config--parameters">Parameters<a class="headerlink" href="#tui.services.load_camera_config--parameters" title="Permanent link">&para;</a></h4>
+<p>path:
+    Path to the YAML file.</p>
+<h4 id="tui.services.load_camera_config--returns">Returns<a class="headerlink" href="#tui.services.load_camera_config--returns" title="Permanent link">&para;</a></h4>
+<p>cameras, raw_config:
+    A tuple containing the list of camera dictionaries and the raw configuration
+    mapping loaded from YAML.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/services/config.py</code></summary>
+              <pre class="highlight"><code class="language-python">def load_camera_config(path: os.PathLike[str] | str) -&gt; Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    """
+    Load the camera configuration file and return the list of camera entries.
+
+    Parameters
+    ----------
+    path:
+        Path to the YAML file.
+
+    Returns
+    -------
+    cameras, raw_config:
+        A tuple containing the list of camera dictionaries and the raw configuration
+        mapping loaded from YAML.
+    """
+    resolved = Path(path)
+    if not resolved.exists():
+        raise FileNotFoundError(f"Camera configuration file '{resolved}' does not exist.")
+
+    with resolved.open("r") as handle:
+        data = yaml.safe_load(handle) or {}
+
+    if isinstance(data, list):
+        cameras = data
+        raw_config = {"cameras": cameras}
+    elif isinstance(data, dict):
+        cameras = data.get("cameras", [])
+        raw_config = data
+    else:
+        cameras = []
+        raw_config = {}
+
+    return cameras, raw_config</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../tui/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../tui.views/" class="btn btn-neutral float-right" title="tui.views">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../tui/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../tui.views/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

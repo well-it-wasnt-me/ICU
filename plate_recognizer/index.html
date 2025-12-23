@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>plate_recognizer - ICU</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "plate_recognizer";
+        var mkdocs_page_input_path = "plate_recognizer.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICU
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../modules/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../face_recognizer/">face_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../image_utils/">image_utils</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logger_setup/">logger_setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../main/">main</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notifications/">notifications</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_monitor/">plate_monitor</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">plate_recognizer</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#plate_recognizer">plate_recognizer</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#plate_recognizer.PlateDetection">PlateDetection</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateDetection.plate">plate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateDetection.confidence">confidence</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateDetection.bbox">bbox</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateDetection.raw_text">raw_text</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateDetection.ocr_confidence">ocr_confidence</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateDetection.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateDetection.expand_bbox">expand_bbox</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#plate_recognizer.PlateRecognizer">PlateRecognizer</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateRecognizer.min_confidence">min_confidence</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateRecognizer.min_plate_length">min_plate_length</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateRecognizer.max_plate_length">max_plate_length</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateRecognizer.max_detections_per_frame">max_detections_per_frame</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateRecognizer.enabled">enabled</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateRecognizer.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plate_recognizer.PlateRecognizer.detect">detect</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../resource_monitor/">resource_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../runtime_events/">runtime_events</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_finder/">stream_finder</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_processor/">stream_processor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../textual_app/">textual_app</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >TUI</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../tui/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.services/">tui.services</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.views/">tui.views</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.widgets/">tui.widgets</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICU</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+      <li class="breadcrumb-item active">plate_recognizer</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="plate_recognizer-module">plate_recognizer module<a class="headerlink" href="#plate_recognizer-module" title="Permanent link">&para;</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="plate_recognizer"></a>
+    <div class="doc doc-contents first">
+
+        <p>License Plate Recognition helpers.</p>
+<p>Provides utilities to detect license plates in a frame and extract their text using OCR.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="plate_recognizer.PlateDetection" class="doc doc-heading">
+            <code>PlateDetection</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateDetection" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Information about a detected license plate.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>plate_recognizer.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass(slots=True)
+class PlateDetection:
+    """Information about a detected license plate."""
+
+    plate: str
+    confidence: float
+    bbox: Tuple[int, int, int, int]
+    raw_text: str
+    ocr_confidence: float
+
+    def expand_bbox(self, frame_shape: Tuple[int, int, int], padding: int = 6) -&gt; Tuple[int, int, int, int]:
+        """Return the bounding box expanded by `padding` pixels on each side."""
+        height, width = frame_shape[:2]
+        x, y, w, h = self.bbox
+        x1 = max(0, x - padding)
+        y1 = max(0, y - padding)
+        x2 = min(width, x + w + padding)
+        y2 = min(height, y + h + padding)
+        return x1, y1, x2 - x1, y2 - y1</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="plate_recognizer.PlateDetection.plate" class="doc doc-heading">
+            <code class="highlight language-python">plate: str</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateDetection.plate" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="plate_recognizer.PlateDetection.confidence" class="doc doc-heading">
+            <code class="highlight language-python">confidence: float</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateDetection.confidence" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="plate_recognizer.PlateDetection.bbox" class="doc doc-heading">
+            <code class="highlight language-python">bbox: Tuple[int, int, int, int]</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateDetection.bbox" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="plate_recognizer.PlateDetection.raw_text" class="doc doc-heading">
+            <code class="highlight language-python">raw_text: str</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateDetection.raw_text" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="plate_recognizer.PlateDetection.ocr_confidence" class="doc doc-heading">
+            <code class="highlight language-python">ocr_confidence: float</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateDetection.ocr_confidence" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="plate_recognizer.PlateDetection.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(plate: str, confidence: float, bbox: Tuple[int, int, int, int], raw_text: str, ocr_confidence: float) -&gt; None</code>
+
+<a href="#plate_recognizer.PlateDetection.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="plate_recognizer.PlateDetection.expand_bbox" class="doc doc-heading">
+            <code class="highlight language-python">expand_bbox(frame_shape: Tuple[int, int, int], padding: int = 6) -&gt; Tuple[int, int, int, int]</code>
+
+<a href="#plate_recognizer.PlateDetection.expand_bbox" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the bounding box expanded by <code>padding</code> pixels on each side.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>plate_recognizer.py</code></summary>
+              <pre class="highlight"><code class="language-python">def expand_bbox(self, frame_shape: Tuple[int, int, int], padding: int = 6) -&gt; Tuple[int, int, int, int]:
+    """Return the bounding box expanded by `padding` pixels on each side."""
+    height, width = frame_shape[:2]
+    x, y, w, h = self.bbox
+    x1 = max(0, x - padding)
+    y1 = max(0, y - padding)
+    x2 = min(width, x + w + padding)
+    y2 = min(height, y + h + padding)
+    return x1, y1, x2 - x1, y2 - y1</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="plate_recognizer.PlateRecognizer" class="doc doc-heading">
+            <code>PlateRecognizer</code>
+
+
+<a href="#plate_recognizer.PlateRecognizer" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Detect license plates in a frame and extract their text using EasyOCR.</p>
+<p>The recognizer relies on OpenCV's Haar cascade to locate candidate plates and
+EasyOCR to read their contents. If EasyOCR is not installed, the recognizer
+is disabled automatically and emits a warning once.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>plate_recognizer.py</code></summary>
+                <pre class="highlight"><code class="language-python">class PlateRecognizer:
+    """
+    Detect license plates in a frame and extract their text using EasyOCR.
+
+    The recognizer relies on OpenCV's Haar cascade to locate candidate plates and
+    EasyOCR to read their contents. If EasyOCR is not installed, the recognizer
+    is disabled automatically and emits a warning once.
+    """
+
+    def __init__(
+        self,
+        cascade_path: Optional[str] = None,
+        ocr_languages: Optional[Sequence[str]] = None,
+        ocr_gpu: bool = False,
+        min_confidence: float = 0.5,
+        min_plate_length: int = 4,
+        max_plate_length: int = 10,
+        max_detections_per_frame: int = 5,
+    ) -&gt; None:
+        self.min_confidence = max(0.0, min(1.0, min_confidence))
+        self.min_plate_length = min_plate_length
+        self.max_plate_length = max_plate_length
+        self.max_detections_per_frame = max_detections_per_frame
+        self._ocr_languages = list(ocr_languages or ["en"])
+        self._ocr_gpu = bool(ocr_gpu)
+        self._reader = None
+        self._reader_lock = threading.Lock()
+        self._warned_about_easyocr = False
+
+        cascade_default = os.path.join(
+            cv2.data.haarcascades, "haarcascade_russian_plate_number.xml"
+        )
+        cascade_to_use = cascade_path or cascade_default
+        self._cascade = cv2.CascadeClassifier(cascade_to_use)
+        if self._cascade.empty():
+            raise RuntimeError(f"Failed to load license plate cascade from {cascade_to_use}")
+
+        self._enabled = True
+
+    @property
+    def enabled(self) -&gt; bool:
+        """Return True when OCR is available and the recognizer is operational."""
+        if not self._enabled:
+            return False
+        reader = self._ensure_reader()
+        return reader is not None
+
+    def detect(self, frame: np.ndarray) -&gt; List[PlateDetection]:
+        """
+        Detect and read license plates present in the frame.
+
+        :param frame: BGR image from OpenCV.
+        :return: List of `PlateDetection` entries ordered by confidence.
+        """
+        if not self.enabled:
+            return []
+
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        detections = self._detect_candidates(gray)
+        if not detections:
+            return []
+
+        reader = self._ensure_reader()
+        if not reader:
+            return []
+
+        results: List[PlateDetection] = []
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        for x, y, w, h in detections[: self.max_detections_per_frame]:
+            roi = frame_rgb[max(0, y - 6): y + h + 6, max(0, x - 6): x + w + 6]
+            if roi.size == 0:
+                continue
+            try:
+                ocr_results = reader.readtext(roi, detail=1, paragraph=False)
+            except Exception as exc:
+                logger.debug("EasyOCR failed to read plate: %s", exc)
+                continue
+
+            best_detection = self._select_best_result(ocr_results)
+            if not best_detection:
+                continue
+
+            text, score = best_detection
+            cleaned = self._clean_plate_text(text)
+            if not cleaned:
+                continue
+            combined_confidence = float(score)
+            if combined_confidence &lt; self.min_confidence:
+                continue
+
+            results.append(
+                PlateDetection(
+                    plate=cleaned,
+                    confidence=combined_confidence,
+                    bbox=(x, y, w, h),
+                    raw_text=text,
+                    ocr_confidence=float(score),
+                )
+            )
+
+        if not results:
+            return []
+
+        deduped = self._deduplicate(results)
+        deduped.sort(key=lambda det: det.confidence, reverse=True)
+        return deduped
+
+    # Internal helpers -------------------------------------------------
+
+    def _detect_candidates(self, gray: np.ndarray) -&gt; List[Tuple[int, int, int, int]]:
+        try:
+            results = self._cascade.detectMultiScale3(
+                gray,
+                scaleFactor=1.1,
+                minNeighbors=5,
+                outputRejectLevels=True,
+            )
+            boxes = results[0]
+            weights = results[2]
+            ordered = sorted(
+                zip(boxes, weights),
+                key=lambda entry: entry[1],
+                reverse=True,
+            )
+            return [tuple(map(int, box)) for box, _ in ordered]
+        except Exception:
+            boxes = self._cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
+            return [tuple(map(int, box)) for box in boxes]
+
+    def _ensure_reader(self):
+        with self._reader_lock:
+            if self._reader is not None:
+                return self._reader
+            try:
+                import easyocr  # type: ignore
+            except ImportError:
+                if not self._warned_about_easyocr:
+                    logger.warning(
+                        "EasyOCR is not available. License plate recognition disabled. "
+                        "Install 'easyocr' to enable this feature."
+                    )
+                    self._warned_about_easyocr = True
+                self._enabled = False
+                return None
+            try:
+                self._reader = easyocr.Reader(
+                    self._ocr_languages,
+                    gpu=self._ocr_gpu,
+                )
+            except Exception as exc:
+                logger.error("Failed to initialise EasyOCR reader: %s", exc)
+                self._enabled = False
+                self._reader = None
+            return self._reader
+
+    def _select_best_result(self, ocr_results) -&gt; Optional[Tuple[str, float]]:
+        best: Tuple[str, float] | None = None
+        for _, text, score in ocr_results:
+            if not text:
+                continue
+            cleaned = self._clean_plate_text(text)
+            if not cleaned:
+                continue
+            score = float(score)
+            if best is None or score &gt; best[1]:
+                best = (text, score)
+        return best
+
+    def _clean_plate_text(self, text: str) -&gt; Optional[str]:
+        cleaned = re.sub(r"[^A-Za-z0-9]", "", text.upper())
+        if not cleaned:
+            return None
+        if len(cleaned) &lt; self.min_plate_length or len(cleaned) &gt; self.max_plate_length:
+            return None
+        if not re.search(r"[A-Z]", cleaned) or not re.search(r"\d", cleaned):
+            return None
+        return cleaned
+
+    def _deduplicate(self, detections: Sequence[PlateDetection]) -&gt; List[PlateDetection]:
+        unique: dict[str, PlateDetection] = {}
+        for det in detections:
+            key = det.plate
+            stored = unique.get(key)
+            if stored is None or det.confidence &gt; stored.confidence:
+                unique[key] = det
+        return list(unique.values())</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="plate_recognizer.PlateRecognizer.min_confidence" class="doc doc-heading">
+            <code class="highlight language-python">min_confidence = max(0.0, min(1.0, min_confidence))</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateRecognizer.min_confidence" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="plate_recognizer.PlateRecognizer.min_plate_length" class="doc doc-heading">
+            <code class="highlight language-python">min_plate_length = min_plate_length</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateRecognizer.min_plate_length" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="plate_recognizer.PlateRecognizer.max_plate_length" class="doc doc-heading">
+            <code class="highlight language-python">max_plate_length = max_plate_length</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateRecognizer.max_plate_length" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="plate_recognizer.PlateRecognizer.max_detections_per_frame" class="doc doc-heading">
+            <code class="highlight language-python">max_detections_per_frame = max_detections_per_frame</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateRecognizer.max_detections_per_frame" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="plate_recognizer.PlateRecognizer.enabled" class="doc doc-heading">
+            <code class="highlight language-python">enabled: bool</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#plate_recognizer.PlateRecognizer.enabled" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return True when OCR is available and the recognizer is operational.</p>
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="plate_recognizer.PlateRecognizer.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(cascade_path: Optional[str] = None, ocr_languages: Optional[Sequence[str]] = None, ocr_gpu: bool = False, min_confidence: float = 0.5, min_plate_length: int = 4, max_plate_length: int = 10, max_detections_per_frame: int = 5) -&gt; None</code>
+
+<a href="#plate_recognizer.PlateRecognizer.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>plate_recognizer.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(
+    self,
+    cascade_path: Optional[str] = None,
+    ocr_languages: Optional[Sequence[str]] = None,
+    ocr_gpu: bool = False,
+    min_confidence: float = 0.5,
+    min_plate_length: int = 4,
+    max_plate_length: int = 10,
+    max_detections_per_frame: int = 5,
+) -&gt; None:
+    self.min_confidence = max(0.0, min(1.0, min_confidence))
+    self.min_plate_length = min_plate_length
+    self.max_plate_length = max_plate_length
+    self.max_detections_per_frame = max_detections_per_frame
+    self._ocr_languages = list(ocr_languages or ["en"])
+    self._ocr_gpu = bool(ocr_gpu)
+    self._reader = None
+    self._reader_lock = threading.Lock()
+    self._warned_about_easyocr = False
+
+    cascade_default = os.path.join(
+        cv2.data.haarcascades, "haarcascade_russian_plate_number.xml"
+    )
+    cascade_to_use = cascade_path or cascade_default
+    self._cascade = cv2.CascadeClassifier(cascade_to_use)
+    if self._cascade.empty():
+        raise RuntimeError(f"Failed to load license plate cascade from {cascade_to_use}")
+
+    self._enabled = True</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="plate_recognizer.PlateRecognizer.detect" class="doc doc-heading">
+            <code class="highlight language-python">detect(frame: np.ndarray) -&gt; List[PlateDetection]</code>
+
+<a href="#plate_recognizer.PlateRecognizer.detect" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Detect and read license plates present in the frame.</p>
+<p>:param frame: BGR image from OpenCV.
+:return: List of <code>PlateDetection</code> entries ordered by confidence.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>plate_recognizer.py</code></summary>
+              <pre class="highlight"><code class="language-python">def detect(self, frame: np.ndarray) -&gt; List[PlateDetection]:
+    """
+    Detect and read license plates present in the frame.
+
+    :param frame: BGR image from OpenCV.
+    :return: List of `PlateDetection` entries ordered by confidence.
+    """
+    if not self.enabled:
+        return []
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    detections = self._detect_candidates(gray)
+    if not detections:
+        return []
+
+    reader = self._ensure_reader()
+    if not reader:
+        return []
+
+    results: List[PlateDetection] = []
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    for x, y, w, h in detections[: self.max_detections_per_frame]:
+        roi = frame_rgb[max(0, y - 6): y + h + 6, max(0, x - 6): x + w + 6]
+        if roi.size == 0:
+            continue
+        try:
+            ocr_results = reader.readtext(roi, detail=1, paragraph=False)
+        except Exception as exc:
+            logger.debug("EasyOCR failed to read plate: %s", exc)
+            continue
+
+        best_detection = self._select_best_result(ocr_results)
+        if not best_detection:
+            continue
+
+        text, score = best_detection
+        cleaned = self._clean_plate_text(text)
+        if not cleaned:
+            continue
+        combined_confidence = float(score)
+        if combined_confidence &lt; self.min_confidence:
+            continue
+
+        results.append(
+            PlateDetection(
+                plate=cleaned,
+                confidence=combined_confidence,
+                bbox=(x, y, w, h),
+                raw_text=text,
+                ocr_confidence=float(score),
+            )
+        )
+
+    if not results:
+        return []
+
+    deduped = self._deduplicate(results)
+    deduped.sort(key=lambda det: det.confidence, reverse=True)
+    return deduped</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../plate_monitor/" class="btn btn-neutral float-left" title="plate_monitor"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../resource_monitor/" class="btn btn-neutral float-right" title="resource_monitor">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../plate_monitor/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../resource_monitor/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

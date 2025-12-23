@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>runtime_events - ICU</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "runtime_events";
+        var mkdocs_page_input_path = "runtime_events.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICU
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../modules/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../face_recognizer/">face_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../image_utils/">image_utils</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logger_setup/">logger_setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../main/">main</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notifications/">notifications</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_monitor/">plate_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_recognizer/">plate_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../resource_monitor/">resource_monitor</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">runtime_events</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#runtime_events">runtime_events</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#runtime_events.StreamStatus">StreamStatus</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#runtime_events.RuntimeEvent">RuntimeEvent</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.RuntimeEvent.timestamp">timestamp</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.RuntimeEvent.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#runtime_events.StreamLifecycleEvent">StreamLifecycleEvent</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamLifecycleEvent.camera_name">camera_name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamLifecycleEvent.status">status</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamLifecycleEvent.message">message</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamLifecycleEvent.details">details</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamLifecycleEvent.timestamp">timestamp</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamLifecycleEvent.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#runtime_events.StreamMetricsEvent">StreamMetricsEvent</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamMetricsEvent.camera_name">camera_name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamMetricsEvent.frame_count">frame_count</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamMetricsEvent.processed_frames">processed_frames</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamMetricsEvent.skipped_frames">skipped_frames</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamMetricsEvent.last_latency_ms">last_latency_ms</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamMetricsEvent.timestamp">timestamp</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.StreamMetricsEvent.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#runtime_events.DetectionEvent">DetectionEvent</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.DetectionEvent.camera_name">camera_name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.DetectionEvent.person_name">person_name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.DetectionEvent.confidence">confidence</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.DetectionEvent.distance">distance</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.DetectionEvent.capture_path">capture_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.DetectionEvent.side_by_side_path">side_by_side_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.DetectionEvent.cooldown_active">cooldown_active</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.DetectionEvent.timestamp">timestamp</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.DetectionEvent.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#runtime_events.PlateDetectionEvent">PlateDetectionEvent</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.PlateDetectionEvent.camera_name">camera_name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.PlateDetectionEvent.plate">plate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.PlateDetectionEvent.confidence">confidence</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.PlateDetectionEvent.occurrences">occurrences</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.PlateDetectionEvent.watchlist_hit">watchlist_hit</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.PlateDetectionEvent.capture_path">capture_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.PlateDetectionEvent.crop_path">crop_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.PlateDetectionEvent.cooldown_active">cooldown_active</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.PlateDetectionEvent.timestamp">timestamp</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.PlateDetectionEvent.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#runtime_events.TrainingEvent">TrainingEvent</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.TrainingEvent.phase">phase</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.TrainingEvent.message">message</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.TrainingEvent.details">details</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.TrainingEvent.timestamp">timestamp</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runtime_events.TrainingEvent.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_finder/">stream_finder</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_processor/">stream_processor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../textual_app/">textual_app</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >TUI</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../tui/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.services/">tui.services</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.views/">tui.views</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.widgets/">tui.widgets</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICU</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+      <li class="breadcrumb-item active">runtime_events</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="runtime_events-module">runtime_events module<a class="headerlink" href="#runtime_events-module" title="Permanent link">&para;</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="runtime_events"></a>
+    <div class="doc doc-contents first">
+
+        <p>Shared runtime event definitions for streaming and training telemetry.</p>
+<p>These lightweight dataclasses allow modules to exchange structured updates
+without creating a hard dependency on any specific UI implementation.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="runtime_events.StreamStatus" class="doc doc-heading">
+            <code class="highlight language-python">StreamStatus = Literal['connecting', 'connected', 'reconnecting', 'stopped', 'error']</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamStatus" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="runtime_events.RuntimeEvent" class="doc doc-heading">
+            <code>RuntimeEvent</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#runtime_events.RuntimeEvent" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Base event carrying a timestamp.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>runtime_events.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass(slots=True)
+class RuntimeEvent:
+    """Base event carrying a timestamp."""
+
+    timestamp: float = field(default_factory=lambda: time.time())</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.RuntimeEvent.timestamp" class="doc doc-heading">
+            <code class="highlight language-python">timestamp: float = field(default_factory=(lambda: time.time()))</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.RuntimeEvent.timestamp" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="runtime_events.RuntimeEvent.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(timestamp: float = (lambda: time.time())()) -&gt; None</code>
+
+<a href="#runtime_events.RuntimeEvent.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="runtime_events.StreamLifecycleEvent" class="doc doc-heading">
+            <code>StreamLifecycleEvent</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#runtime_events.StreamLifecycleEvent" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="RuntimeEvent
+
+
+  
+      dataclass
+   (runtime_events.RuntimeEvent)" href="#runtime_events.RuntimeEvent">RuntimeEvent</a></code></p>
+
+
+
+        <p>Lifecycle updates for an individual camera stream.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>runtime_events.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass(slots=True)
+class StreamLifecycleEvent(RuntimeEvent):
+    """Lifecycle updates for an individual camera stream."""
+
+    camera_name: str = ""
+    status: StreamStatus = "connecting"
+    message: str = ""
+    details: Dict[str, Any] = field(default_factory=dict)</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamLifecycleEvent.camera_name" class="doc doc-heading">
+            <code class="highlight language-python">camera_name: str = ''</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamLifecycleEvent.camera_name" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamLifecycleEvent.status" class="doc doc-heading">
+            <code class="highlight language-python">status: StreamStatus = 'connecting'</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamLifecycleEvent.status" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamLifecycleEvent.message" class="doc doc-heading">
+            <code class="highlight language-python">message: str = ''</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamLifecycleEvent.message" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamLifecycleEvent.details" class="doc doc-heading">
+            <code class="highlight language-python">details: Dict[str, Any] = field(default_factory=dict)</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamLifecycleEvent.details" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamLifecycleEvent.timestamp" class="doc doc-heading">
+            <code class="highlight language-python">timestamp: float = field(default_factory=(lambda: time.time()))</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamLifecycleEvent.timestamp" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="runtime_events.StreamLifecycleEvent.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(timestamp: float = (lambda: time.time())(), camera_name: str = '', status: StreamStatus = 'connecting', message: str = '', details: Dict[str, Any] = dict()) -&gt; None</code>
+
+<a href="#runtime_events.StreamLifecycleEvent.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="runtime_events.StreamMetricsEvent" class="doc doc-heading">
+            <code>StreamMetricsEvent</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#runtime_events.StreamMetricsEvent" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="RuntimeEvent
+
+
+  
+      dataclass
+   (runtime_events.RuntimeEvent)" href="#runtime_events.RuntimeEvent">RuntimeEvent</a></code></p>
+
+
+
+        <p>Aggregated metrics emitted while processing frames.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>runtime_events.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass(slots=True)
+class StreamMetricsEvent(RuntimeEvent):
+    """Aggregated metrics emitted while processing frames."""
+
+    camera_name: str = ""
+    frame_count: int = 0
+    processed_frames: int = 0
+    skipped_frames: int = 0
+    last_latency_ms: Optional[float] = None</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamMetricsEvent.camera_name" class="doc doc-heading">
+            <code class="highlight language-python">camera_name: str = ''</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamMetricsEvent.camera_name" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamMetricsEvent.frame_count" class="doc doc-heading">
+            <code class="highlight language-python">frame_count: int = 0</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamMetricsEvent.frame_count" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamMetricsEvent.processed_frames" class="doc doc-heading">
+            <code class="highlight language-python">processed_frames: int = 0</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamMetricsEvent.processed_frames" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamMetricsEvent.skipped_frames" class="doc doc-heading">
+            <code class="highlight language-python">skipped_frames: int = 0</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamMetricsEvent.skipped_frames" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamMetricsEvent.last_latency_ms" class="doc doc-heading">
+            <code class="highlight language-python">last_latency_ms: Optional[float] = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamMetricsEvent.last_latency_ms" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.StreamMetricsEvent.timestamp" class="doc doc-heading">
+            <code class="highlight language-python">timestamp: float = field(default_factory=(lambda: time.time()))</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.StreamMetricsEvent.timestamp" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="runtime_events.StreamMetricsEvent.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(timestamp: float = (lambda: time.time())(), camera_name: str = '', frame_count: int = 0, processed_frames: int = 0, skipped_frames: int = 0, last_latency_ms: Optional[float] = None) -&gt; None</code>
+
+<a href="#runtime_events.StreamMetricsEvent.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="runtime_events.DetectionEvent" class="doc doc-heading">
+            <code>DetectionEvent</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#runtime_events.DetectionEvent" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="RuntimeEvent
+
+
+  
+      dataclass
+   (runtime_events.RuntimeEvent)" href="#runtime_events.RuntimeEvent">RuntimeEvent</a></code></p>
+
+
+
+        <p>Notification that a known person has been recognized.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>runtime_events.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass(slots=True)
+class DetectionEvent(RuntimeEvent):
+    """Notification that a known person has been recognized."""
+
+    camera_name: str = ""
+    person_name: str = ""
+    confidence: float = 0.0
+    distance: float = 0.0
+    capture_path: Optional[str] = None
+    side_by_side_path: Optional[str] = None
+    cooldown_active: bool = False</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.DetectionEvent.camera_name" class="doc doc-heading">
+            <code class="highlight language-python">camera_name: str = ''</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.DetectionEvent.camera_name" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.DetectionEvent.person_name" class="doc doc-heading">
+            <code class="highlight language-python">person_name: str = ''</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.DetectionEvent.person_name" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.DetectionEvent.confidence" class="doc doc-heading">
+            <code class="highlight language-python">confidence: float = 0.0</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.DetectionEvent.confidence" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.DetectionEvent.distance" class="doc doc-heading">
+            <code class="highlight language-python">distance: float = 0.0</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.DetectionEvent.distance" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.DetectionEvent.capture_path" class="doc doc-heading">
+            <code class="highlight language-python">capture_path: Optional[str] = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.DetectionEvent.capture_path" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.DetectionEvent.side_by_side_path" class="doc doc-heading">
+            <code class="highlight language-python">side_by_side_path: Optional[str] = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.DetectionEvent.side_by_side_path" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.DetectionEvent.cooldown_active" class="doc doc-heading">
+            <code class="highlight language-python">cooldown_active: bool = False</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.DetectionEvent.cooldown_active" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.DetectionEvent.timestamp" class="doc doc-heading">
+            <code class="highlight language-python">timestamp: float = field(default_factory=(lambda: time.time()))</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.DetectionEvent.timestamp" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="runtime_events.DetectionEvent.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(timestamp: float = (lambda: time.time())(), camera_name: str = '', person_name: str = '', confidence: float = 0.0, distance: float = 0.0, capture_path: Optional[str] = None, side_by_side_path: Optional[str] = None, cooldown_active: bool = False) -&gt; None</code>
+
+<a href="#runtime_events.DetectionEvent.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="runtime_events.PlateDetectionEvent" class="doc doc-heading">
+            <code>PlateDetectionEvent</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#runtime_events.PlateDetectionEvent" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="RuntimeEvent
+
+
+  
+      dataclass
+   (runtime_events.RuntimeEvent)" href="#runtime_events.RuntimeEvent">RuntimeEvent</a></code></p>
+
+
+
+        <p>Notification that a license plate has been recognized.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>runtime_events.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass(slots=True)
+class PlateDetectionEvent(RuntimeEvent):
+    """Notification that a license plate has been recognized."""
+
+    camera_name: str = ""
+    plate: str = ""
+    confidence: float = 0.0
+    occurrences: int = 0
+    watchlist_hit: bool = False
+    capture_path: Optional[str] = None
+    crop_path: Optional[str] = None
+    cooldown_active: bool = False</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.PlateDetectionEvent.camera_name" class="doc doc-heading">
+            <code class="highlight language-python">camera_name: str = ''</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.PlateDetectionEvent.camera_name" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.PlateDetectionEvent.plate" class="doc doc-heading">
+            <code class="highlight language-python">plate: str = ''</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.PlateDetectionEvent.plate" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.PlateDetectionEvent.confidence" class="doc doc-heading">
+            <code class="highlight language-python">confidence: float = 0.0</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.PlateDetectionEvent.confidence" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.PlateDetectionEvent.occurrences" class="doc doc-heading">
+            <code class="highlight language-python">occurrences: int = 0</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.PlateDetectionEvent.occurrences" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.PlateDetectionEvent.watchlist_hit" class="doc doc-heading">
+            <code class="highlight language-python">watchlist_hit: bool = False</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.PlateDetectionEvent.watchlist_hit" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.PlateDetectionEvent.capture_path" class="doc doc-heading">
+            <code class="highlight language-python">capture_path: Optional[str] = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.PlateDetectionEvent.capture_path" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.PlateDetectionEvent.crop_path" class="doc doc-heading">
+            <code class="highlight language-python">crop_path: Optional[str] = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.PlateDetectionEvent.crop_path" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.PlateDetectionEvent.cooldown_active" class="doc doc-heading">
+            <code class="highlight language-python">cooldown_active: bool = False</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.PlateDetectionEvent.cooldown_active" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.PlateDetectionEvent.timestamp" class="doc doc-heading">
+            <code class="highlight language-python">timestamp: float = field(default_factory=(lambda: time.time()))</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.PlateDetectionEvent.timestamp" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="runtime_events.PlateDetectionEvent.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(timestamp: float = (lambda: time.time())(), camera_name: str = '', plate: str = '', confidence: float = 0.0, occurrences: int = 0, watchlist_hit: bool = False, capture_path: Optional[str] = None, crop_path: Optional[str] = None, cooldown_active: bool = False) -&gt; None</code>
+
+<a href="#runtime_events.PlateDetectionEvent.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="runtime_events.TrainingEvent" class="doc doc-heading">
+            <code>TrainingEvent</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#runtime_events.TrainingEvent" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="RuntimeEvent
+
+
+  
+      dataclass
+   (runtime_events.RuntimeEvent)" href="#runtime_events.RuntimeEvent">RuntimeEvent</a></code></p>
+
+
+
+        <p>Updates covering the lifecycle of a training session.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>runtime_events.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass(slots=True)
+class TrainingEvent(RuntimeEvent):
+    """Updates covering the lifecycle of a training session."""
+
+    phase: Literal["starting", "progress", "completed", "failed"] = "starting"
+    message: str = ""
+    details: Dict[str, Any] = field(default_factory=dict)</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.TrainingEvent.phase" class="doc doc-heading">
+            <code class="highlight language-python">phase: Literal['starting', 'progress', 'completed', 'failed'] = 'starting'</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.TrainingEvent.phase" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.TrainingEvent.message" class="doc doc-heading">
+            <code class="highlight language-python">message: str = ''</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.TrainingEvent.message" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.TrainingEvent.details" class="doc doc-heading">
+            <code class="highlight language-python">details: Dict[str, Any] = field(default_factory=dict)</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.TrainingEvent.details" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="runtime_events.TrainingEvent.timestamp" class="doc doc-heading">
+            <code class="highlight language-python">timestamp: float = field(default_factory=(lambda: time.time()))</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#runtime_events.TrainingEvent.timestamp" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="runtime_events.TrainingEvent.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(timestamp: float = (lambda: time.time())(), phase: Literal['starting', 'progress', 'completed', 'failed'] = 'starting', message: str = '', details: Dict[str, Any] = dict()) -&gt; None</code>
+
+<a href="#runtime_events.TrainingEvent.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../resource_monitor/" class="btn btn-neutral float-left" title="resource_monitor"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../stream_finder/" class="btn btn-neutral float-right" title="stream_finder">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../resource_monitor/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../stream_finder/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

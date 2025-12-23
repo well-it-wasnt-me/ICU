@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>stream_finder - ICU</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "stream_finder";
+        var mkdocs_page_input_path = "stream_finder.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICU
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../modules/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../face_recognizer/">face_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../image_utils/">image_utils</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logger_setup/">logger_setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../main/">main</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notifications/">notifications</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_monitor/">plate_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_recognizer/">plate_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../resource_monitor/">resource_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../runtime_events/">runtime_events</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">stream_finder</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#stream_finder">stream_finder</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#stream_finder.DiscoveredStream">DiscoveredStream</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.DiscoveredStream.url">url</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.DiscoveredStream.protocol">protocol</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.DiscoveredStream.headers">headers</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.DiscoveredStream.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#stream_finder.CameraStreamFinder">CameraStreamFinder</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.CameraStreamFinder.session">session</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.CameraStreamFinder.timeout">timeout</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.CameraStreamFinder.verify_ssl">verify_ssl</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.CameraStreamFinder.scrapers">scrapers</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.CameraStreamFinder.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.CameraStreamFinder.find_streams">find_streams</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.CameraStreamFinder.fetch">fetch</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#stream_finder.BaseCameraScraper">BaseCameraScraper</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.BaseCameraScraper.find">find</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#stream_finder.InsecamScraper">InsecamScraper</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.InsecamScraper.LISTING_URL_TEMPLATE">LISTING_URL_TEMPLATE</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.InsecamScraper.COUNTRY_LISTING_URL_TEMPLATE">COUNTRY_LISTING_URL_TEMPLATE</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.InsecamScraper.DETAIL_URL_TEMPLATE">DETAIL_URL_TEMPLATE</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.InsecamScraper.RTSP_REGEX">RTSP_REGEX</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.InsecamScraper.EXPOSED_HTTP_REGEX">EXPOSED_HTTP_REGEX</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.InsecamScraper.BASE_HEADERS">BASE_HEADERS</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.InsecamScraper.BOOTSTRAP_URL">BOOTSTRAP_URL</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.InsecamScraper.USER_AGENTS">USER_AGENTS</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.InsecamScraper.find">find</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#stream_finder.EarthCamScraper">EarthCamScraper</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.EarthCamScraper.SEARCH_URL_TEMPLATE">SEARCH_URL_TEMPLATE</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.EarthCamScraper.STREAM_REGEX">STREAM_REGEX</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.EarthCamScraper.CONFIG_URL_REGEX">CONFIG_URL_REGEX</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.EarthCamScraper.EARTHCAM_HEADERS">EARTHCAM_HEADERS</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.EarthCamScraper.BASE_KEYS">BASE_KEYS</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.EarthCamScraper.FILE_KEYS">FILE_KEYS</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.EarthCamScraper.URL_KEYS">URL_KEYS</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stream_finder.EarthCamScraper.find">find</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_processor/">stream_processor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../textual_app/">textual_app</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >TUI</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../tui/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.services/">tui.services</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.views/">tui.views</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.widgets/">tui.widgets</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICU</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+      <li class="breadcrumb-item active">stream_finder</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="stream_finder-module">stream_finder module<a class="headerlink" href="#stream_finder-module" title="Permanent link">&para;</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="stream_finder"></a>
+    <div class="doc doc-contents first">
+
+        <p>Utilities to discover public camera streams by city.</p>
+<p>Currently, supports:
+* insecam.org (RTSP feeds)
+* earthcam.com (HLS feeds)</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="stream_finder.DiscoveredStream" class="doc doc-heading">
+            <code>DiscoveredStream</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#stream_finder.DiscoveredStream" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>stream_finder.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass
+class DiscoveredStream:
+    url: str
+    protocol: str
+    headers: Optional[Dict[str, str]] = None</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.DiscoveredStream.url" class="doc doc-heading">
+            <code class="highlight language-python">url: str</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.DiscoveredStream.url" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.DiscoveredStream.protocol" class="doc doc-heading">
+            <code class="highlight language-python">protocol: str</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.DiscoveredStream.protocol" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.DiscoveredStream.headers" class="doc doc-heading">
+            <code class="highlight language-python">headers: Optional[Dict[str, str]] = None</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.DiscoveredStream.headers" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="stream_finder.DiscoveredStream.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(url: str, protocol: str, headers: Optional[Dict[str, str]] = None) -&gt; None</code>
+
+<a href="#stream_finder.DiscoveredStream.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="stream_finder.CameraStreamFinder" class="doc doc-heading">
+            <code>CameraStreamFinder</code>
+
+
+<a href="#stream_finder.CameraStreamFinder" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Aggregate multiple scrapers to locate public camera streams.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>stream_finder.py</code></summary>
+                <pre class="highlight"><code class="language-python">class CameraStreamFinder:
+    """
+    Aggregate multiple scrapers to locate public camera streams.
+    """
+
+    def __init__(
+        self,
+        session: Optional[requests.Session] = None,
+        timeout: int = 10,
+        verify_ssl: bool = False,
+        scrapers: Optional[Sequence["BaseCameraScraper"]] = None,
+    ) -&gt; None:
+        self.session = session or requests.Session()
+        self.timeout = timeout
+        self.verify_ssl = verify_ssl
+        if not self.verify_ssl:
+            try:
+                requests.packages.urllib3.disable_warnings()  # type: ignore[attr-defined]
+            except Exception:
+                pass
+        self.session.headers["User-Agent"] = (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
+        )
+        self.session.headers["Accept"] = (
+            "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+        )
+        self.scrapers: Sequence[BaseCameraScraper] = scrapers or (
+            InsecamScraper(),
+            EarthCamScraper(),
+        )
+
+    def find_streams(
+        self,
+        city: str,
+        max_results: int = 100,
+        max_pages: int = 10,
+    ) -&gt; List[DiscoveredStream]:
+        results: List[DiscoveredStream] = []
+        seen: set[str] = set()
+        for scraper in self.scrapers:
+            needed = max_results - len(results)
+            if needed &lt;= 0:
+                break
+            for stream in scraper.find(self, city, needed, max_pages):
+                if stream.url in seen:
+                    continue
+                results.append(stream)
+                seen.add(stream.url)
+                if len(results) &gt;= max_results:
+                    break
+        return results
+
+    def fetch(self, url: str, headers: Optional[Dict[str, str]] = None) -&gt; Optional[str]:
+        try:
+            response = self.session.get(
+                url,
+                timeout=self.timeout,
+                verify=self.verify_ssl,
+                headers=headers,
+            )
+            if response.status_code &gt;= 400:
+                logger.warning("Failed to fetch %s (status %s)", url, response.status_code)
+                return None
+            return response.text
+        except requests.RequestException as exc:
+            logger.error("Error fetching %s: %s", url, exc)
+            return None</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.CameraStreamFinder.session" class="doc doc-heading">
+            <code class="highlight language-python">session = session or requests.Session()</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.CameraStreamFinder.session" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.CameraStreamFinder.timeout" class="doc doc-heading">
+            <code class="highlight language-python">timeout = timeout</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.CameraStreamFinder.timeout" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.CameraStreamFinder.verify_ssl" class="doc doc-heading">
+            <code class="highlight language-python">verify_ssl = verify_ssl</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.CameraStreamFinder.verify_ssl" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.CameraStreamFinder.scrapers" class="doc doc-heading">
+            <code class="highlight language-python">scrapers: Sequence[BaseCameraScraper] = scrapers or (InsecamScraper(), EarthCamScraper())</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.CameraStreamFinder.scrapers" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="stream_finder.CameraStreamFinder.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(session: Optional[requests.Session] = None, timeout: int = 10, verify_ssl: bool = False, scrapers: Optional[Sequence['BaseCameraScraper']] = None) -&gt; None</code>
+
+<a href="#stream_finder.CameraStreamFinder.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>stream_finder.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(
+    self,
+    session: Optional[requests.Session] = None,
+    timeout: int = 10,
+    verify_ssl: bool = False,
+    scrapers: Optional[Sequence["BaseCameraScraper"]] = None,
+) -&gt; None:
+    self.session = session or requests.Session()
+    self.timeout = timeout
+    self.verify_ssl = verify_ssl
+    if not self.verify_ssl:
+        try:
+            requests.packages.urllib3.disable_warnings()  # type: ignore[attr-defined]
+        except Exception:
+            pass
+    self.session.headers["User-Agent"] = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
+    )
+    self.session.headers["Accept"] = (
+        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    )
+    self.scrapers: Sequence[BaseCameraScraper] = scrapers or (
+        InsecamScraper(),
+        EarthCamScraper(),
+    )</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="stream_finder.CameraStreamFinder.find_streams" class="doc doc-heading">
+            <code class="highlight language-python">find_streams(city: str, max_results: int = 100, max_pages: int = 10) -&gt; List[DiscoveredStream]</code>
+
+<a href="#stream_finder.CameraStreamFinder.find_streams" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>stream_finder.py</code></summary>
+              <pre class="highlight"><code class="language-python">def find_streams(
+    self,
+    city: str,
+    max_results: int = 100,
+    max_pages: int = 10,
+) -&gt; List[DiscoveredStream]:
+    results: List[DiscoveredStream] = []
+    seen: set[str] = set()
+    for scraper in self.scrapers:
+        needed = max_results - len(results)
+        if needed &lt;= 0:
+            break
+        for stream in scraper.find(self, city, needed, max_pages):
+            if stream.url in seen:
+                continue
+            results.append(stream)
+            seen.add(stream.url)
+            if len(results) &gt;= max_results:
+                break
+    return results</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="stream_finder.CameraStreamFinder.fetch" class="doc doc-heading">
+            <code class="highlight language-python">fetch(url: str, headers: Optional[Dict[str, str]] = None) -&gt; Optional[str]</code>
+
+<a href="#stream_finder.CameraStreamFinder.fetch" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>stream_finder.py</code></summary>
+              <pre class="highlight"><code class="language-python">def fetch(self, url: str, headers: Optional[Dict[str, str]] = None) -&gt; Optional[str]:
+    try:
+        response = self.session.get(
+            url,
+            timeout=self.timeout,
+            verify=self.verify_ssl,
+            headers=headers,
+        )
+        if response.status_code &gt;= 400:
+            logger.warning("Failed to fetch %s (status %s)", url, response.status_code)
+            return None
+        return response.text
+    except requests.RequestException as exc:
+        logger.error("Error fetching %s: %s", url, exc)
+        return None</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="stream_finder.BaseCameraScraper" class="doc doc-heading">
+            <code>BaseCameraScraper</code>
+
+
+<a href="#stream_finder.BaseCameraScraper" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>stream_finder.py</code></summary>
+                <pre class="highlight"><code class="language-python">class BaseCameraScraper:
+    def find(
+        self,
+        finder: CameraStreamFinder,
+        city: str,
+        max_results: int,
+        max_pages: int,
+    ) -&gt; Iterable[DiscoveredStream]:
+        raise NotImplementedError</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="stream_finder.BaseCameraScraper.find" class="doc doc-heading">
+            <code class="highlight language-python">find(finder: CameraStreamFinder, city: str, max_results: int, max_pages: int) -&gt; Iterable[DiscoveredStream]</code>
+
+<a href="#stream_finder.BaseCameraScraper.find" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>stream_finder.py</code></summary>
+              <pre class="highlight"><code class="language-python">def find(
+    self,
+    finder: CameraStreamFinder,
+    city: str,
+    max_results: int,
+    max_pages: int,
+) -&gt; Iterable[DiscoveredStream]:
+    raise NotImplementedError</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="stream_finder.InsecamScraper" class="doc doc-heading">
+            <code>InsecamScraper</code>
+
+
+<a href="#stream_finder.InsecamScraper" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="BaseCameraScraper (stream_finder.BaseCameraScraper)" href="#stream_finder.BaseCameraScraper">BaseCameraScraper</a></code></p>
+
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>stream_finder.py</code></summary>
+                <pre class="highlight"><code class="language-python">class InsecamScraper(BaseCameraScraper):
+    LISTING_URL_TEMPLATE = "https://www.insecam.org/en/bycity/{city}/"
+    COUNTRY_LISTING_URL_TEMPLATE = "https://www.insecam.org/en/bycountry/{country}/"
+    DETAIL_URL_TEMPLATE = "https://www.insecam.org{path}"
+    RTSP_REGEX = re.compile(r"(rtsp://[^\s\"']+)")
+    EXPOSED_HTTP_REGEX = re.compile(
+        r"https?://\d{1,3}(?:\.\d{1,3}){3}:\d+/?",
+        re.IGNORECASE,
+    )
+    BASE_HEADERS = {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Referer": "https://www.insecam.org/",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+    }
+    BOOTSTRAP_URL = "https://www.insecam.org/en/"
+    USER_AGENTS = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+        "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+        "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Opera/9.80 (Windows NT 6.1; WOW64) Presto/2.12.388 Version/12.18",
+    )
+
+    def find(
+        self,
+        finder: CameraStreamFinder,
+        city: str,
+        max_results: int,
+        max_pages: int,
+    ) -&gt; Iterable[DiscoveredStream]:
+        self._bootstrap_session(finder)
+        country_code = self._normalize_country_code(city)
+        city_slug = city.strip().replace(" ", "_")
+        found = 0
+
+        if country_code:
+            headers_override = {"User-Agent": self._pick_user_agent()}
+            for stream in self._scrape_country_listings(
+                finder, country_code, max_pages, max_results - found, headers_override
+            ):
+                yield stream
+                found += 1
+                if found &gt;= max_results:
+                    return
+            return
+
+        for stream in self._scrape_city_listings(finder, city_slug, max_pages, max_results - found):
+            yield stream
+            found += 1
+            if found &gt;= max_results:
+                return
+
+    def _build_listing_url(self, city_slug: str, page: int) -&gt; str:
+        if page &lt;= 1:
+            return self.LISTING_URL_TEMPLATE.format(city=city_slug)
+        return f"{self.LISTING_URL_TEMPLATE.format(city=city_slug)}?page={page}"
+
+    def _build_country_listing_url(self, country_code: str, page: int) -&gt; str:
+        if page &lt;= 1:
+            return self.COUNTRY_LISTING_URL_TEMPLATE.format(country=country_code)
+        return f"{self.COUNTRY_LISTING_URL_TEMPLATE.format(country=country_code)}?page={page}"
+
+    def _scrape_city_listings(
+        self,
+        finder: CameraStreamFinder,
+        city_slug: str,
+        max_pages: int,
+        remaining: int,
+    ) -&gt; Iterable[DiscoveredStream]:
+        for page in range(1, max_pages + 1):
+            if remaining &lt;= 0:
+                return
+            page_url = self._build_listing_url(city_slug, page)
+            logger.info("Fetching insecam listing: %s", page_url)
+            listing_html = self._fetch_listing(finder, page_url, referer=self.BASE_HEADERS["Referer"])
+            if not listing_html:
+                continue
+
+            for http_url in self._extract_exposed_http_streams(listing_html):
+                yield DiscoveredStream(url=http_url, protocol="http")
+                remaining -= 1
+                if remaining &lt;= 0:
+                    return
+
+            for detail_path in self._extract_camera_links(listing_html):
+                if remaining &lt;= 0:
+                    return
+                detail_url = self.DETAIL_URL_TEMPLATE.format(path=detail_path)
+                detail_headers = {
+                    **self.BASE_HEADERS,
+                    "Referer": page_url,
+                }
+                detail_html = finder.fetch(detail_url, headers=detail_headers)
+                if not detail_html:
+                    detail_html = self._direct_fetch(finder, detail_url, referer=page_url)
+                if not detail_html:
+                    continue
+                for rtsp_url in self._extract_rtsp(detail_html):
+                    yield DiscoveredStream(url=rtsp_url, protocol="rtsp")
+                    remaining -= 1
+                    if remaining &lt;= 0:
+                        return
+
+    def _scrape_country_listings(
+        self,
+        finder: CameraStreamFinder,
+        country_code: str,
+        max_pages: int,
+        remaining: int,
+        headers_override: Optional[Dict[str, str]],
+    ) -&gt; Iterable[DiscoveredStream]:
+        for page in range(1, max_pages + 1):
+            if remaining &lt;= 0:
+                return
+            page_url = self._build_country_listing_url(country_code, page)
+            logger.info("Fetching insecam country listing: %s", page_url)
+            listing_html = self._fetch_listing(
+                finder,
+                page_url,
+                referer=self.BASE_HEADERS["Referer"],
+                headers=headers_override,
+            )
+            if not listing_html:
+                continue
+
+            for http_url in self._extract_exposed_http_streams(listing_html):
+                yield DiscoveredStream(url=http_url, protocol="http")
+                remaining -= 1
+                if remaining &lt;= 0:
+                    return
+            for rtsp_url in self._extract_rtsp(listing_html):
+                yield DiscoveredStream(url=rtsp_url, protocol="rtsp")
+                remaining -= 1
+                if remaining &lt;= 0:
+                    return
+
+    @staticmethod
+    def _extract_camera_links(html: str) -&gt; Iterable[str]:
+        soup = BeautifulSoup(html, "html.parser")
+        for a_tag in soup.select("a[href^='/en/view/']"):
+            href = a_tag.get("href")
+            if href:
+                yield href
+
+    def _extract_exposed_http_streams(self, html: str) -&gt; Iterable[str]:
+        seen: set[str] = set()
+        for match in self.EXPOSED_HTTP_REGEX.finditer(html):
+            candidate = match.group(0)
+            if candidate not in seen:
+                seen.add(candidate)
+                yield candidate
+
+    def _extract_rtsp(self, html: str) -&gt; Iterable[str]:
+        return self.RTSP_REGEX.findall(html)
+
+    def _bootstrap_session(self, finder: CameraStreamFinder) -&gt; None:
+        if getattr(self, "_bootstrapped", False):
+            return
+        finder.fetch(self.BOOTSTRAP_URL, headers=self.BASE_HEADERS)
+        self._bootstrapped = True
+
+    def _pick_user_agent(self) -&gt; str:
+        try:
+            return random.choice(self.USER_AGENTS)
+        except Exception:
+            return self.USER_AGENTS[0]
+
+    def _fetch_listing(
+        self,
+        finder: CameraStreamFinder,
+        url: str,
+        referer: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
+    ) -&gt; Optional[str]:
+        listing_headers = {**self.BASE_HEADERS}
+        if headers:
+            listing_headers.update(headers)
+        if referer:
+            listing_headers["Referer"] = referer
+        listing_html = finder.fetch(url, headers=listing_headers)
+        if listing_html:
+            return listing_html
+        logger.debug("Listing fetch returned no content, retrying with hardened headers.")
+        return self._direct_fetch(
+            finder,
+            url,
+            referer=referer or self.BASE_HEADERS["Referer"],
+            headers=headers,
+        )
+
+    def _direct_fetch(
+        self,
+        finder: CameraStreamFinder,
+        url: str,
+        referer: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
+    ) -&gt; Optional[str]:
+        base_headers = {**self.BASE_HEADERS}
+        if headers:
+            base_headers.update(headers)
+        if referer:
+            base_headers["Referer"] = referer
+        try:
+            response = finder.session.get(
+                url,
+                timeout=finder.timeout,
+                verify=finder.verify_ssl,
+                headers=base_headers,
+            )
+            if response.status_code &gt;= 400:
+                logger.warning("Fallback fetch failed for %s (status %s)", url, response.status_code)
+                return None
+            return response.text
+        except requests.RequestException as exc:
+            logger.error("Error during fallback fetch %s: %s", url, exc)
+            return None
+
+    @staticmethod
+    def _normalize_country_code(city: str) -&gt; Optional[str]:
+        code = city.strip().replace(" ", "").upper()
+        if re.fullmatch(r"[A-Z]{2,3}", code):
+            return code
+        return None</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.InsecamScraper.LISTING_URL_TEMPLATE" class="doc doc-heading">
+            <code class="highlight language-python">LISTING_URL_TEMPLATE = 'https://www.insecam.org/en/bycity/{city}/'</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.InsecamScraper.LISTING_URL_TEMPLATE" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.InsecamScraper.COUNTRY_LISTING_URL_TEMPLATE" class="doc doc-heading">
+            <code class="highlight language-python">COUNTRY_LISTING_URL_TEMPLATE = 'https://www.insecam.org/en/bycountry/{country}/'</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.InsecamScraper.COUNTRY_LISTING_URL_TEMPLATE" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.InsecamScraper.DETAIL_URL_TEMPLATE" class="doc doc-heading">
+            <code class="highlight language-python">DETAIL_URL_TEMPLATE = 'https://www.insecam.org{path}'</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.InsecamScraper.DETAIL_URL_TEMPLATE" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.InsecamScraper.RTSP_REGEX" class="doc doc-heading">
+            <code class="highlight language-python">RTSP_REGEX = re.compile('(rtsp://[^\\s\\"\']+)')</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.InsecamScraper.RTSP_REGEX" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.InsecamScraper.EXPOSED_HTTP_REGEX" class="doc doc-heading">
+            <code class="highlight language-python">EXPOSED_HTTP_REGEX = re.compile('https?://\\d{1,3}(?:\\.\\d{1,3}){3}:\\d+/?', re.IGNORECASE)</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.InsecamScraper.EXPOSED_HTTP_REGEX" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.InsecamScraper.BASE_HEADERS" class="doc doc-heading">
+            <code class="highlight language-python">BASE_HEADERS = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8', 'Accept-Encoding': 'gzip, deflate, br', 'Referer': 'https://www.insecam.org/', 'Accept-Language': 'en-US,en;q=0.9', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.InsecamScraper.BASE_HEADERS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.InsecamScraper.BOOTSTRAP_URL" class="doc doc-heading">
+            <code class="highlight language-python">BOOTSTRAP_URL = 'https://www.insecam.org/en/'</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.InsecamScraper.BOOTSTRAP_URL" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.InsecamScraper.USER_AGENTS" class="doc doc-heading">
+            <code class="highlight language-python">USER_AGENTS = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15', 'Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko', 'Opera/9.80 (Windows NT 6.1; WOW64) Presto/2.12.388 Version/12.18')</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.InsecamScraper.USER_AGENTS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="stream_finder.InsecamScraper.find" class="doc doc-heading">
+            <code class="highlight language-python">find(finder: CameraStreamFinder, city: str, max_results: int, max_pages: int) -&gt; Iterable[DiscoveredStream]</code>
+
+<a href="#stream_finder.InsecamScraper.find" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>stream_finder.py</code></summary>
+              <pre class="highlight"><code class="language-python">def find(
+    self,
+    finder: CameraStreamFinder,
+    city: str,
+    max_results: int,
+    max_pages: int,
+) -&gt; Iterable[DiscoveredStream]:
+    self._bootstrap_session(finder)
+    country_code = self._normalize_country_code(city)
+    city_slug = city.strip().replace(" ", "_")
+    found = 0
+
+    if country_code:
+        headers_override = {"User-Agent": self._pick_user_agent()}
+        for stream in self._scrape_country_listings(
+            finder, country_code, max_pages, max_results - found, headers_override
+        ):
+            yield stream
+            found += 1
+            if found &gt;= max_results:
+                return
+        return
+
+    for stream in self._scrape_city_listings(finder, city_slug, max_pages, max_results - found):
+        yield stream
+        found += 1
+        if found &gt;= max_results:
+            return</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="stream_finder.EarthCamScraper" class="doc doc-heading">
+            <code>EarthCamScraper</code>
+
+
+<a href="#stream_finder.EarthCamScraper" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="BaseCameraScraper (stream_finder.BaseCameraScraper)" href="#stream_finder.BaseCameraScraper">BaseCameraScraper</a></code></p>
+
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>stream_finder.py</code></summary>
+                <pre class="highlight"><code class="language-python">class EarthCamScraper(BaseCameraScraper):
+    SEARCH_URL_TEMPLATE = "https://www.earthcam.com/search/ft-search.php?term={query}"
+    STREAM_REGEX = re.compile(
+        r"(?P&lt;url&gt;(?:https?|rtsp):\/\/[^\s\"']+?\.(?:m3u8?|mpd|mp4|mpg|mjpeg|mjpg|flv|webm|ts)(?:\?[^\s\"']*)?|\/\/[^\s\"']+?\.(?:m3u8?|mpd|mp4|mpg|mjpeg|mjpg|flv|webm|ts)(?:\?[^\s\"']*)?)",
+        re.IGNORECASE,
+    )
+    CONFIG_URL_REGEX = re.compile(
+        r"""["']?(?:configUrl|config|config_path|playerConfigUrl)["']?\s*[:=]\s*["'](?P&lt;url&gt;[^"']+?\.json[^"']*)["']""",
+        re.IGNORECASE,
+    )
+    EARTHCAM_HEADERS = {
+        "Referer": "https://www.earthcam.com/",
+        "Origin": "https://www.earthcam.com",
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
+        ),
+        "Accept": "*/*",
+    }
+    BASE_KEYS = {"base", "baseurl", "securebase", "basehttps", "urlroot", "root", "httpbase", "httpsbase"}
+    FILE_KEYS = {"file", "playlist", "path", "manifest", "stream", "uri", "hls", "dash"}
+    URL_KEYS = {
+        "url",
+        "src",
+        "href",
+        "streamurl",
+        "hlsurl",
+        "dashurl",
+        "mjpegurl",
+        "httpsurl",
+        "httpurl",
+        "contenturl",
+        "video",
+        "video_src",
+    }
+
+    def find(
+        self,
+        finder: CameraStreamFinder,
+        city: str,
+        max_results: int,
+        max_pages: int,
+    ) -&gt; Iterable[DiscoveredStream]:
+        query = city.strip().replace(" ", "%20")
+        search_url = self.SEARCH_URL_TEMPLATE.format(query=query)
+        logger.info("Fetching EarthCam listing: %s", search_url)
+        listing_html = finder.fetch(search_url, headers=self.EARTHCAM_HEADERS)
+        if not listing_html:
+            return
+
+        detail_paths = list(self._extract_camera_links(listing_html))
+        if not detail_paths:
+            logger.info("EarthCam search returned no camera cards for '%s'.", city)
+        found = 0
+        for path in detail_paths[: max_pages * 5]:
+            detail_url = self._build_detail_url(path)
+            detail_html = finder.fetch(detail_url, headers=self.EARTHCAM_HEADERS)
+            if not detail_html:
+                continue
+            for stream_url in self._extract_streams(finder, detail_url, detail_html):
+                protocol = self._infer_protocol(stream_url)
+                yield DiscoveredStream(
+                    url=stream_url,
+                    protocol=protocol,
+                    headers=self.EARTHCAM_HEADERS.copy(),
+                )
+                found += 1
+                if found &gt;= max_results:
+                    return
+
+    def _build_detail_url(self, path: str) -&gt; str:
+        if path.startswith("http"):
+            return path
+        return f"https://www.earthcam.com{path}"
+
+    def _extract_camera_links(self, html: str) -&gt; Iterable[str]:
+        soup = BeautifulSoup(html, "html.parser")
+        result_banner = soup.select_one("#pagination_top")
+        if result_banner:
+            text = result_banner.get_text(strip=True)
+            logger.info("EarthCam summary: %s", text)
+
+        seen: set[str] = set()
+        card_selectors = ("div.tiny-single-row", "div.searchItem")
+        for selector in card_selectors:
+            for card in soup.select(f"{selector} a[href]"):
+                href = card.get("href")
+                if not href or href.startswith("javascript:"):
+                    continue
+                if href in seen:
+                    continue
+                seen.add(href)
+                yield href
+
+    def _extract_from_json(self, script_text: str) -&gt; Iterable[str]:
+        matches = re.findall(r"({\"[^\}]+})", script_text)
+        for match in matches:
+            try:
+                data = json.loads(match)
+                url = data.get("url") or data.get("href")
+                if isinstance(url, str):
+                    yield url
+            except json.JSONDecodeError:
+                continue
+
+    def _extract_streams(self, finder: CameraStreamFinder, page_url: str, html: str) -&gt; Iterable[str]:
+        discovered: List[str] = []
+        seen: set[str] = set()
+        pending_config_urls: set[str] = set()
+
+        def record(url: str) -&gt; None:
+            normalized = self._normalize_url(page_url, url)
+            if not normalized or normalized in seen:
+                return
+            seen.add(normalized)
+            discovered.append(normalized)
+
+        def enqueue_configs(text: str, base_url: str) -&gt; None:
+            for config_url in self._extract_config_urls_from_text(text, base_url):
+                if config_url not in pending_config_urls:
+                    pending_config_urls.add(config_url)
+
+        self._record_from_text(html, record)
+        enqueue_configs(html, page_url)
+        soup = BeautifulSoup(html, "html.parser")
+
+        for script_tag in soup.find_all("script"):
+            script_text = script_tag.string or script_tag.get_text()
+            if script_text:
+                self._record_from_text(script_text, record)
+                enqueue_configs(script_text, page_url)
+
+        for attr_name in ("src", "data-src", "data-hls", "data-url", "data-stream", "data-file"):
+            for element in soup.find_all(attrs={attr_name: True}):
+                value = element.get(attr_name)
+                if value:
+                    self._record_from_text(value, record)
+                    enqueue_configs(value, page_url)
+
+        iframe_sources = {
+            urljoin(page_url, iframe.get("src"))
+            for iframe in soup.find_all("iframe", src=True)
+        }
+        for iframe_url in iframe_sources:
+            iframe_headers = {
+                **self.EARTHCAM_HEADERS,
+                "Referer": page_url,
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            }
+            iframe_html = finder.fetch(iframe_url, headers=iframe_headers)
+            if not iframe_html:
+                continue
+            self._record_from_text(iframe_html, record)
+            enqueue_configs(iframe_html, iframe_url)
+            iframe_soup = BeautifulSoup(iframe_html, "html.parser")
+            for script_tag in iframe_soup.find_all("script"):
+                script_text = script_tag.string or script_tag.get_text()
+                if script_text:
+                    self._record_from_text(script_text, record)
+                    enqueue_configs(script_text, iframe_url)
+
+        config_urls = self._extract_config_urls_from_dom(soup, page_url)
+        pending_config_urls.update(config_urls)
+        for config_url in config_urls:
+            config_headers = {
+                **self.EARTHCAM_HEADERS,
+                "Referer": page_url,
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "X-Requested-With": "XMLHttpRequest",
+            }
+            config_payload = finder.fetch(config_url, headers=config_headers)
+            if not config_payload:
+                continue
+            self._record_from_config(config_payload, config_url, record, enqueue_configs)
+
+        extra_configs = pending_config_urls - config_urls
+        for config_url in extra_configs:
+            config_headers = {
+                **self.EARTHCAM_HEADERS,
+                "Referer": page_url,
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "X-Requested-With": "XMLHttpRequest",
+            }
+            config_payload = finder.fetch(config_url, headers=config_headers)
+            if not config_payload:
+                continue
+            self._record_from_config(config_payload, config_url, record, enqueue_configs)
+
+        return discovered
+
+    def _record_from_text(self, text: str, recorder) -&gt; None:
+        if not text:
+            return
+        cleaned = html.unescape(text).replace("\\/", "/")
+        for match in self.STREAM_REGEX.finditer(cleaned):
+            candidate = match.group("url")
+            recorder(candidate)
+
+    def _record_from_config(
+        self,
+        payload: str,
+        base_url: str,
+        recorder,
+        enqueue_configs,
+    ) -&gt; None:
+        if not payload:
+            return
+        try:
+            data = json.loads(payload)
+        except json.JSONDecodeError:
+            self._record_from_text(payload, recorder)
+            enqueue_configs(payload, base_url)
+            return
+
+        for candidate in self._collect_urls_from_data(data, base_url):
+            recorder(candidate)
+
+    def _extract_config_urls_from_text(self, text: str, base_url: str) -&gt; set[str]:
+        urls: set[str] = set()
+        if not text:
+            return urls
+        cleaned = html.unescape(text)
+        for match in self.CONFIG_URL_REGEX.finditer(cleaned):
+            candidate = match.group("url")
+            normalized = urljoin(base_url, candidate)
+            urls.add(normalized)
+        return urls
+
+    def _normalize_url(self, page_url: str, candidate: str) -&gt; Optional[str]:
+        if not candidate:
+            return None
+        candidate = candidate.strip()
+        if candidate.startswith("//"):
+            return f"https:{candidate}"
+        if candidate.startswith(("http://", "https://", "rtsp://")):
+            return candidate
+        if candidate.startswith("/"):
+            return urljoin(page_url, candidate)
+        return None
+
+    def _collect_urls_from_data(self, data, base_hint: Optional[str]) -&gt; Iterable[str]:
+        collected: List[str] = []
+
+        def recurse(obj, current_base: Optional[str]) -&gt; None:
+            if isinstance(obj, dict):
+                bases: List[str] = []
+                files: List[str] = []
+                for key, value in obj.items():
+                    key_lower = key.lower()
+                    if isinstance(value, str):
+                        if key_lower in self.URL_KEYS:
+                            collected.append(value)
+                        if key_lower in self.BASE_KEYS:
+                            bases.append(value)
+                        if key_lower in self.FILE_KEYS:
+                            files.append(value)
+                    elif isinstance(value, (dict, list)):
+                        recurse(value, current_base)
+
+                effective_bases = bases or ([current_base] if current_base else [])
+                for base in effective_bases:
+                    for file_value in files:
+                        combined = self._combine_base_and_file(base, file_value)
+                        if combined:
+                            collected.append(combined)
+
+                next_base = bases[0] if bases else current_base
+                for key, value in obj.items():
+                    if isinstance(value, (dict, list)):
+                        recurse(value, next_base)
+
+            elif isinstance(obj, list):
+                for item in obj:
+                    recurse(item, current_base)
+
+        recurse(data, base_hint)
+        return collected
+
+    def _extract_config_urls_from_dom(self, soup: BeautifulSoup, page_url: str) -&gt; set[str]:
+        candidates: set[str] = set()
+        for element in soup.find_all(attrs={"data-config": True}):
+            config_path = element.get("data-config")
+            if config_path:
+                candidates.add(urljoin(page_url, config_path))
+        for element in soup.find_all(attrs={"data-config-url": True}):
+            config_path = element.get("data-config-url")
+            if config_path:
+                candidates.add(urljoin(page_url, config_path))
+        for element in soup.find_all("link", href=True):
+            rel = (element.get("rel") or [])
+            if any(value.lower() in {"preload", "alternate"} for value in rel):
+                href = element.get("href")
+                if href:
+                    candidates.add(urljoin(page_url, href))
+        return candidates
+
+    def _combine_base_and_file(self, base: Optional[str], file_value: str) -&gt; Optional[str]:
+        if not file_value:
+            return None
+        file_value = file_value.strip()
+        if file_value.startswith(("http://", "https://", "rtsp://")):
+            return file_value
+        if file_value.startswith("//"):
+            return f"https:{file_value}"
+        if not base:
+            return None
+        base = base.strip()
+        if not base:
+            return None
+        if base.startswith("//"):
+            base = f"https:{base}"
+        return urljoin(base if base.endswith("/") else f"{base}/", file_value.lstrip("/"))
+
+    def _infer_protocol(self, url: str) -&gt; str:
+        lowered = url.lower()
+        if lowered.startswith("rtsp://"):
+            return "rtsp"
+        if ".m3u8" in lowered:
+            return "hls"
+        if ".mpd" in lowered:
+            return "dash"
+        if any(ext in lowered for ext in (".mjpg", ".mjpeg")):
+            return "mjpeg"
+        if any(ext in lowered for ext in (".mp4", ".webm", ".flv", ".ts", ".mpg")):
+            return "http"
+        return "http"</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.EarthCamScraper.SEARCH_URL_TEMPLATE" class="doc doc-heading">
+            <code class="highlight language-python">SEARCH_URL_TEMPLATE = 'https://www.earthcam.com/search/ft-search.php?term={query}'</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.EarthCamScraper.SEARCH_URL_TEMPLATE" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.EarthCamScraper.STREAM_REGEX" class="doc doc-heading">
+            <code class="highlight language-python">STREAM_REGEX = re.compile('(?P&lt;url&gt;(?:https?|rtsp):\\/\\/[^\\s\\"\']+?\\.(?:m3u8?|mpd|mp4|mpg|mjpeg|mjpg|flv|webm|ts)(?:\\?[^\\s\\"\']*)?|\\/\\/[^\\s\\"\']+?\\.(?:m3u8?|mpd|mp4|mpg|mjpeg|mjpg|flv|webm|ts)(?:\\?[^\\s\\"\']*)?)', re.IGNORECASE)</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.EarthCamScraper.STREAM_REGEX" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.EarthCamScraper.CONFIG_URL_REGEX" class="doc doc-heading">
+            <code class="highlight language-python">CONFIG_URL_REGEX = re.compile('["\']?(?:configUrl|config|config_path|playerConfigUrl)["\']?\\s*[:=]\\s*["\'](?P&lt;url&gt;[^"\']+?\\.json[^"\']*)["\']', re.IGNORECASE)</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.EarthCamScraper.CONFIG_URL_REGEX" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.EarthCamScraper.EARTHCAM_HEADERS" class="doc doc-heading">
+            <code class="highlight language-python">EARTHCAM_HEADERS = {'Referer': 'https://www.earthcam.com/', 'Origin': 'https://www.earthcam.com', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36', 'Accept': '*/*'}</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.EarthCamScraper.EARTHCAM_HEADERS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.EarthCamScraper.BASE_KEYS" class="doc doc-heading">
+            <code class="highlight language-python">BASE_KEYS = {'base', 'baseurl', 'securebase', 'basehttps', 'urlroot', 'root', 'httpbase', 'httpsbase'}</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.EarthCamScraper.BASE_KEYS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.EarthCamScraper.FILE_KEYS" class="doc doc-heading">
+            <code class="highlight language-python">FILE_KEYS = {'file', 'playlist', 'path', 'manifest', 'stream', 'uri', 'hls', 'dash'}</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.EarthCamScraper.FILE_KEYS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="stream_finder.EarthCamScraper.URL_KEYS" class="doc doc-heading">
+            <code class="highlight language-python">URL_KEYS = {'url', 'src', 'href', 'streamurl', 'hlsurl', 'dashurl', 'mjpegurl', 'httpsurl', 'httpurl', 'contenturl', 'video', 'video_src'}</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#stream_finder.EarthCamScraper.URL_KEYS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="stream_finder.EarthCamScraper.find" class="doc doc-heading">
+            <code class="highlight language-python">find(finder: CameraStreamFinder, city: str, max_results: int, max_pages: int) -&gt; Iterable[DiscoveredStream]</code>
+
+<a href="#stream_finder.EarthCamScraper.find" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>stream_finder.py</code></summary>
+              <pre class="highlight"><code class="language-python">def find(
+    self,
+    finder: CameraStreamFinder,
+    city: str,
+    max_results: int,
+    max_pages: int,
+) -&gt; Iterable[DiscoveredStream]:
+    query = city.strip().replace(" ", "%20")
+    search_url = self.SEARCH_URL_TEMPLATE.format(query=query)
+    logger.info("Fetching EarthCam listing: %s", search_url)
+    listing_html = finder.fetch(search_url, headers=self.EARTHCAM_HEADERS)
+    if not listing_html:
+        return
+
+    detail_paths = list(self._extract_camera_links(listing_html))
+    if not detail_paths:
+        logger.info("EarthCam search returned no camera cards for '%s'.", city)
+    found = 0
+    for path in detail_paths[: max_pages * 5]:
+        detail_url = self._build_detail_url(path)
+        detail_html = finder.fetch(detail_url, headers=self.EARTHCAM_HEADERS)
+        if not detail_html:
+            continue
+        for stream_url in self._extract_streams(finder, detail_url, detail_html):
+            protocol = self._infer_protocol(stream_url)
+            yield DiscoveredStream(
+                url=stream_url,
+                protocol=protocol,
+                headers=self.EARTHCAM_HEADERS.copy(),
+            )
+            found += 1
+            if found &gt;= max_results:
+                return</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../runtime_events/" class="btn btn-neutral float-left" title="runtime_events"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../stream_processor/" class="btn btn-neutral float-right" title="stream_processor">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../runtime_events/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../stream_processor/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

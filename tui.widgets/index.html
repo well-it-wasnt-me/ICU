@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>tui.widgets - ICU</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "tui.widgets";
+        var mkdocs_page_input_path = "tui.widgets.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICU
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../modules/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../face_recognizer/">face_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../image_utils/">image_utils</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logger_setup/">logger_setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../main/">main</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notifications/">notifications</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_monitor/">plate_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_recognizer/">plate_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../resource_monitor/">resource_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../runtime_events/">runtime_events</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_finder/">stream_finder</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_processor/">stream_processor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../textual_app/">textual_app</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >TUI</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../tui/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.services/">tui.services</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.views/">tui.views</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">tui.widgets</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#tui.widgets">widgets</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.widgets.__all__">__all__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.widgets.CameraBoard">CameraBoard</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.CameraBoard.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.CameraBoard.on_mount">on_mount</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.CameraBoard.update_camera">update_camera</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.CameraBoard.reset">reset</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.widgets.NavigationItem">NavigationItem</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.NavigationItem.id">id</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.NavigationItem.label">label</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.NavigationItem.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.widgets.NavigationRail">NavigationRail</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.NavigationRail.items">items</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.NavigationRail.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.NavigationRail.compose">compose</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.NavigationRail.on_button_pressed">on_button_pressed</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.widgets.NavigationSelection">NavigationSelection</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.NavigationSelection.item_id">item_id</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.NavigationSelection.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.widgets.ResourceFooter">ResourceFooter</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.ResourceFooter.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.ResourceFooter.update_metrics">update_metrics</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tui.widgets.StatusPanel">StatusPanel</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.StatusPanel.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tui.widgets.StatusPanel.update_detail">update_detail</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICU</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">TUI</li>
+      <li class="breadcrumb-item active">tui.widgets</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="tuiwidgets-module">tui.widgets module<a class="headerlink" href="#tuiwidgets-module" title="Permanent link">&para;</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="tui.widgets"></a>
+    <div class="doc doc-contents first">
+
+        <p>Reusable widgets for the Textual UI.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="tui.widgets.__all__" class="doc doc-heading">
+            <code class="highlight language-python">__all__ = ['CameraBoard', 'NavigationItem', 'NavigationRail', 'NavigationSelection', 'ResourceFooter', 'StatusPanel']</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#tui.widgets.__all__" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.widgets.CameraBoard" class="doc doc-heading">
+            <code>CameraBoard</code>
+
+
+<a href="#tui.widgets.CameraBoard" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.widgets.DataTable">DataTable</span></code></p>
+
+
+
+        <p>Tabular overview of camera streams.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/widgets/camera_board.py</code></summary>
+                <pre class="highlight"><code class="language-python">class CameraBoard(DataTable):
+    """Tabular overview of camera streams."""
+
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self._row_keys: Dict[str, str] = {}
+
+    def on_mount(self) -&gt; None:
+        self.add_columns("Camera", "Status", "Processed", "Skipped", "Last Detection")
+        self.cursor_type = "row"
+
+    def update_camera(self, state: CameraState) -&gt; None:
+        row_key = self._row_keys.get(state.name)
+        last_detection = self._format_detection(state.last_detection, state.last_detection_time)
+        row = (
+            state.name,
+            state.status,
+            f"{state.processed_frames}",
+            f"{state.skipped_frames}",
+            last_detection,
+        )
+        if row_key is not None:
+            try:
+                self.remove_row(row_key)
+            except KeyError:
+                pass
+        new_key = self.add_row(*row, key=state.name)
+        self._row_keys[state.name] = new_key
+
+    def reset(self) -&gt; None:
+        self.clear()
+        self._row_keys.clear()
+
+    @staticmethod
+    def _format_detection(label: str | None, timestamp: datetime | None) -&gt; str:
+        if not label:
+            return "-"
+        if not timestamp:
+            return label
+        return f"{label} @ {timestamp.strftime('%H:%M:%S')}"</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.CameraBoard.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__() -&gt; None</code>
+
+<a href="#tui.widgets.CameraBoard.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/camera_board.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self) -&gt; None:
+    super().__init__()
+    self._row_keys: Dict[str, str] = {}</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.CameraBoard.on_mount" class="doc doc-heading">
+            <code class="highlight language-python">on_mount() -&gt; None</code>
+
+<a href="#tui.widgets.CameraBoard.on_mount" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/camera_board.py</code></summary>
+              <pre class="highlight"><code class="language-python">def on_mount(self) -&gt; None:
+    self.add_columns("Camera", "Status", "Processed", "Skipped", "Last Detection")
+    self.cursor_type = "row"</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.CameraBoard.update_camera" class="doc doc-heading">
+            <code class="highlight language-python">update_camera(state: CameraState) -&gt; None</code>
+
+<a href="#tui.widgets.CameraBoard.update_camera" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/camera_board.py</code></summary>
+              <pre class="highlight"><code class="language-python">def update_camera(self, state: CameraState) -&gt; None:
+    row_key = self._row_keys.get(state.name)
+    last_detection = self._format_detection(state.last_detection, state.last_detection_time)
+    row = (
+        state.name,
+        state.status,
+        f"{state.processed_frames}",
+        f"{state.skipped_frames}",
+        last_detection,
+    )
+    if row_key is not None:
+        try:
+            self.remove_row(row_key)
+        except KeyError:
+            pass
+    new_key = self.add_row(*row, key=state.name)
+    self._row_keys[state.name] = new_key</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.CameraBoard.reset" class="doc doc-heading">
+            <code class="highlight language-python">reset() -&gt; None</code>
+
+<a href="#tui.widgets.CameraBoard.reset" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/camera_board.py</code></summary>
+              <pre class="highlight"><code class="language-python">def reset(self) -&gt; None:
+    self.clear()
+    self._row_keys.clear()</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.widgets.NavigationItem" class="doc doc-heading">
+            <code>NavigationItem</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#tui.widgets.NavigationItem" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/widgets/navigation.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass(frozen=True)
+class NavigationItem:
+    id: str
+    label: str</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.widgets.NavigationItem.id" class="doc doc-heading">
+            <code class="highlight language-python">id: str</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.widgets.NavigationItem.id" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.widgets.NavigationItem.label" class="doc doc-heading">
+            <code class="highlight language-python">label: str</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.widgets.NavigationItem.label" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.NavigationItem.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(id: str, label: str) -&gt; None</code>
+
+<a href="#tui.widgets.NavigationItem.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.widgets.NavigationRail" class="doc doc-heading">
+            <code>NavigationRail</code>
+
+
+<a href="#tui.widgets.NavigationRail" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.widget.Widget">Widget</span></code></p>
+
+
+
+        <p>Simple vertical collection of buttons that behave like a navigation rail.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/widgets/navigation.py</code></summary>
+                <pre class="highlight"><code class="language-python">class NavigationRail(Widget):
+    """
+    Simple vertical collection of buttons that behave like a navigation rail.
+    """
+
+    items: reactive[Sequence[NavigationItem]] = reactive(tuple())
+
+    def __init__(self, items: Iterable[NavigationItem]) -&gt; None:
+        super().__init__()
+        self.items = tuple(items)
+
+    def compose(self):
+        for item in self.items:
+            yield Button(item.label, id=f"nav-{item.id}", variant="primary")
+
+    def on_button_pressed(self, event: Button.Pressed) -&gt; None:
+        if not event.button.id:
+            return
+        item_id = event.button.id.removeprefix("nav-")
+        self.post_message(NavigationSelection(item_id))</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.widgets.NavigationRail.items" class="doc doc-heading">
+            <code class="highlight language-python">items: reactive[Sequence[NavigationItem]] = tuple(items)</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.widgets.NavigationRail.items" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.NavigationRail.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(items: Iterable[NavigationItem]) -&gt; None</code>
+
+<a href="#tui.widgets.NavigationRail.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/navigation.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, items: Iterable[NavigationItem]) -&gt; None:
+    super().__init__()
+    self.items = tuple(items)</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.NavigationRail.compose" class="doc doc-heading">
+            <code class="highlight language-python">compose()</code>
+
+<a href="#tui.widgets.NavigationRail.compose" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/navigation.py</code></summary>
+              <pre class="highlight"><code class="language-python">def compose(self):
+    for item in self.items:
+        yield Button(item.label, id=f"nav-{item.id}", variant="primary")</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.NavigationRail.on_button_pressed" class="doc doc-heading">
+            <code class="highlight language-python">on_button_pressed(event: Button.Pressed) -&gt; None</code>
+
+<a href="#tui.widgets.NavigationRail.on_button_pressed" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/navigation.py</code></summary>
+              <pre class="highlight"><code class="language-python">def on_button_pressed(self, event: Button.Pressed) -&gt; None:
+    if not event.button.id:
+        return
+    item_id = event.button.id.removeprefix("nav-")
+    self.post_message(NavigationSelection(item_id))</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.widgets.NavigationSelection" class="doc doc-heading">
+            <code>NavigationSelection</code>
+
+
+<a href="#tui.widgets.NavigationSelection" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.message.Message">Message</span></code></p>
+
+
+
+        <p>Message emitted when the user selects a navigation item.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/widgets/navigation.py</code></summary>
+                <pre class="highlight"><code class="language-python">class NavigationSelection(Message):
+    """Message emitted when the user selects a navigation item."""
+
+    def __init__(self, item_id: str) -&gt; None:
+        super().__init__()
+        self.item_id = item_id</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tui.widgets.NavigationSelection.item_id" class="doc doc-heading">
+            <code class="highlight language-python">item_id = item_id</code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#tui.widgets.NavigationSelection.item_id" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.NavigationSelection.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__(item_id: str) -&gt; None</code>
+
+<a href="#tui.widgets.NavigationSelection.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/navigation.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self, item_id: str) -&gt; None:
+    super().__init__()
+    self.item_id = item_id</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.widgets.ResourceFooter" class="doc doc-heading">
+            <code>ResourceFooter</code>
+
+
+<a href="#tui.widgets.ResourceFooter" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.widgets.Static">Static</span></code></p>
+
+
+
+        <p>Simple status line for resource utilisation.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/widgets/resource_footer.py</code></summary>
+                <pre class="highlight"><code class="language-python">class ResourceFooter(Static):
+    """Simple status line for resource utilisation."""
+
+    def __init__(self) -&gt; None:
+        super().__init__("CPU: --%  MEM: --%")
+        self._cpu = None
+        self._mem = None
+        self._pressure = False
+
+    def update_metrics(self, cpu_percent: float, mem_percent: float, under_pressure: bool = False) -&gt; None:
+        self._cpu = cpu_percent
+        self._mem = mem_percent
+        self._pressure = under_pressure
+        pressure_flag = "!" if under_pressure else ""
+        self.update(f"CPU: {cpu_percent:5.1f}%{pressure_flag}  MEM: {mem_percent:5.1f}%")</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.ResourceFooter.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__() -&gt; None</code>
+
+<a href="#tui.widgets.ResourceFooter.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/resource_footer.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self) -&gt; None:
+    super().__init__("CPU: --%  MEM: --%")
+    self._cpu = None
+    self._mem = None
+    self._pressure = False</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.ResourceFooter.update_metrics" class="doc doc-heading">
+            <code class="highlight language-python">update_metrics(cpu_percent: float, mem_percent: float, under_pressure: bool = False) -&gt; None</code>
+
+<a href="#tui.widgets.ResourceFooter.update_metrics" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/resource_footer.py</code></summary>
+              <pre class="highlight"><code class="language-python">def update_metrics(self, cpu_percent: float, mem_percent: float, under_pressure: bool = False) -&gt; None:
+    self._cpu = cpu_percent
+    self._mem = mem_percent
+    self._pressure = under_pressure
+    pressure_flag = "!" if under_pressure else ""
+    self.update(f"CPU: {cpu_percent:5.1f}%{pressure_flag}  MEM: {mem_percent:5.1f}%")</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tui.widgets.StatusPanel" class="doc doc-heading">
+            <code>StatusPanel</code>
+
+
+<a href="#tui.widgets.StatusPanel" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.widgets.Static">Static</span></code></p>
+
+
+
+        <p>Placeholder panel that displays contextual details.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>tui/widgets/status_panel.py</code></summary>
+                <pre class="highlight"><code class="language-python">class StatusPanel(Static):
+    """Placeholder panel that displays contextual details."""
+
+    def __init__(self) -&gt; None:
+        super().__init__("Select a camera to see details.")
+
+    def update_detail(self, text: str) -&gt; None:
+        self.update(text)</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.StatusPanel.__init__" class="doc doc-heading">
+            <code class="highlight language-python">__init__() -&gt; None</code>
+
+<a href="#tui.widgets.StatusPanel.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/status_panel.py</code></summary>
+              <pre class="highlight"><code class="language-python">def __init__(self) -&gt; None:
+    super().__init__("Select a camera to see details.")</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tui.widgets.StatusPanel.update_detail" class="doc doc-heading">
+            <code class="highlight language-python">update_detail(text: str) -&gt; None</code>
+
+<a href="#tui.widgets.StatusPanel.update_detail" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>tui/widgets/status_panel.py</code></summary>
+              <pre class="highlight"><code class="language-python">def update_detail(self, text: str) -&gt; None:
+    self.update(text)</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../tui.views/" class="btn btn-neutral float-left" title="tui.views"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../tui.views/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

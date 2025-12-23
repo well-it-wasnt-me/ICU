@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Usage - ICU</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Usage";
+        var mkdocs_page_input_path = "usage.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICU
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Usage</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-training">1. Training</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-run">2. Run</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#telegram-notifications-setup">Telegram Notifications Setup</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#telegram-commands">Telegram Commands</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#add-pois-from-telegram">Add POIs from Telegram</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#plate-monitor-watchlist">Plate Monitor &amp; Watchlist</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#finding-public-streams">Finding Public Streams</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#icu-arguments">ICU Arguments</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../modules/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../face_recognizer/">face_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../image_utils/">image_utils</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logger_setup/">logger_setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../main/">main</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../notifications/">notifications</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_monitor/">plate_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plate_recognizer/">plate_recognizer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../resource_monitor/">resource_monitor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../runtime_events/">runtime_events</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_finder/">stream_finder</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stream_processor/">stream_processor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../textual_app/">textual_app</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >TUI</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../tui/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.services/">tui.services</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.views/">tui.views</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../tui.widgets/">tui.widgets</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICU</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Usage</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h1>
+<p>Alright, you’ve made it this far without breaking anything — kudos to you!</p>
+<h2 id="1-training">1. Training<a class="headerlink" href="#1-training" title="Permanent link">&para;</a></h2>
+<p>In order for the script to find people it needs to learn their faces. So create
+the following structure inside the <code>poi</code> folder:</p>
+<pre class="highlight"><code class="language-text">ICU
+├── poi
+│   └── FOLDER_PERSON_NAME
+│       ├── image_1.jpg
+│       ├── image_2.jpg
+│       ├── image_3.jpg
+│       └── image_4.jpg  # the more the better
+└── main.py</code></pre>
+<p>Now it’s time to train the model.</p>
+<blockquote>
+<p><strong>NOTE</strong>: if you have a GPU feel free to add <code>--use_gpu</code> at the end.</p>
+</blockquote>
+<pre class="highlight"><code class="language-bash">python main.py --train --train_dir poi --model_save_path trained_knn_model_gpu.clf</code></pre>
+<p>If all went fine you should see something like this:</p>
+<pre class="highlight"><code class="language-text">[INFO] Converted poi/PERSON_NAME/image_1.jpeg to RGB.
+[INFO] Converted poi/PERSON_NAME/image_2.jpeg to RGB.
+[INFO] Converted poi/PERSON_NAME_2/image_1.jpeg to RGB.
+[INFO] Using device: mps
+[INFO] Training KNN classifier...
+[INFO] Using device for training: mps
+[INFO] Chose n_neighbors automatically: 3
+[INFO] KNN classifier saved to trained_knn_model_gpu.clf
+[INFO] Training complete!</code></pre>
+<h2 id="2-run">2. Run<a class="headerlink" href="#2-run" title="Permanent link">&para;</a></h2>
+<p>Remember: use the <code>--use_gpu</code> flag only if you have a GPU available.</p>
+<pre class="highlight"><code class="language-bash">python main.py \
+  --camera_config configs/cameras.yaml \
+  --app_config configs/app.yaml \
+  --model_save_path trained_knn_model_gpu.clf</code></pre>
+<p>If all went ok you should see something like this:</p>
+<pre class="highlight"><code class="language-text">2024-12-25 16:23:32,540 [INFO] Converted poi/PERSON_NAME_A/image_1.jpeg to RGB.
+.... more as above ...
+2024-12-25 16:23:32,865 [INFO] Using device: mps
+2024-12-25 16:23:32,865 [INFO] Loaded KNN classifier from trained_knn_model_gpu.clf
+2024-12-25 16:23:33,190 [INFO] [Laptop WebCam] Connecting to the video stream...
+2024-12-25 16:23:33,191 [INFO] [Laptop WebCam] CONNECTED. Starting Analysis process...
+2024-12-25 16:23:46,888 [INFO] [Laptop WebCam] Detected known face: PERSON_NAME at 8%
+2024-12-25 16:23:46,905 [INFO] [Laptop WebCam] Saved captured frame to captures/Laptop WebCam/Laptop WebCam_PERSON_NAME_20241225_162346.jpg
+2024-12-25 16:23:47,098 [INFO] [Laptop WebCam] Saved side-by-side screenshot to captures/Laptop WebCam/Laptop WebCam_PERSON_NAME_20241225_162346_sidebyside.jpg</code></pre>
+<p>Every time the script finds a face not only will you find a screenshot of that
+frame inside the <code>captures</code> folder but also a side-by-side view of what the
+camera is seeing and the image used for the match.</p>
+<h2 id="telegram-notifications-setup">Telegram Notifications Setup<a class="headerlink" href="#telegram-notifications-setup" title="Permanent link">&para;</a></h2>
+<p>Want Telegram alerts (and interactive uploads)? Set it up once:</p>
+<ol>
+<li>Create a bot with <code>@BotFather</code> and keep the token it prints.</li>
+<li>Send any message to the bot (or add it to a private channel) so Telegram creates a chat.</li>
+<li>Visit <code>https://api.telegram.org/bot&lt;YOUR_TOKEN&gt;/getUpdates</code> after sending a message; the JSON response contains the numeric <code>chat.id</code> you need.</li>
+<li>Configure <code>configs/app.yaml</code>:</li>
+</ol>
+<pre class="highlight"><code class="language-yaml">notifications:
+  telegram:
+    bot_token: "123456:ABCDEF"
+    chat_id: "123456789"
+    enable_commands: true
+    timeout: 10
+    max_workers: 2</code></pre>
+<ol>
+<li>Start ICU with <code>python main.py</code>. The Telegram poller starts automatically when both token and chat id are present. Set <code>enable_commands: false</code> if you only want outbound notifications.</li>
+</ol>
+<h2 id="telegram-commands">Telegram Commands<a class="headerlink" href="#telegram-commands" title="Permanent link">&para;</a></h2>
+<p>Once the bot is running, these commands are always available:</p>
+<ul>
+<li><code>/add_poi [Name]</code> — start collecting files for a new person of interest (name is optional inline).</li>
+<li><code>/add_plate &lt;Plate&gt;</code> — append a licence plate to the watchlist (stored on disk if <code>watchlist_file</code> is set).</li>
+<li><code>/status</code> — display the current session state (stage, photos saved, etc.).</li>
+<li><code>/list_poi</code> — list stored POI folders and file counts on disk.</li>
+<li><code>/done</code> — finish the current upload session.</li>
+<li><code>/cancel</code> — abort the current session and discard temporary files if needed.</li>
+<li><code>/help</code> — print the quick reference with all commands.</li>
+</ul>
+<h2 id="add-pois-from-telegram">Add POIs from Telegram<a class="headerlink" href="#add-pois-from-telegram" title="Permanent link">&para;</a></h2>
+<p>With Telegram notifications enabled, you can add new people of interest straight
+from chat:</p>
+<ol>
+<li>Send <code>/add_poi</code> to your bot (or <code>/add_poi Alice</code> to skip the name prompt).</li>
+<li>The bot replies <code>name</code> — answer with the person’s display name if you didn’t provide it inline.</li>
+<li>The bot asks for <code>picture(s)</code> — upload one or more photos.</li>
+<li>When finished, reply with <code>done</code> (or tap <code>/done</code>). Use <code>/cancel</code> to abort at any point.</li>
+<li>The bot will ask whether to retrain immediately — reply <code>yes</code> to stop streams,
+   retrain, and restart ICU with the updated model (or <code>no</code> to handle it later).</li>
+</ol>
+<p>The images are written to the training directory (<code>poi/&lt;NAME&gt;</code> by default),
+converted to RGB, and ready for your next training run. Confirming the retrain
+prompt triggers an automatic stop → retrain → restart sequence so the new person
+is recognised immediately.</p>
+<h2 id="plate-monitor-watchlist">Plate Monitor &amp; Watchlist<a class="headerlink" href="#plate-monitor-watchlist" title="Permanent link">&para;</a></h2>
+<p>ICU can also watch for licence plates:</p>
+<ol>
+<li>Toggle <code>plates.enabled: true</code> inside <code>configs/app.yaml</code>.</li>
+<li>Populate <code>plates.watchlist</code> with any plates you care about. Matching ignores case and punctuation.</li>
+<li>Point <code>plates.watchlist_file</code> to a writable path (defaults to <code>configs/plates_watchlist.txt</code>). Telegram commands append to this file so updates persist.</li>
+<li>Adjust the rest of the block as needed:</li>
+</ol>
+<pre class="highlight"><code class="language-yaml">plates:
+  enabled: true
+  watchlist:
+    - ABC123
+    - XYZ999
+  watchlist_file: configs/plates_watchlist.txt
+  alert_on_watchlist: true
+  alert_on_every_plate: false
+  use_notifications: true
+  capture_cooldown: 30
+  storage:
+    base_dir: captures/plates
+    summary_file: plates_summary.json</code></pre>
+<ol>
+<li>Start ICU. The plate recognizer downloads OCR models on its first run and then processes every frame for plates.</li>
+</ol>
+<p>Each hit writes annotated frames and crops to <code>captures/plates/&lt;camera&gt;/&lt;plate&gt;/</code> and appends metadata to the summary JSON. When Telegram notifications plus <code>plates.use_notifications</code> are enabled, the bot posts the capture, the crop, and whether the plate was on your watchlist so you can react immediately.</p>
+<p>Need to add someone new while you’re away from the computer? Send <code>/add_plate &lt;PlateNumber&gt;</code> to the bot. The value is normalised (uppercase, punctuation removed), applied to the live watchlist instantly, and written to <code>watchlist_file</code> so it remains active after restarts.</p>
+<h2 id="finding-public-streams">Finding Public Streams<a class="headerlink" href="#finding-public-streams" title="Permanent link">&para;</a></h2>
+<p>Need cameras to watch?
+Run <code>python main.py --find-camera</code> and provide a city name or country code. </p>
+<p>ICU uses <code>stream_finder.CameraStreamFinder</code> to query both Insecam and
+EarthCam, retries Insecam pages that respond with HTTP 403, follows EarthCam
+iframe embeds and JSON configs, and writes the consolidated results to
+<code>camera_streams_&lt;city&gt;.yaml</code> (up to 100 entries) using the same shape as
+<code>configs/cameras-example.yaml</code> (top-level <code>cameras</code> list). </p>
+<p>Each entry includes the discovered <code>stream_url</code> plus any headers
+(such as <code>Referer</code>) that you should copy into <code>configs/cameras.yaml</code> before
+monitoring the stream.</p>
+<h2 id="icu-arguments">ICU Arguments<a class="headerlink" href="#icu-arguments" title="Permanent link">&para;</a></h2>
+<pre class="highlight"><code class="language-bash">python main.py --help</code></pre>
+<pre class="highlight"><code>usage: main.py [-h] [--train_dir TRAIN_DIR]
+               [--model_save_path MODEL_SAVE_PATH] [--n_neighbors N_NEIGHBORS]
+               [--camera_config CAMERA_CONFIG] [--app_config APP_CONFIG]
+               [--distance_threshold DISTANCE_THRESHOLD]
+               [--train] [--use_gpu]
+               [--target_processing_fps TARGET_PROCESSING_FPS]
+               [--cpu_pressure_threshold CPU_PRESSURE_THRESHOLD]
+               [--find-camera]
+
+Face Recognition from Live Camera Stream
+
+options:
+  -h, --help            show this help message and exit
+  --train_dir TRAIN_DIR
+                        Directory with training images
+  --model_save_path MODEL_SAVE_PATH
+                        Path to save/load KNN model
+  --n_neighbors N_NEIGHBORS
+                        Number of neighbors for KNN
+  --camera_config CAMERA_CONFIG
+                        Path to camera configuration file
+  --app_config APP_CONFIG
+                        Path to application configuration file
+  --distance_threshold DISTANCE_THRESHOLD
+                        Distance threshold for recognition
+  --train               Train the model
+  --use_gpu             Use GPU with facenet-pytorch
+  --target_processing_fps TARGET_PROCESSING_FPS
+                        Target processing rate per camera (0 disables rate
+                        limiting)
+  --cpu_pressure_threshold CPU_PRESSURE_THRESHOLD
+                        CPU usage threshold to trigger adaptive throttling
+  --find-camera         Interactively search for public camera streams by city</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../installation/" class="btn btn-neutral float-left" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../modules/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../installation/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../modules/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
