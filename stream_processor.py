@@ -23,7 +23,6 @@ from runtime_events import (
     RuntimeEvent,
     StreamLifecycleEvent,
     StreamMetricsEvent,
-    PlateDetectionEvent,
 )
 
 
