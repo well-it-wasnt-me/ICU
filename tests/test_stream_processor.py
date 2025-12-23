@@ -115,3 +115,52 @@ def test_calculate_confidence():
     assert StreamProcessor._calculate_confidence(0.0) == 100.0
     assert StreamProcessor._calculate_confidence(0.4) == 60.0
     assert StreamProcessor._calculate_confidence(1.2) == 0.0
+
+
+def test_should_process_frame_with_pressure():
+    processor = StreamProcessor(
+        DummyFaceRecognizer(),
+        {"TestPerson": np.zeros((1, 1, 3), dtype=np.uint8)},
+        resource_monitor=None,
+        cpu_pressure_threshold=80.0,
+        pressure_backoff_factor=3.0,
+    )
+    # Under normal conditions process every other frame (interval=2)
+    assert processor._should_process_frame(2, 2) is True
+    assert processor._should_process_frame(3, 2) is False
+
+    class UnderPressure:
+        def is_under_pressure(self, threshold):
+            return True
+
+    processor.resource_monitor = UnderPressure()
+    # With pressure and backoff factor 3, interval becomes 6
+    assert processor._should_process_frame(6, 2) is True
+    assert processor._should_process_frame(4, 2) is False
+
+
+def test_current_min_interval_with_pressure():
+    processor = StreamProcessor(
+        DummyFaceRecognizer(),
+        {"TestPerson": np.zeros((1, 1, 3), dtype=np.uint8)},
+        target_processing_fps=10.0,
+        resource_monitor=None,
+        pressure_backoff_factor=2.5,
+    )
+    assert pytest.approx(processor._current_min_interval(), rel=1e-3) == 0.1
+
+    class UnderPressure:
+        def is_under_pressure(self, threshold):
+            return True
+
+    processor.resource_monitor = UnderPressure()
+    assert pytest.approx(processor._current_min_interval(), rel=1e-3) == 0.25
+
+
+def test_scale_face_location():
+    scaled = StreamProcessor._scale_face_location(
+        (10.0, 20.0, 30.0, 5.0),
+        original_shape=(200, 400, 3),
+        scaled_shape=(100, 200, 3),
+    )
+    assert scaled == (20, 40, 60, 10)

@@ -1,47 +1,54 @@
-import subprocess
+import importlib.util
 from pathlib import Path
-import shutil
 
-def test_training_creates_model(tmp_path):
+import pytest
+
+
+@pytest.mark.skipif(importlib.util.find_spec("facenet_pytorch") is None, reason="facenet_pytorch not available")
+def test_training_cli_creates_model(monkeypatch, tmp_path):
     """
-    Create a temporary training folder structure with one person’s image,
-    run the training command, and verify that a model file is created.
+    Exercise the `--train` CLI path without running heavy ML pipelines.
+
+    The FaceRecognizer and image preprocessing are stubbed so the test only
+    verifies argument wiring and that the model path is written.
     """
-    # Create temporary training directory: poi/TestPerson/
+    import main  # Imported lazily so monkeypatch can hook symbols
+
     train_dir = tmp_path / "poi"
     train_dir.mkdir(parents=True)
+    model_path = tmp_path / "trained_knn_model.clf"
 
-    person_dir = tmp_path / "poi" / "TestPerson"
-    person_dir.mkdir(parents=True)
+    convert_calls = []
 
-    # Copy the realistic face image from the tests folder
-    src_image_path = Path(__file__).parent / "thispersondoesntexist.jpeg"
-    dest_image_path = person_dir / "thispersondoesntexist.jpeg"
-    shutil.copy(src_image_path, dest_image_path)
+    monkeypatch.setattr(main.ImageUtils, "convert_images_to_rgb", lambda path: convert_calls.append(path))
 
-    # Set a path for the output model file (updated to the correct filename)
-    model_save_path = tmp_path / "trained_knn_model.clf"
-    print("tmp_path:", tmp_path)
-    print("train_dir:", train_dir)
-    print("person_dir:", person_dir)
-    print("img path:", dest_image_path)
-    print("model_save_path:", model_save_path)
+    class DummyRecognizer:
+        def __init__(self, use_gpu=False):
+            self.device = "cpu"
+            self.use_gpu = use_gpu
+            self.initialised = False
 
-    # Determine project root (assuming main.py is in the project root)
-    project_root = Path(__file__).parent.parent.resolve()
+        def initialize_facenet_pytorch_models(self):
+            self.initialised = True
 
-    # Build the command to run training mode using absolute path to main.py
-    cmd = [
-        "python", str(project_root / "main.py"),
+        def train(self, train_dir, model_save_path, n_neighbors=None, knn_algo="ball_tree", verbose=False):
+            Path(model_save_path).write_text("dummy model")
+            return object()
+
+    monkeypatch.setattr(main, "FaceRecognizer", DummyRecognizer)
+    monkeypatch.setenv("PYTHONWARNINGS", "ignore")  # keep subprocess noise down
+
+    argv = [
+        "main.py",
         "--train",
-        "--train_dir", str(tmp_path / "poi"),
-        "--model_save_path", str(model_save_path)
+        "--train_dir",
+        str(train_dir),
+        "--model_save_path",
+        str(model_path),
     ]
+    monkeypatch.setattr(main.sys, "argv", argv)
 
-    # Run the command with the working directory set to the project root
-    result = subprocess.run(cmd, cwd=str(project_root), capture_output=True, text=True)
+    main.main()
 
-    # Assert that the process exited successfully
-    assert result.returncode == 0, f"Training failed: {result.stderr}"
-    # Assert that the model file was created
-    assert model_save_path.exists(), "Model file was not created."
+    assert convert_calls == [str(train_dir)], "Training should preprocess the provided train_dir."
+    assert model_path.exists(), "Model file should be written by the stubbed trainer."

@@ -58,6 +58,31 @@ def test_insecam_scraper_parses_results(monkeypatch):
     assert headers_seen["https://www.insecam.org/en/view/123"]["Referer"] == "https://www.insecam.org/en/bycity/Test_City/"
 
 
+def test_insecam_scraper_prefers_country_mode_for_country_codes(monkeypatch):
+    listing_html_country = "<div>http://10.0.0.1:8080/</div>"
+
+    responses = {
+        "https://www.insecam.org/en/bycountry/US/": DummyResponse(listing_html_country),
+    }
+
+    headers_seen = []
+
+    def fake_get(url, timeout, verify, headers=None):
+        headers_seen.append(headers)
+        return responses.get(url, DummyResponse("", status_code=404))
+
+    finder = CameraStreamFinder(timeout=1, scrapers=(InsecamScraper(),))
+    monkeypatch.setattr(finder.session, "get", fake_get)
+    monkeypatch.setattr("stream_finder.random.choice", lambda seq: "UA-TEST")
+
+    streams = finder.find_streams("US", max_pages=1, max_results=2)
+    urls = [stream.url for stream in streams]
+
+    assert urls == ["http://10.0.0.1:8080/"]
+    assert streams[0].protocol == "http"
+    assert any(h and h.get("User-Agent") == "UA-TEST" for h in headers_seen)
+
+
 def test_earthcam_scraper_parses_results(monkeypatch):
     listing_html = """
     <div id="pagination_top">Your search Test City returned 1 results</div>

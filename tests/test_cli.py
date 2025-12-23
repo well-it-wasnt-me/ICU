@@ -1,4 +1,13 @@
+import importlib.util
 import subprocess
+
+import pytest
+
+
+pytestmark = pytest.mark.skipif(
+    importlib.util.find_spec("facenet_pytorch") is None,
+    reason="CLI import requires facenet_pytorch",
+)
 
 
 def test_help_output():
