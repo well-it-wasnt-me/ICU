@@ -9,7 +9,6 @@ import time
 from typing import Iterable, Optional
 
 from face_recognizer import FaceRecognizer
-from logger_setup import logger
 from notifications import NotificationManager
 from resource_monitor import ResourceMonitor
 from runtime_events import RuntimeEvent
