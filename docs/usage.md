@@ -152,11 +152,16 @@ Need to add someone new while you’re away from the computer? Send `/add_plate 
 
 ## Finding Public Streams
 
-Need cameras to watch? Run `python main.py --find-camera` and provide a city
-name. ICU uses `stream_finder.CameraStreamFinder` to query both Insecam and
+Need cameras to watch?
+Run `python main.py --find-camera` and provide a city name or country code. 
+
+ICU uses `stream_finder.CameraStreamFinder` to query both Insecam and
 EarthCam, retries Insecam pages that respond with HTTP 403, follows EarthCam
 iframe embeds and JSON configs, and writes the consolidated results to
-`camera_streams_<city>.yaml`. Each entry includes the protocol and any headers
+`camera_streams_<city>.yaml` (up to 100 entries) using the same shape as
+`configs/cameras-example.yaml` (top-level `cameras` list). 
+
+Each entry includes the discovered `stream_url` plus any headers
 (such as `Referer`) that you should copy into `configs/cameras.yaml` before
 monitoring the stream.
 

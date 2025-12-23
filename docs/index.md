@@ -1,15 +1,17 @@
-# Welcome to ICU documentation!
+# ICU Documentation
 
 ![ICU Logo](icu.jpg)
 
-Well, folks, if you are here then chances are you're looking to find people on
-camera live streams. Lucky for you, I made this thing so you can become the king
-of the stalker.
+ICU is a real-time computer-vision toolkit for monitoring live camera streams.
+It performs face recognition with a KNN classifier, can optionally watch for
+licence plates via OCR, and ships with Telegram notifications/commands plus a
+Textual-based TUI for local monitoring.
 
-Check out the [installation](installation.md) section to get started.
+Check out [installation](installation.md) to get set up, then see [usage](usage.md)
+for training and running ICU against your own cameras.
 
 !!! note "Heads up"
-    This project is under active development.
+    This project is under active development; expect frequent updates.
 
 ## Contents
 
