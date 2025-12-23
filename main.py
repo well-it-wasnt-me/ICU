@@ -13,13 +13,8 @@ import yaml
 import threading
 import time
 
-# Ensure facenet-pytorch uses the custom imresample function from ImageUtils
 import facenet_pytorch.models.utils.detect_face as detect_face_module
 from image_utils import ImageUtils
-
-# Override the original imresample with custom_imresample
-detect_face_module.imresample = ImageUtils.custom_imresample
-
 from logger_setup import logger, configure_logging
 from face_recognizer import FaceRecognizer
 from stream_processor import StreamProcessor
@@ -28,6 +23,9 @@ from resource_monitor import ResourceMonitor
 from stream_finder import CameraStreamFinder, DiscoveredStream
 from plate_monitor import PlateDetectionHandler, PlateStore
 from plate_recognizer import PlateRecognizer
+
+# Ensure facenet-pytorch uses the custom imresample function from ImageUtils
+detect_face_module.imresample = ImageUtils.custom_imresample
 
 
 def main():
@@ -345,10 +343,12 @@ def handle_camera_lookup():
     city_slug = city.strip().lower().replace(" ", "_")
     output_path = f"camera_streams_{city_slug}.yaml"
     try:
-        serialized = [
-            _serialize_stream(stream)
-            for stream in streams
-        ]
+        serialized = {
+            "cameras": [
+                _serialize_stream(stream, idx)
+                for idx, stream in enumerate(streams, start=1)
+            ]
+        }
         with open(output_path, "w", encoding="utf-8") as f:
             yaml.safe_dump(serialized, f, sort_keys=False)
 
@@ -360,14 +360,14 @@ def handle_camera_lookup():
         logger.error("Failed to write camera search results: %s", exc)
 
 
-def _serialize_stream(stream: DiscoveredStream) -> dict:
-    data = {
-        "url": stream.url,
-        "protocol": stream.protocol,
+def _serialize_stream(stream: DiscoveredStream, index: int) -> dict:
+    return {
+        "name": f"Discovered Camera {index}",
+        "stream_url": stream.url,
+        "headers": stream.headers or {},
+        "process_frame_interval": 30,
+        "capture_cooldown": 120,
     }
-    if stream.headers:
-        data["headers"] = stream.headers
-    return data
 
 
 if __name__ == "__main__":
