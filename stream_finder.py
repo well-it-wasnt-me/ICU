@@ -1,7 +1,7 @@
 """
 Utilities to discover public camera streams by city.
 
-Currently supports:
+Currently, supports:
 * insecam.org (RTSP feeds)
 * earthcam.com (HLS feeds)
 """
@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import html
 import json
+import random
 import re
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Optional, Sequence
@@ -63,8 +64,8 @@ class CameraStreamFinder:
     def find_streams(
         self,
         city: str,
-        max_results: int = 10,
-        max_pages: int = 3,
+        max_results: int = 100,
+        max_pages: int = 10,
     ) -> List[DiscoveredStream]:
         results: List[DiscoveredStream] = []
         seen: set[str] = set()
@@ -111,8 +112,13 @@ class BaseCameraScraper:
 
 class InsecamScraper(BaseCameraScraper):
     LISTING_URL_TEMPLATE = "https://www.insecam.org/en/bycity/{city}/"
+    COUNTRY_LISTING_URL_TEMPLATE = "https://www.insecam.org/en/bycountry/{country}/"
     DETAIL_URL_TEMPLATE = "https://www.insecam.org{path}"
     RTSP_REGEX = re.compile(r"(rtsp://[^\s\"']+)")
+    EXPOSED_HTTP_REGEX = re.compile(
+        r"https?://\d{1,3}(?:\.\d{1,3}){3}:\d+/?",
+        re.IGNORECASE,
+    )
     BASE_HEADERS = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Encoding": "gzip, deflate, br",
@@ -122,6 +128,13 @@ class InsecamScraper(BaseCameraScraper):
         "Upgrade-Insecure-Requests": "1",
     }
     BOOTSTRAP_URL = "https://www.insecam.org/en/"
+    USER_AGENTS = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+        "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+        "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Opera/9.80 (Windows NT 6.1; WOW64) Presto/2.12.388 Version/12.18",
+    )
 
     def find(
         self,
@@ -131,18 +144,62 @@ class InsecamScraper(BaseCameraScraper):
         max_pages: int,
     ) -> Iterable[DiscoveredStream]:
         self._bootstrap_session(finder)
+        country_code = self._normalize_country_code(city)
         city_slug = city.strip().replace(" ", "_")
         found = 0
+
+        if country_code:
+            headers_override = {"User-Agent": self._pick_user_agent()}
+            for stream in self._scrape_country_listings(
+                finder, country_code, max_pages, max_results - found, headers_override
+            ):
+                yield stream
+                found += 1
+                if found >= max_results:
+                    return
+            return
+
+        for stream in self._scrape_city_listings(finder, city_slug, max_pages, max_results - found):
+            yield stream
+            found += 1
+            if found >= max_results:
+                return
+
+    def _build_listing_url(self, city_slug: str, page: int) -> str:
+        if page <= 1:
+            return self.LISTING_URL_TEMPLATE.format(city=city_slug)
+        return f"{self.LISTING_URL_TEMPLATE.format(city=city_slug)}?page={page}"
+
+    def _build_country_listing_url(self, country_code: str, page: int) -> str:
+        if page <= 1:
+            return self.COUNTRY_LISTING_URL_TEMPLATE.format(country=country_code)
+        return f"{self.COUNTRY_LISTING_URL_TEMPLATE.format(country=country_code)}?page={page}"
+
+    def _scrape_city_listings(
+        self,
+        finder: CameraStreamFinder,
+        city_slug: str,
+        max_pages: int,
+        remaining: int,
+    ) -> Iterable[DiscoveredStream]:
         for page in range(1, max_pages + 1):
+            if remaining <= 0:
+                return
             page_url = self._build_listing_url(city_slug, page)
             logger.info("Fetching insecam listing: %s", page_url)
-            listing_html = finder.fetch(page_url, headers=self.BASE_HEADERS)
-            if not listing_html:
-                logger.debug("Listing fetch returned no content, retrying with hardened headers.")
-                listing_html = self._direct_fetch(finder, page_url, referer=self.BASE_HEADERS["Referer"])
+            listing_html = self._fetch_listing(finder, page_url, referer=self.BASE_HEADERS["Referer"])
             if not listing_html:
                 continue
+
+            for http_url in self._extract_exposed_http_streams(listing_html):
+                yield DiscoveredStream(url=http_url, protocol="http")
+                remaining -= 1
+                if remaining <= 0:
+                    return
+
             for detail_path in self._extract_camera_links(listing_html):
+                if remaining <= 0:
+                    return
                 detail_url = self.DETAIL_URL_TEMPLATE.format(path=detail_path)
                 detail_headers = {
                     **self.BASE_HEADERS,
@@ -155,14 +212,42 @@ class InsecamScraper(BaseCameraScraper):
                     continue
                 for rtsp_url in self._extract_rtsp(detail_html):
                     yield DiscoveredStream(url=rtsp_url, protocol="rtsp")
-                    found += 1
-                    if found >= max_results:
+                    remaining -= 1
+                    if remaining <= 0:
                         return
 
-    def _build_listing_url(self, city_slug: str, page: int) -> str:
-        if page <= 1:
-            return self.LISTING_URL_TEMPLATE.format(city=city_slug)
-        return f"{self.LISTING_URL_TEMPLATE.format(city=city_slug)}?page={page}"
+    def _scrape_country_listings(
+        self,
+        finder: CameraStreamFinder,
+        country_code: str,
+        max_pages: int,
+        remaining: int,
+        headers_override: Optional[Dict[str, str]],
+    ) -> Iterable[DiscoveredStream]:
+        for page in range(1, max_pages + 1):
+            if remaining <= 0:
+                return
+            page_url = self._build_country_listing_url(country_code, page)
+            logger.info("Fetching insecam country listing: %s", page_url)
+            listing_html = self._fetch_listing(
+                finder,
+                page_url,
+                referer=self.BASE_HEADERS["Referer"],
+                headers=headers_override,
+            )
+            if not listing_html:
+                continue
+
+            for http_url in self._extract_exposed_http_streams(listing_html):
+                yield DiscoveredStream(url=http_url, protocol="http")
+                remaining -= 1
+                if remaining <= 0:
+                    return
+            for rtsp_url in self._extract_rtsp(listing_html):
+                yield DiscoveredStream(url=rtsp_url, protocol="rtsp")
+                remaining -= 1
+                if remaining <= 0:
+                    return
 
     @staticmethod
     def _extract_camera_links(html: str) -> Iterable[str]:
@@ -171,6 +256,14 @@ class InsecamScraper(BaseCameraScraper):
             href = a_tag.get("href")
             if href:
                 yield href
+
+    def _extract_exposed_http_streams(self, html: str) -> Iterable[str]:
+        seen: set[str] = set()
+        for match in self.EXPOSED_HTTP_REGEX.finditer(html):
+            candidate = match.group(0)
+            if candidate not in seen:
+                seen.add(candidate)
+                yield candidate
 
     def _extract_rtsp(self, html: str) -> Iterable[str]:
         return self.RTSP_REGEX.findall(html)
@@ -181,16 +274,53 @@ class InsecamScraper(BaseCameraScraper):
         finder.fetch(self.BOOTSTRAP_URL, headers=self.BASE_HEADERS)
         self._bootstrapped = True
 
-    def _direct_fetch(self, finder: CameraStreamFinder, url: str, referer: Optional[str] = None) -> Optional[str]:
-        headers = {**self.BASE_HEADERS}
+    def _pick_user_agent(self) -> str:
+        try:
+            return random.choice(self.USER_AGENTS)
+        except Exception:
+            return self.USER_AGENTS[0]
+
+    def _fetch_listing(
+        self,
+        finder: CameraStreamFinder,
+        url: str,
+        referer: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
+    ) -> Optional[str]:
+        listing_headers = {**self.BASE_HEADERS}
+        if headers:
+            listing_headers.update(headers)
         if referer:
-            headers["Referer"] = referer
+            listing_headers["Referer"] = referer
+        listing_html = finder.fetch(url, headers=listing_headers)
+        if listing_html:
+            return listing_html
+        logger.debug("Listing fetch returned no content, retrying with hardened headers.")
+        return self._direct_fetch(
+            finder,
+            url,
+            referer=referer or self.BASE_HEADERS["Referer"],
+            headers=headers,
+        )
+
+    def _direct_fetch(
+        self,
+        finder: CameraStreamFinder,
+        url: str,
+        referer: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
+    ) -> Optional[str]:
+        base_headers = {**self.BASE_HEADERS}
+        if headers:
+            base_headers.update(headers)
+        if referer:
+            base_headers["Referer"] = referer
         try:
             response = finder.session.get(
                 url,
                 timeout=finder.timeout,
                 verify=finder.verify_ssl,
-                headers=headers,
+                headers=base_headers,
             )
             if response.status_code >= 400:
                 logger.warning("Fallback fetch failed for %s (status %s)", url, response.status_code)
@@ -199,6 +329,13 @@ class InsecamScraper(BaseCameraScraper):
         except requests.RequestException as exc:
             logger.error("Error during fallback fetch %s: %s", url, exc)
             return None
+
+    @staticmethod
+    def _normalize_country_code(city: str) -> Optional[str]:
+        code = city.strip().replace(" ", "").upper()
+        if re.fullmatch(r"[A-Z]{2,3}", code):
+            return code
+        return None
 
 
 class EarthCamScraper(BaseCameraScraper):
