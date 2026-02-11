@@ -19,7 +19,7 @@ networkx
 numpy
 opencv-contrib-python
 opencv-python
-pillow==12.0.0
+pillow==12.1.1
 PyYAML
 requests
 beautifulsoup4
